@@ -37,6 +37,8 @@
   * Author: BootstrapMade.com
   * License: https://bootstrapmade.com/license/
   ======================================================== -->
+
+  @stack('styles')
 </head>
 
 <body>
@@ -165,6 +167,9 @@
 
   <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
+  @include('sweetalert::alert')
+
+  @stack('scripts')
   <!-- Vendor JS Files -->
   <script src="{{ asset('assets') }}/vendor/apexcharts/apexcharts.min.js"></script>
   <script src="{{ asset('assets') }}/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>

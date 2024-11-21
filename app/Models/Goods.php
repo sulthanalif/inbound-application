@@ -20,7 +20,7 @@ class Goods extends Model
         'price',
         'qty',
         'category_id',
-        'werehouse_id',
+        'warehouse_id',
         'user_id',
     ];
 
@@ -29,9 +29,9 @@ class Goods extends Model
         return $this->belongsTo(Category::class);
     }
 
-    public function werehouse()
+    public function warehouse()
     {
-        return $this->belongsTo(Werehouse::class);
+        return $this->belongsTo(Warehouse::class);
     }
 
     public function user()
@@ -42,5 +42,10 @@ class Goods extends Model
     public function inbounds()
     {
         return $this->hasMany(Inbound::class);
+    }
+
+    public function outboundItems()
+    {
+        return $this->hasMany(OutboundItem::class);
     }
 }

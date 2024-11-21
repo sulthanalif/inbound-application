@@ -24,7 +24,7 @@ return new class extends Migration
             $table->decimal('price', 10, 2);
             $table->integer('qty');
             $table->foreignId('category_id')->constrained();
-            $table->foreignId('werehouse_id')->constrained();
+            $table->foreignId('warehouse_id')->constrained();
             $table->foreignId('user_id')->constrained();
             $table->timestamps();
         });

@@ -18,8 +18,8 @@ class DatabaseSeeder extends Seeder
         //Role
         $super_admin = Role::create(['name' => 'Super Admin']);
         $admin_engineer = Role::create(['name' => 'Admin Engineer']);
-        $admin_werehouse = Role::create(['name' => 'Admin Werehouse']);
-        $head_werehouse = Role::create(['name' => 'Head Werehouse']);
+        $admin_warehouse = Role::create(['name' => 'Admin Warehouse']);
+        $head_warehouse = Role::create(['name' => 'Head Warehouse']);
 
 
         $this->call(UserSeeder::class);

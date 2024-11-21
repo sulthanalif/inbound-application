@@ -19,4 +19,9 @@ class Vendor extends Model
     {
         return $this->hasMany(Inbound::class);
     }
+
+    public function outbounds()
+    {
+        return $this->hasMany(Outbound::class);
+    }
 }

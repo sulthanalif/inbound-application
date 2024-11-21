@@ -8,19 +8,6 @@
             <div class="card-body">
               <h5 class="card-title">User Data</h5>
 
-              @if (session('success'))
-              <div class="alert alert-success alert-dismissible fade show" role="alert">
-                {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-              </div>
-              @endif
-
-              @if (session('error'))
-                <div class="alert alert-danger">
-                  {{ session('error') }}
-                </div>
-              @endif
-
               <div class="flex">
                 <a href="{{ route('users.create') }}" class="btn btn-primary btn-sm mb-3">Create</a>
               </div>
@@ -46,12 +33,8 @@
                         <td><p class="text-center">{{ $user->roles[0]->name }}</p></td>
                         <td align="center"><a href="{{ route('users.is_active', $user) }}" class="btn btn-sm {{ $user->is_active ? 'btn-success' : 'btn-danger' }}">{{ $user->is_active ? 'Yes' : 'No' }}</a></td>
                         <td align="center">
-                            <a href="" class="btn btn-primary btn-sm">Edit</a>
-                            <form action="{{ route('users.destroy', $user) }}" method="POST" class="d-inline">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                            </form>
+                            <a href="{{ route('users.edit', $user) }}" class="btn btn-primary btn-sm"><i class="bi bi-pencil-fill"></i></a>
+                            <a href="{{ route('users.destroy', $user) }}" class="btn btn-danger btn-sm" data-confirm-delete="true"><i class="bi bi-trash-fill"></i></a>
                         </td>
                     </tr>
                   @endforeach

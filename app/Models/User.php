@@ -56,4 +56,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Goods::class);
     }
+
+    public function outbounds()
+    {
+        return $this->hasMany(Outbound::class);
+    }
 }

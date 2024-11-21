@@ -8,12 +8,15 @@ use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class Usercontroller extends Controller
 {
     public function index(Request $request)
     {
-        $users = User::with('roles')->paginate(5);
+        $users = User::with('roles')->latest()->paginate(5);
+
+        confirmDelete('Delete Data!', 'Are you sure you want to delete?');
 
         return view('users.index', compact('users'));
     }
@@ -27,7 +30,6 @@ class Usercontroller extends Controller
 
     public function store(Request $request)
     {
-
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'email' => 'required|email|unique:users,email',
@@ -60,9 +62,61 @@ class Usercontroller extends Controller
                 $newUser->assignRole($request->role);
             });
 
-            return redirect()->route('users.index')->with('success', 'User created successfully!');
+            Alert::success('Hore!', 'User created successfully!');
+            return redirect()->route('users.index');
         } catch (\Throwable $th) {
-            return redirect()->route('users.index')->with('error', $th->getMessage());
+            Alert::error('Oops!', $th->getMessage());
+            return redirect()->route('users.index');
+        }
+    }
+
+    public function edit(User $user)
+    {
+        $roles = Role::all()->pluck('name');
+
+        return view('users.edit', compact('user', 'roles'));
+    }
+
+    public function update(Request $request, User $user)
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'password' => 'nullable|min:6',
+            'nip' => 'nullable|string',
+            'role' => 'required|string',
+            'position' => 'nullable|string',
+            'phone' => 'nullable|numeric',
+            'address' => 'nullable|string',
+            'is_active' => 'required|boolean',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        try {
+            DB::transaction(function () use ($request, $user) {
+                $user->name = $request->name;
+                $user->email = $request->email;
+                if ($request->password) {
+                    $user->password = Hash::make($request->password);
+                }
+                $user->nip = $request->nip;
+                $user->position = $request->position;
+                $user->phone = $request->phone;
+                $user->address = $request->address;
+                $user->is_active = $request->is_active;
+                $user->save();
+
+                $user->syncRoles($request->role);
+            });
+
+            Alert::success('Hore!', 'User updated successfully!');
+            return redirect()->route('users.index');
+        } catch (\Throwable $th) {
+            Alert::error('Oops!', $th->getMessage());
+            return redirect()->route('users.index');
         }
     }
 
@@ -72,9 +126,11 @@ class Usercontroller extends Controller
             DB::transaction(function () use ($user) {
                 $user->delete();
             });
-            return redirect()->route('users.index')->with('success', 'User deleted successfully!');
+            Alert::success('Hore!', 'User deleted successfully!');
+            return redirect()->route('users.index');
         } catch (\Throwable $th) {
-            return redirect()->route('users.index')->with('error', $th->getMessage());
+                        return redirect()->route('users.index');
+                        return redirect()->route('users.index');
         }
     }
 
@@ -83,6 +139,8 @@ class Usercontroller extends Controller
         $user->is_active = !$user->is_active;
         $user->save();
 
-        return redirect()->route('users.index')->with('success', 'Status changed successfully!');
+        Alert::success('Hore!', 'Status changed successfully!');
+        return redirect()->route('users.index');
     }
 }
+
