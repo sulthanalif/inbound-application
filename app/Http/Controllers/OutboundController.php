@@ -2,14 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use DateTime;
+use Carbon\Carbon;
 use App\Models\Note;
 use App\Models\Goods;
+use App\Models\Project;
 use App\Models\Outbound;
 use App\Models\OutboundItem;
-use App\Models\Project;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use RealRashid\SweetAlert\Facades\Alert;
 
 class OutboundController extends Controller
@@ -29,6 +33,23 @@ class OutboundController extends Controller
         // confirmDelete('Reject Data!', 'Are you sure you want to reject?');
         $goods = Goods::all();
         return view('outbounds.show', compact('outbound', 'goods'));
+    }
+
+    public function delivery(Request $request, Outbound $outbound)
+    {
+        try {
+            DB::transaction(function () use ($outbound, $request) {
+                $outbound->status = 'Delivery';
+                $outbound->sender_name = $request->sender_name;
+                $outbound->vehicle_number = $request->vehicle_number;
+                $outbound->save();
+            });
+            Alert::success('Success', 'Data Delivered');
+            return back();
+        } catch (\Throwable $th) {
+            Alert::error('Error', $th->getMessage());
+            return back();
+        }
     }
 
     public function changeStatus(Outbound $outbound, Request $request)
@@ -147,6 +168,56 @@ class OutboundController extends Controller
         } catch (\Throwable $th) {
             Alert::error('Error', $th->getMessage());
             return back();
+        }
+    }
+
+    public function approveDelivery(Request $request, Outbound $outbound)
+    {
+        // $pdf = Pdf::loadView('outbounds.pdf.outbound', ['outbound' => $outbound]);
+        // if (Storage::disk('public')->put('pdf/Outbound_OUT2024112215861.pdf', $pdf->output())) {
+        //     return response()->json('OKK');
+        // }
+        try {
+            DB::transaction(function () use ($outbound, $request) {
+                $order_count = str_pad(Outbound::where('status', 'Approved')->count() + 1, 3, '0', STR_PAD_LEFT);
+                $outbound_goods = 'DN';
+                $default = 'JSSZ1';
+                $area = $request->area;
+                // $mounth = DateTime::createFromFormat('!m', date('m'))->format('F');
+                $romanNumerals = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
+                $monthNumber = Carbon::parse(now())->month;
+                $mounth = $romanNumerals[$monthNumber - 1];
+                $year = date('Y');
+                $number = $order_count .'/'. $outbound_goods .'-'. $default . $area .'-'. $mounth .'-'. $year ;
+
+                $outbound->status = 'Approved to delivery';
+                $outbound->number = $number;
+                $outbound->save();
+            });
+
+            $pdf = Pdf::loadView('outbounds.pdf.outbound', ['outbound' => $outbound]);
+            if (Storage::disk('public')->put('pdf/Outbound_'.$outbound->code.'.pdf', $pdf->output())) {
+                Alert::success('Success', 'Data Delivered');
+                return back();
+            }
+            Alert::error('Error', 'Something went wrong');
+            return back();
+        } catch (\Throwable $th) {
+            Alert::error('Error', $th->getMessage());
+            return back();
+        }
+    }
+
+    public function downloadInvoiceDelivery(Outbound $outbound)
+    {
+        $filePath = 'pdf/Outbound_' . $outbound->code . '.pdf';
+        if (Storage::disk('public')->exists($filePath)) {
+            $file = Storage::disk('public')->get($filePath);
+            return response($file, 200)
+                ->header('Content-Type', 'application/pdf')
+                ->header('Content-Disposition', 'inline; filename="Outbound_' . $outbound->code . '.pdf"');
+        } else {
+            return response()->json(['message' => 'File tidak ditemukan'], 404);
         }
     }
 }

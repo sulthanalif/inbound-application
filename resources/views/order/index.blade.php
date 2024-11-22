@@ -25,11 +25,11 @@
                                 @enderror
                             </div>
                             <div class="col-sm-6">
-                                <label for="inbound_code" class="form-label">Code<span
+                                <label for="code" class="form-label">Code<span
                                         class="text-danger">*</span></label>
-                                <input type="text" value="{{ $inbound_code }}" name="inbound_code" class="form-control @error('inbound_code') is-invalid @enderror" id="inbound_code"
+                                <input type="text" value="{{ $inbound_code }}" name="code" class="form-control @error('code') is-invalid @enderror" id="code"
                                      readonly>
-                                @error('inbound_code')
+                                @error('code')
                                     <p class="text-danger text-xs mt-2">
                                         {{ $message }}
                                     </p>

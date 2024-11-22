@@ -77,7 +77,7 @@
                             <thead>
                                 <tr>
                                     <th scope="col">#</th>
-                                    <th scope="col">Code</th>
+                                    <th scope="col">SK</th>
                                     <th scope="col">Name</th>
                                     <th scope="col">Warehouse</th>
                                     <th scope="col">Quantity</th>
@@ -88,7 +88,7 @@
                                 @foreach ($outbound->items as $item)
                                     <tr style="font-size: 12px">
                                         <th scope="row">{{ $loop->iteration  }}</th>
-                                        <td>{{ $item->goods->code }}</td>
+                                        <td>{{ $item->goods->sk }}</td>
                                         <td>{{ Str::limit($item->goods->name, 12) }}</td>
                                         <td>{{ $item->goods->warehouse->name }}</td>
                                         <td>{{ $item->qty }}</td>
@@ -204,9 +204,47 @@
                                         'Delivery' => 'This order is ready for delivery.',
                                         default => 'This order is ready for delivery.',
                                     } }}</p>
+                                    @if ($outbound->status == 'Delivery')
+                                        <p>Sender Name: {{ $outbound->sender_name }} <br>
+                                        Vahicle Number: {{ $outbound->vehicle_number }}
+                                        </p>
+                                    @endif
                                     @hasrole('Super Admin|Admin Warehouse')
                                     @if ($outbound->status == 'Pickup')
-                                    <a href="{{ route('outbounds.changeStatus', [$outbound, 'status' => 'Delivery']) }}" class="btn btn-warning btn-sm text-white  mb-3" >Submit</a>
+                                    <form class="row g-3 mt-1" action="{{ route('outbounds.delivery', $outbound) }}" method="POST">
+                                        @csrf
+                                        @method('PUT')
+                                        <div class="col-sm-6">
+                                            <label for="sender_name" class="form-label">Sender Name<span
+                                                    class="text-danger">*</span></label>
+                                            <input type="text" name="sender_name"
+                                                class="form-control @error('sender_name') is-invalid @enderror"
+                                                id="sender_name" required>
+                                            @error('sender_name')
+                                                <p class="text-danger text-xs mt-2">
+                                                    {{ $message }}
+                                                </p>
+                                            @enderror
+                                        </div>
+
+                                        <div class="col-sm-6">
+                                            <label for="vehicle_number" class="form-label">Vehicle Number<span
+                                                    class="text-danger">*</span></label>
+                                            <input type="text" name="vehicle_number"
+                                                class="form-control @error('vehicle_number') is-invalid @enderror"
+                                                id="vehicle_number" required>
+                                            @error('vehicle_number')
+                                                <p class="text-danger text-xs mt-2">
+                                                    {{ $message }}
+                                                </p>
+                                            @enderror
+                                        </div>
+                                        <div class="text-center">
+                                            <button type="submit"
+                                            class="btn btn-warning btn-sm text-white mb-3">Submit</button>
+                                        </div>
+                                    </form>
+                                    {{-- <a href="{{ route('outbounds.changeStatus', [$outbound, 'status' => 'Delivery']) }}" class="btn btn-warning btn-sm text-white  mb-3" >Submit</a> --}}
                                     @endif
                                 @endhasrole
                                 </div>
@@ -231,11 +269,38 @@
                                         'Approved to delivery' => 'This order has been approved',
                                         default => 'This order has been approved.',
                                     } }}</p>
+
                                     @hasrole('Super Admin|Head Warehouse')
                                         @if ($outbound->status == 'Delivery')
-                                        <a href="{{ route('outbounds.changeStatus', [$outbound, 'status' => 'Approved to delivery']) }}" class="btn btn-primary btn-sm  mb-3" >Approve</a>
+                                        <form class="row g-3 mt-1" action="{{ route('outbounds.approveDelivery', $outbound) }}" method="POST">
+                                            @csrf
+                                            @method('PUT')
+                                            <div class="col-sm-6">
+                                                <label for="area" class="form-label">Area<span
+                                                        class="text-danger">*</span></label>
+                                                <select name="area" id="area" class="form-select">
+                                                    <option value="" selected disabled>Choose...</option>
+                                                    <option value="A001">Area 1</option>
+                                                    <option value="A002">Area 2</option>
+                                                </select>
+                                                @error('area')
+                                                    <p class="text-danger text-xs mt-2">
+                                                        {{ $message }}
+                                                    </p>
+                                                @enderror
+                                            </div>
+                                            <div class="">
+                                                <button type="submit"
+                                                class="btn btn-primary btn-sm  mb-3">Submit</button>
+                                            </div>
+                                        </form>
+                                        {{-- <a href="{{ route('outbounds.changeStatus', [$outbound, 'status' => 'Approved to delivery']) }}" class="btn btn-primary btn-sm  mb-3" >Approve</a> --}}
                                         @endif
                                     @endhasrole
+
+                                    @if ($outbound->status == 'Approved to delivery')
+                                    <a href="{{ route('outbounds.downloadInvoiceDelivery', $outbound) }}" class="btn btn-primary btn-sm  mb-3">Download Invoice Delivery</a>
+                                    @endif
                                 </div>
                             </div>
                             <div class="timeline-item">

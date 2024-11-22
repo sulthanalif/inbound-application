@@ -10,7 +10,7 @@
 
               @hasrole('Super Admin|Admin Engineer')
                 <div class="flex mt-3">
-                    <a href="" class="btn btn-primary btn-sm mb-3">Return</a>
+                    <a href="{{ route('returns.index') }}" class="btn btn-primary btn-sm mb-3">Return</a>
                     <a href="{{ route('orders.index') }}" class="btn btn-primary btn-sm mb-3">Order</a>
                 </div>
               @endhasrole
@@ -21,7 +21,7 @@
                   <tr>
                     <th scope="col">#</th>
                     <th scope="col">Date</th>
-                    <th scope="col">Vendor</th>
+                    <th scope="col">Code</th>
                     <th scope="col">Status</th>
                     {{-- <th scope="col">Active</th> --}}
                     <th scope="col" style="text-align: center;">Action</th>
@@ -32,7 +32,7 @@
                     <tr>
                         <th scope="row">{{ ($inbounds->currentPage() - 1) * $inbounds->perPage() + $loop->iteration }}</th>
                         <td>{{ $inbound->date }}</td>
-                        <td>{{ $inbound->vendor->name }}</td>
+                        <td>{{ $inbound->code }}</td>
                         <td>
                             <div class="badge bg-{{ match ($inbound->status) {
                                                 'Pending' => 'primary',

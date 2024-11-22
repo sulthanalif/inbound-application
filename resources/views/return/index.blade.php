@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Order')
+@section('title', 'Return')
 
 @section('content')
     <section class="section">
@@ -25,25 +25,14 @@
                                 @enderror
                             </div>
                             <div class="col-12">
-                                <label for="inbound_id" class="form-label">Inbound<span class="text-danger">*</span></label>
-                                <select id="inbound_id" name="inbound_id" class="form-select @error('inbound_id') is-invalid @enderror" required>
+                                <label for="outbound_id" class="form-label">Outbound<span class="text-danger">*</span></label>
+                                <select id="outbound_id" name="outbound_id" class="form-select @error('outbound_id') is-invalid @enderror" required onchange="getItems(this)">
                                     <option value="" selected disabled>Choose...</option>
-                                    @foreach ($inbounds as $inbound)
-                                        <option value="{{ $inbound->id }}">{{ $inbound->name }}</option>
+                                    @foreach ($outbounds as $outbound)
+                                        <option value="{{ $outbound->id }}" data-outbound_id="{{ $outbound->id }}" data-items="{{ json_encode($outbound->items) }}">{{ $outbound->code }} | {{ $outbound->project->name }}</option>
                                     @endforeach
                                 </select>
-                                @error('inbound_id')
-                                    <p class="text-danger text-xs mt-2">
-                                        {{ $message }}
-                                    </p>
-                                @enderror
-                            </div>
-
-
-                            <div class="col-12">
-                                <label for="description" class="form-label">Description</label>
-                                <textarea name="description" class="form-control @error('description') is-invalid @enderror" id="description" cols="30" rows="3"></textarea>
-                                @error('description')
+                                @error('outbound_id')
                                     <p class="text-danger text-xs mt-2">
                                         {{ $message }}
                                     </p>
@@ -65,18 +54,7 @@
                                         </thead>
                                         <tbody>
                                         </tbody>
-                                        {{-- <tfoot>
-                                            <tr></tr>
-                                                <td colspan="2"></td>
-                                                <td>Total</td>
-                                                <td><input type="number" name="total_price" class="form-control" id="total_price" readonly></td>
-                                                <td colspan="2"></td>
-                                            </tr>
-                                        </tfoot> --}}
                                     </table>
-                                </div>
-                                <div class="d-flex justify-content-between">
-                                    <a href="#" class="btn btn-primary" id="add-row">Add Item</a>
                                 </div>
                             </div>
 
@@ -97,60 +75,35 @@
 <script>
     const requestForm = document.getElementById('requestForm');
     const requestTable = document.getElementById('request-table');
-    const addRowButton = document.getElementById('add-row');
     let data = [];
 
-
-    addRowButton.addEventListener('click', (e) => {
-        e.preventDefault();
-        const newRow = `
-            <tr>
-                <td>
-                    <select name="request_item_id[]" class="form-select" required onchange="setItemWarehouse(this, event)">
-                        <option value="" selected disabled>Choose...</option>
-                        @foreach ($goods as $item)
-                            <option value="{{ $item->id }}" data-warehouse="{{ $item->warehouse->name }}">{{ $item->name }}</option>
-                        @endforeach
-                    </select>
-                </td>
-                <td><input type="number" name="request_item_qty[]" class="form-control" required onchange="calculateSubtotal(this, event)"></td>
-                <td><input type="text" name="warehouse[]" class="form-control" disabled readonly></td>
-                <td><a href="#" class="btn btn-danger" onclick="removeRow(this, event)">Remove</a></td>
-            </tr>
-        `;
-        requestTable.insertAdjacentHTML('beforeend', newRow);
-    });
-
-    const setItemWarehouse = (el, e) => {
-        const warehouse = el.options[el.selectedIndex].getAttribute('data-warehouse');
-        const row = e.target.closest('tr');
-        row.querySelector('input[name="warehouse[]"]').value = warehouse;
-
-        // Update or add item to data array
-        const item_id = row.querySelector('select[name="request_item_id[]"]').value;
-        const existingItemIndex = data.findIndex(item => item.item_id === item_id);
-        if (existingItemIndex !== -1) {
-            data[existingItemIndex] = { item_id, warehouse };
-        } else {
-            data.push({ item_id, warehouse });
-        }
+    const getItems = (el) => {
+        const items = JSON.parse(el.selectedOptions[0].dataset.items);
+        requestTable.tBodies[0].innerHTML = '';
+        items.forEach(item => {
+            const row = `
+                <tr>
+                    <td>${item.item_code} | ${item.item_name}</td>
+                    <td><input type="number" name="request_item_qty[]" value="${item.qty || ''}" class="form-control" required></td>
+                    <td>${item.warehouse_name || 'Undefined'}</td>
+                    <td><a href="#" class="btn btn-danger" onclick="removeRow(this)">Remove</a></td>
+                </tr>
+            `;
+            requestTable.tBodies[0].insertAdjacentHTML('beforeend', row);
+        });
     };
 
-    const calculateSubtotal = (el, e) => {
-        const qty = e.target.value;
-        const row = e.target.closest('tr');
-        const warehouse = row.querySelector('input[name="warehouse[]"]').value;
-        const item_id = row.querySelector('select[name="request_item_id[]"]').value;
-        const existingItemIndex = data.findIndex(item => item.item_id === item_id);
-        data[existingItemIndex] = { item_id, qty, warehouse };
+    const removeRow = (el) => {
+        el.parentElement.parentElement.remove();
     };
 
-    const removeRow = (el, e) => {
-        const row = e.target.closest('tr');
-        const item_id = row.querySelector('select[name="request_item_id[]"]').value;
-        const index = data.findIndex(item => item.item_id === item_id);
-        data.splice(index, 1);
-        row.remove();
+    const updateRow = (el) => {
+        const row = el.parentElement.parentElement;
+        const item_id = row.querySelector('td:first-child').textContent;
+        const qty = row.querySelector('input[name="request_item_qty[]"]').value;
+        const price = row.querySelector('input[name="request_item_price[]"]').value;
+        const subtotal = qty * price;
+        row.querySelector('input[name="request_item_subtotal[]"]').value = subtotal;
     };
 
     // Add a hidden input to the form to send the data array

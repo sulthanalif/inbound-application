@@ -17,8 +17,8 @@
                                     <td>{{ $inbound->date }}</td>
                                 </tr>
                                 <tr>
-                                    <th scope="row">Vendor</th>
-                                    <td>{{ $inbound->vendor->name }}</td>
+                                    <th scope="row">Code</th>
+                                    <td>{{ $inbound->code }}</td>
                                 </tr>
                                 <tr>
                                     <th scope="row">Status</th>

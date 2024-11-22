@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Goods;
 use App\Models\Vendor;
 use App\Models\Inbound;
+use App\Models\Outbound;
 use App\Models\InboundItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -15,10 +16,9 @@ class ReturnController extends Controller
 {
     public function index()
     {
-        $vendors = Vendor::all();
-        $goods = Goods::all();
+        $outbounds = Outbound::where('status', 'success')->get();
 
-        return view('return.index', compact('vendors', 'goods'));
+        return view('return.index', compact('outbounds'));
     }
 
     public function store(Request $request)

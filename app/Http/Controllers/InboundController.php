@@ -89,6 +89,7 @@ class InboundController extends Controller
             DB::transaction(function () use ($request, $data) {
                 $inbound = new Inbound();
                 $inbound->vendor_id = $request->vendor_id;
+                $inbound->code = $request->code;
                 $inbound->user_id = Auth::user()->id;
                 $inbound->date = $request->date;
                 $inbound->sender_name = $request->sender_name;
@@ -110,10 +111,10 @@ class InboundController extends Controller
             });
 
             Alert::success('Hore!', 'Return Created Successfully');
-            return back();
+            return redirect()->route('inbounds.index');
         } catch (\Throwable $th) {
             Alert::error('Oops!', $th->getMessage());
-            return back();
+            return redirect()->route('inbounds.index');
         }
     }
 

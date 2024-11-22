@@ -18,6 +18,7 @@ class Outbound extends Model
         'vehicle_number',
         'project_id',
         'status',
+        'number',
         'status_payment',
         'total_price',
     ];

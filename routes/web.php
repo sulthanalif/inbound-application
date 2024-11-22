@@ -21,6 +21,11 @@ use App\Http\Controllers\RequestOrderController;
 //     return view('welcome');
 // });
 
+Route::get('/coba', function () {
+    $outbound = \App\Models\Outbound::find(7);
+   return view('outbounds.pdf.outbound', compact('outbound'));
+});
+
 //auth
 Route::get('/', LoginController::class)->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('submitLogin');
@@ -107,9 +112,12 @@ Route::middleware('auth')->group(function () {
         Route::post('/request-goods', [OutboundController::class, 'storeRequest'])->name('outbounds.storeRequest');
         Route::put('/request-goods/update/{outbound}', [OutboundController::class, 'updateRequest'])->name('outbounds.updateRequest');
 
-        //return
+        //order
         Route::get('/orders', [InboundController::class, 'order'])->name('orders.index');
         Route::post('/orders', [InboundController::class, 'storeOrder'])->name('orders.store');
+
+        //return
+        Route::get('/returns', [ReturnController::class, 'index'])->name('returns.index');
     });
 
     Route::middleware('role:Super Admin|Admin Warehouse|Head Warehouse|Admin Engineer')->group(function () {
@@ -117,6 +125,9 @@ Route::middleware('auth')->group(function () {
        Route::get('/outbounds', [OutboundController::class, 'index'])->name('outbounds.index');
        Route::get('/outbounds/{outbound}/show', [OutboundController::class, 'show'])->name('outbounds.show');
        Route::get('/outbounds/{outbound}/{status}', [OutboundController::class, 'changeStatus'])->name('outbounds.changeStatus');
+       Route::put('/outbounds/{outbound}/delivery', [OutboundController::class, 'delivery'])->name('outbounds.delivery');
+       Route::put('/outbounds/{outbound}/approveDelivery', [OutboundController::class, 'approveDelivery'])->name('outbounds.approveDelivery');
+       Route::get('/download-invoice-delivery/{outbound}', [OutboundController::class, 'downloadInvoiceDelivery'])->name('outbounds.downloadInvoiceDelivery');
 
        //inbounds
        Route::get('/inbounds', [InboundController::class, 'index'])->name('inbounds.index');

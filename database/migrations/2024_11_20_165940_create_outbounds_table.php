@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('sender_name')->nullable();
             $table->string('vehicle_number')->nullable();
             $table->decimal('total_price', 20, 2);
+            $table->string('number')->nullable();
             $table->string('status')->default('Unpaid');
             $table->string('status_payment')->default('Pending');
             $table->timestamps();
