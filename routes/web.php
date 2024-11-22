@@ -2,31 +2,33 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\UnitController;
 use App\Http\Controllers\Usercontroller;
 use App\Http\Controllers\GoodsController;
 use App\Http\Controllers\ReturnController;
 use App\Http\Controllers\VendorController;
+use App\Http\Controllers\InboundController;
+use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\OutboundController;
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\WarehouseController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\RequestOrderController;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', function () {
+//     return view('welcome');
+// });
 
 //auth
-Route::get('/login', LoginController::class)->name('login');
+Route::get('/', LoginController::class)->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('submitLogin');
 
 Route::middleware('auth')->group(function () {
     Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::middleware('role:Super Admin')->group(function () {
         //user
@@ -66,6 +68,14 @@ Route::middleware('auth')->group(function () {
         Route::put('/categories/{category}', [CategoryController::class, 'update'])->name('categories.update');
         Route::delete('/categories/{category}', [CategoryController::class, 'destroy'])->name('categories.destroy');
 
+        //units
+        Route::get('/units', [UnitController::class, 'index'])->name('units.index');
+        Route::get('/units/create', [UnitController::class, 'create'])->name('units.create');
+        Route::post('/units', [UnitController::class, 'store'])->name('units.store');
+        Route::get('/units/{unit}/edit', [UnitController::class, 'edit'])->name('units.edit');
+        Route::put('/units/{unit}', [UnitController::class, 'update'])->name('units.update');
+        Route::delete('/units/{unit}', [UnitController::class, 'destroy'])->name('units.destroy');
+
         //goods
         Route::get('/goods', [GoodsController::class, 'index'])->name('goods.index');
         Route::get('/goods/create', [GoodsController::class, 'create'])->name('goods.create');
@@ -85,13 +95,21 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::middleware('role:Super Admin|Admin Engineer')->group(function () {
+        //projects
+        Route::get('/projects', [ProjectController::class, 'index'])->name('projects.index');
+        Route::get('/projects/create', [ProjectController::class, 'create'])->name('projects.create');
+        Route::post('/projects', [ProjectController::class, 'store'])->name('projects.store');
+
+
+
         //request
-        Route::get('/request-goods', [RequestOrderController::class, 'index'])->name('request-goods.index');
-        Route::post('/request-goods', [RequestOrderController::class, 'store'])->name('request-goods.store');
+        Route::get('/request-goods', [OutboundController::class, 'request'])->name('outbounds.request');
+        Route::post('/request-goods', [OutboundController::class, 'storeRequest'])->name('outbounds.storeRequest');
+        Route::put('/request-goods/update/{outbound}', [OutboundController::class, 'updateRequest'])->name('outbounds.updateRequest');
 
         //return
-        Route::get('/returns', [ReturnController::class, 'index'])->name('returns.index');
-        Route::post('/returns', [ReturnController::class, 'store'])->name('returns.store');
+        Route::get('/orders', [InboundController::class, 'order'])->name('orders.index');
+        Route::post('/orders', [InboundController::class, 'storeOrder'])->name('orders.store');
     });
 
     Route::middleware('role:Super Admin|Admin Warehouse|Head Warehouse|Admin Engineer')->group(function () {
@@ -99,5 +117,11 @@ Route::middleware('auth')->group(function () {
        Route::get('/outbounds', [OutboundController::class, 'index'])->name('outbounds.index');
        Route::get('/outbounds/{outbound}/show', [OutboundController::class, 'show'])->name('outbounds.show');
        Route::get('/outbounds/{outbound}/{status}', [OutboundController::class, 'changeStatus'])->name('outbounds.changeStatus');
+
+       //inbounds
+       Route::get('/inbounds', [InboundController::class, 'index'])->name('inbounds.index');
+       Route::get('/inbounds/{inbound}/show', [InboundController::class, 'show'])->name('inbounds.show');
+       Route::get('/inbounds/{inbound}/{status}', [InboundController::class, 'changeStatus'])->name('inbounds.changeStatus');
+       Route::put('/inbounds/{inbound}/delivery', [InboundController::class, 'delivery'])->name('inbounds.delivery');
     });
 });

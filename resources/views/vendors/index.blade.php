@@ -26,7 +26,7 @@
                 <tbody>
                   @foreach ($vendors as $vendor)
                     <tr>
-                        <th scope="row">{{ $loop->iteration }}</th>
+                        <th scope="row">{{ ($vendors->currentPage() - 1) * $vendors->perPage() + $loop->iteration }}</th>
                         <td>{{ $vendor->name }}</td>
                         <td>{{ $vendor->email }}</td>
                         <td>{{ Str::limit($vendor->address, 30) }}</td>

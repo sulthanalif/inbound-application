@@ -13,11 +13,15 @@ return new class extends Migration
     {
         Schema::create('inbounds', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('goods_id')->constrained()->onDelete('cascade');
-            $table->foreignId('vendor_id')->constrained()->onDelete('cascade');
+            $table->string('code')->unique();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('vendor_id')->nullable()->constrained()->onDelete('cascade')->nullable();
+            $table->foreignId('project_id')->nullable()->constrained()->onDelete('cascade')->nullable();
+            $table->date('date');
+            $table->string('sender_name')->nullable();
             $table->string('vehicle_number')->nullable();
-            $table->integer('qty')->default(0);
-            $table->string('status')->default('pending');
+            // $table->integer('qty')->default(0);
+            $table->string('status')->default('Pending');
             $table->text('description')->nullable();
             $table->timestamps();
         });

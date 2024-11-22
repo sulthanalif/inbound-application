@@ -10,7 +10,7 @@ class Goods extends Model
 
     protected $fillable = [
         'name',
-        'sk',
+        'code',
         'length',
         'width',
         'height',
@@ -19,10 +19,25 @@ class Goods extends Model
         'condition',
         'price',
         'qty',
+        'type',
+        'unit_time',
+        'capital',
+        'unit_id',
+        'vendor_id',
         'category_id',
         'warehouse_id',
         'user_id',
     ];
+
+    public function vendor()
+    {
+        return $this->belongsTo(Vendor::class);
+    }
+
+    public function unit()
+    {
+        return $this->belongsTo(Unit::class);
+    }
 
     public function category()
     {
@@ -39,9 +54,9 @@ class Goods extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function inbounds()
+    public function inbounditems()
     {
-        return $this->hasMany(Inbound::class);
+        return $this->hasMany(InboundItem::class);
     }
 
     public function outboundItems()

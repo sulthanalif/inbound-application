@@ -25,7 +25,7 @@
                         @if ($categories->count() > 0)
                             @foreach ($categories as $category)
                                 <tr>
-                                    <th scope="row">{{ $loop->iteration }}</th>
+                                    <th scope="row">{{ ($categories->currentPage() - 1) * $categories->perPage() + $loop->iteration }}</th>
                                     <td>{{ $category->name }}</td>
                                     <td align="center">
                                         <a href="{{ route('categories.edit', $category) }}"

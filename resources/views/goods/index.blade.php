@@ -18,46 +18,42 @@
                 <thead>
                   <tr>
                     <th scope="col">#</th>
+                    <th scope="col">Code</th>
                     <th scope="col">Name</th>
-                    <th scope="col">SK</th>
-                    {{-- <th scope="col">L</th>
-                    <th scope="col">W</th>
-                    <th scope="col">H</th>
-                    <th scope="col">Wt</th>
-                    <th scope="col">Desc</th>
-                    <th scope="col">Cond</th> --}}
+                    <th scope="col">Vendor</th>
                     <th scope="col">Price</th>
                     <th scope="col">Qty</th>
                     <th scope="col">Category</th>
                     <th scope="col">Warehouse</th>
-                    <th scope="col">User</th>
+                    {{-- <th scope="col">User</th> --}}
                     <th scope="col" style="text-align: center;">Action</th>
                   </tr>
                 </thead>
                 <tbody>
-                  @foreach ($goods as $item)
-                    <tr>
-                        <th scope="row">{{ $loop->iteration }}</th>
-                        <td>{{ $item->name }}</td>
-                        <td>{{ $item->sk }}</td>
-                        {{-- <td>{{ $item->length }}</td>
-                        <td>{{ $item->width }}</td>
-                        <td>{{ $item->height }}</td>
-                        <td>{{ $item->weight }}</td>
-                        <td>{{ Str::limit($item->description, 20) }}</td>
-                        <td>{{ $item->condition }}</td> --}}
-                        <td>{{ $item->price }}</td>
-                        <td>{{ $item->qty }}</td>
-                        <td>{{ $item->category->name }}</td>
-                        <td>{{ $item->warehouse->name }}</td>
-                        <td>{{ $item->user->name }}</td>
+                  @if ($goods->count() > 0)
+                    @foreach ($goods as $item)
+                        <tr>
+                            <th scope="row">{{ ($goods->currentPage() - 1) * $goods->perPage() + $loop->iteration }}</th>
+                            <td>{{ $item->code }}</td>
+                            <td>{{ $item->name }}</td>
+                            <td>{{ $item->vendor->name }}</td>
+                            <td>{{ $item->price }}</td>
+                            <td>{{ $item->qty }}{{ $item->unit->symbol }}</td>
+                            <td>{{ $item->category->name }}</td>
+                            <td>{{ $item->warehouse->name }}</td>
+                            {{-- <td>{{ $item->user->name }}</td> --}}
 
-                        <td align="center">
-                            <a href="{{ route('goods.edit', $item) }}" class="btn btn-primary btn-sm"><i class="bi bi-pencil-fill"></i></a>
-                            <a href="{{ route('goods.destroy', $item) }}" class="btn btn-danger btn-sm" data-confirm-delete="true"><i class="bi bi-trash-fill"></i></a>
-                        </td>
+                            <td align="center">
+                                <a href="{{ route('goods.edit', $item) }}" class="btn btn-primary btn-sm"><i class="bi bi-pencil-fill"></i></a>
+                                <a href="{{ route('goods.destroy', $item) }}" class="btn btn-danger btn-sm" data-confirm-delete="true"><i class="bi bi-trash-fill"></i></a>
+                            </td>
+                        </tr>
+                    @endforeach
+                  @else
+                    <tr>
+                        <td colspan="10" align="center">No Data</td>
                     </tr>
-                  @endforeach
+                  @endif
                 </tbody>
               </table>
               <!-- End Default Table Example -->

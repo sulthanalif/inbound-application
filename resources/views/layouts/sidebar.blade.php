@@ -12,6 +12,7 @@
 
 
 
+      @hasrole('Super Admin|Admin Warehouse|Head Warehouse')
       <li class="nav-heading">Master</li>
 
       <li class="nav-item">
@@ -29,6 +30,13 @@
       </li>
 
       <li class="nav-item">
+        <a class="nav-link {{ request()->is('units*') ? '' : 'collapsed' }}" href="{{ route('units.index') }}">
+          <i class="bi bi-bookmarks"></i>
+          <span>Units</span>
+        </a>
+      </li>
+
+      <li class="nav-item">
         <a class="nav-link {{ request()->is('warehouses*') ? '' : 'collapsed' }}" href="{{ route('warehouses.index') }}">
           <i class="bi bi-house-door"></i>
           <span>Werehouses</span>
@@ -42,7 +50,27 @@
         </a>
       </li>
 
+
+      @endhasrole
+
+      @hasrole('Admin Engineer')
+      <li class="nav-heading">Master</li>
+
+      <li class="nav-item">
+        <a class="nav-link {{ request()->is('projects*') ? '' : 'collapsed' }}" href="{{ route('projects.index') }}">
+          <i class="bi bi-people"></i>
+          <span>Projects</span>
+        </a>
+      </li>
+      @endhasrole
+
       @hasrole('Super Admin')
+      <li class="nav-item">
+        <a class="nav-link {{ request()->is('projects*') ? '' : 'collapsed' }}" href="{{ route('projects.index') }}">
+          <i class="bi bi-cone-striped"></i>
+          <span>Projects</span>
+        </a>
+      </li>
       <li class="nav-item">
         <a class="nav-link {{ request()->is('users*') ? '' : 'collapsed' }}" href="{{ route('users.index') }}">
           <i class="bi bi-person"></i>
@@ -60,21 +88,6 @@
 
       <li class="nav-heading">Transaction</li>
 
-      @hasrole('Super Admin|Admin Engineer')
-      <li class="nav-item">
-        <a class="nav-link {{ request()->is('request-goods*') ? '' : 'collapsed' }}" href="{{ route('request-goods.index') }}">
-            <i class="bi bi-cart"></i>
-          <span>Request Goods</span>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link {{ request()->is('returns*') ? '' : 'collapsed' }}" href="{{ route('returns.index') }}">
-            <i class="bi bi-cart"></i>
-          <span>Return Goods</span>
-        </a>
-      </li>
-      @endhasrole
-
       @hasrole('Super Admin|Admin Warehouse|Head Warehouse|Admin Engineer')
       <li class="nav-item">
         <a class="nav-link {{ request()->is('outbounds*') ? '' : 'collapsed' }}" href="{{ route('outbounds.index') }}">
@@ -84,7 +97,7 @@
       </li>
 
       <li class="nav-item">
-        <a class="nav-link collapsed" href="">
+        <a class="nav-link {{ request()->is('inbounds*') ? '' : 'collapsed' }}" href="{{ route('inbounds.index') }}">
             <i class="bi bi-box-arrow-in-right"></i>
           <span>Inbound</span>
         </a>

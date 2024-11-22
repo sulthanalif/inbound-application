@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Note;
 use Illuminate\Database\Eloquent\Model;
 
 class Outbound extends Model
@@ -10,11 +11,21 @@ class Outbound extends Model
 
     protected $fillable = [
         'user_id',
+        'code',
         'vendor_id',
         'date',
+        'sender_name',
+        'vehicle_number',
+        'project_id',
         'status',
+        'status_payment',
         'total_price',
     ];
+
+    public function project()
+    {
+        return $this->belongsTo(Project::class);
+    }
 
     public function user()
     {
@@ -29,5 +40,10 @@ class Outbound extends Model
     public function items()
     {
         return $this->hasMany(OutboundItem::class);
+    }
+
+    public function note()
+    {
+        return $this->hasOne(Note::class);
     }
 }

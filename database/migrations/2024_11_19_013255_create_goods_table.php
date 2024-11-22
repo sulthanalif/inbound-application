@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('goods', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('sk');
+            $table->string('code')->unique();
             $table->float('length');
             $table->float('width');
             $table->float('height');
@@ -23,6 +23,11 @@ return new class extends Migration
             $table->string('condition');
             $table->decimal('price', 10, 2);
             $table->integer('qty');
+            $table->string('type');
+            $table->string('unit_time')->nullable();
+            $table->decimal('capital', 10, 2);
+            $table->foreignId('unit_id')->constrained();
+            $table->foreignId('vendor_id')->constrained();
             $table->foreignId('category_id')->constrained();
             $table->foreignId('warehouse_id')->constrained();
             $table->foreignId('user_id')->constrained();

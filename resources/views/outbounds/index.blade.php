@@ -6,11 +6,11 @@
     <section class="section">
         <div class="card">
             <div class="card-body">
-              <h5 class="card-title">Outbound Data</h5>
+              {{-- <h5 class="card-title">Outbound Data</h5> --}}
 
-              {{-- <div class="flex">
-                <a href="" class="btn btn-primary btn-sm mb-3">Create</a>
-              </div> --}}
+              <div class="flex mt-3">
+                <a href="{{ route('outbounds.request') }}" class="btn btn-primary btn-sm mb-3">Request</a>
+              </div>
 
               <!-- Default Table -->
               <table class="table">
@@ -18,18 +18,23 @@
                   <tr>
                     <th scope="col">#</th>
                     <th scope="col">Date</th>
-                    <th scope="col">Vendor</th>
+                    <th scope="col">Code</th>
+                    <th scope="col">Project</th>
+                    <th scope="col">PT</th>
+                    <th scope="col">User</th>
                     <th scope="col">Status</th>
-                    {{-- <th scope="col">Active</th> --}}
                     <th scope="col" style="text-align: center;">Action</th>
                   </tr>
                 </thead>
                 <tbody>
                   @foreach ($outbounds as $outbound)
                     <tr>
-                        <th scope="row">{{ $loop->iteration }}</th>
+                        <th scope="row">{{ ($outbounds->currentPage() - 1) * $outbounds->perPage() + $loop->iteration }}</th>
                         <td>{{ $outbound->date }}</td>
-                        <td>{{ $outbound->vendor->name }}</td>
+                        <td>{{ $outbound->code }}</td>
+                        <td>{{ $outbound->project->name }}</td>
+                        <td>{{ $outbound->company_name ?? '-' }}</td>
+                        <td>{{ auth()->user()->name }}</td>
                         <td>
                             <div class="badge bg-{{ match ($outbound->status) {
                                                 'Pending' => 'primary',
@@ -41,6 +46,7 @@
                                                 default => 'danger',
                                             } }}">{{ $outbound->status }}</div>
                         </td>
+
                         <td align="center">
                             <a href="{{ route('outbounds.show', $outbound) }}" class="btn btn-primary btn-sm"><i class="bi bi-eye-fill"></i></a>
                         </td>

@@ -9,17 +9,25 @@ class Inbound extends Model
     protected $table = 'inbounds';
 
     protected $fillable = [
-        'goods_id',
+        'code',
         'vendor_id',
+        'user_id',
+        'date',
+        'project_id',
+        'sender_name',
         'vehicle_number',
-        'qty',
         'status',
         'description',
     ];
 
-    public function goods()
+    public function project()
     {
-        return $this->belongsTo(Goods::class);
+        return $this->belongsTo(Project::class);
+    }
+
+    public function items()
+    {
+        return $this->hasMany(InboundItem::class);
     }
 
     public function vendor()

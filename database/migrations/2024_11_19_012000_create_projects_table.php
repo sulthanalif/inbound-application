@@ -11,12 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('outbound_items', function (Blueprint $table) {
+        Schema::create('projects', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('outbound_id')->constrained()->onDelete('cascade');
-            $table->foreignId('goods_id')->constrained()->onDelete('cascade');
-            $table->integer('qty');
-            $table->decimal('sub_total', 20, 2);
+            $table->string('code')->unique();
+            $table->string('name');
+            $table->text('address')->nullable();
+            $table->string('status')->default('On Progress');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -26,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('outbound_items');
+        Schema::dropIfExists('projects');
     }
 };

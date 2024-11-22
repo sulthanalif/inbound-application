@@ -4,15 +4,16 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Vendor extends Model
+class Project extends Model
 {
-    protected $table = 'vendors';
+    protected $table = 'projects';
 
     protected $fillable = [
+        'code',
         'name',
-        'email',
-        'phone',
         'address',
+        'status',
+        'user_id'
     ];
 
     public function inbounds()
@@ -23,10 +24,5 @@ class Vendor extends Model
     public function outbounds()
     {
         return $this->hasMany(Outbound::class);
-    }
-
-    public function goods()
-    {
-        return $this->hasMany(Goods::class);
     }
 }

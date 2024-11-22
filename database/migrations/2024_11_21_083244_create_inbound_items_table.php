@@ -11,12 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('outbound_items', function (Blueprint $table) {
+        Schema::create('inbound_items', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('outbound_id')->constrained()->onDelete('cascade');
-            $table->foreignId('goods_id')->constrained()->onDelete('cascade');
+            $table->unsignedBigInteger('inbound_id')->constrained()->onDelete('cascade');
+            $table->unsignedBigInteger('goods_id')->constrained()->onDelete('cascade');
             $table->integer('qty');
-            $table->decimal('sub_total', 20, 2);
             $table->timestamps();
         });
     }
@@ -26,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('outbound_items');
+        Schema::dropIfExists('inbound_items');
     }
 };

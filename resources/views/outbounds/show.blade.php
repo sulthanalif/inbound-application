@@ -5,7 +5,7 @@
 @section('content')
     <section class="section">
         <div class="row">
-            <div class="col-lg-6">
+            <div class="col-lg-7">
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">Outbound Detail</h5>
@@ -17,8 +17,16 @@
                                     <td>{{ $outbound->date }}</td>
                                 </tr>
                                 <tr>
-                                    <th scope="row">Vendor</th>
-                                    <td>{{ $outbound->vendor->name }}</td>
+                                    <th scope="row">Project Name</th>
+                                    <td>{{ $outbound->project->name }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Project Address</th>
+                                    <td>{{ $outbound->project->address }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Company</th>
+                                    <td>{{ $outbound->company_name ?? '-' }}</td>
                                 </tr>
                                 <tr>
                                     <th scope="row">Status</th>
@@ -36,6 +44,18 @@
                                             {{ $outbound->status }}</div>
                                     </td>
                                 </tr>
+                                <tr>
+                                    <th scope="row">Status Payment</th>
+                                    <td>
+                                        <div
+                                            class="badge bg-{{ match ($outbound->status_payment) {
+                                                'Unpaid' => 'danger',
+                                                'Paid' => 'success',
+                                                default => 'danger',
+                                            } }}">
+                                            {{ $outbound->status_payment }}</div>
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
 
@@ -44,29 +64,42 @@
 
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">Items</h5>
-
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="card-title">Items</h5>
+                            @if ($outbound->status == 'Pending')
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#basicModal">
+                                Edit
+                            </button>
+                            @endif
+                        </div>
+                        @include('outbounds.modals.edit-item')
                         <table class="table">
                             <thead>
                                 <tr>
                                     <th scope="col">#</th>
-                                    <th scope="col">Item</th>
+                                    <th scope="col">SK</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Warehouse</th>
                                     <th scope="col">Quantity</th>
                                     <th scope="col">Sub Price</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach ($outbound->items as $item)
-                                    <tr>
-                                        <th scope="row">{{ $loop->iteration }}</th>
-                                        <td>{{ $item->goods->name }}</td>
+                                    <tr style="font-size: 12px">
+                                        <th scope="row">{{ $loop->iteration  }}</th>
+                                        <td>{{ $item->goods->sk }}</td>
+                                        <td>{{ Str::limit($item->goods->name, 12) }}</td>
+                                        <td>{{ $item->goods->warehouse->name }}</td>
                                         <td>{{ $item->qty }}</td>
                                         <td>{{ 'Rp. ' . number_format($item->sub_total, 0, ',', '.') }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>
                             <tfoot></tfoot>
-                            <tr>
+                            <tr style="font-size: 12px">
+                                <td></td>
+                                <td></td>
                                 <td></td>
                                 <td colspan="2" style="font-weight: bold">Total</td>
                                 <td style="font-weight: bold">
@@ -78,7 +111,7 @@
                 </div>
 
             </div>
-            <div class="col-lg-6">
+            <div class="col-lg-5">
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">Timeline</h5>
@@ -107,10 +140,22 @@
                                         'Rejected' => 'This order has been rejected.',
                                         default => 'This order has been approved.',
                                     } }}</p>
+                                    @if ($outbound->status == 'Rejected')
+                                        <p>Reason: {{ $outbound->note->reject }}</p>
+                                    @endif
                                     @hasrole('Super Admin|Head Warehouse')
                                         @if ($outbound->status == 'Pending')
-                                        <a href="{{ route('outbounds.changeStatus', [$outbound, 'status' => 'Approved']) }}" class="btn btn-success btn-sm  mb-3" >Approve</a>
-                                        <a href="{{ route('outbounds.changeStatus', [$outbound, 'status' => 'Rejected']) }}" class="btn btn-danger btn-sm mb-3">Reject</a>
+                                        <form action="{{ route('outbounds.changeStatus', [$outbound, 'status' => 'Approved']) }}">
+                                            @csrf
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" name="is_approved" type="checkbox" id="flexSwitchCheckChecked" value="1"  checked>
+                                                <label class="form-check-label" for="flexSwitchCheckChecked">
+                                                    <span class="badge bg-success">Approve</span>
+                                                </label>
+                                            </div>
+                                            <textarea id="reason" name="reject" class="form-control" style="display: none;"></textarea>
+                                            <button type="submit" class="btn btn-sm btn-primary mt-2">Submit</button>
+                                        </form>
                                         @endif
                                     @endhasrole
                                 </div>
@@ -267,3 +312,23 @@
         }
     </style>
 @endpush
+
+@push('scripts')
+<script>
+    const checkbox = document.getElementById('flexSwitchCheckChecked');
+    const label = document.querySelector('.form-check-label');
+    const textarea = document.getElementById('reason');
+
+    checkbox.addEventListener('change', function() {
+      if (!this.checked) {
+        label.innerHTML = '<span class="badge bg-danger">Reject</span>';
+        textarea.style.display = 'block';
+      } else {
+        label.innerHTML = '<span class="badge bg-success">Approve</span>';
+        textarea.style.display = 'none';
+        textarea.value = ''; // Kosongkan textarea jika checkbox dicentang kembali
+      }
+    });
+  </script>
+@endpush
+

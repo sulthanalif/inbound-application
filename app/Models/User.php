@@ -23,6 +23,7 @@ class User extends Authenticatable
         'nip',
         'position',
         'address',
+        'company',
         'phone',
         'email',
         'password',

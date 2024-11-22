@@ -2,8 +2,12 @@
 
 namespace Database\Seeders;
 
+use App\Models\Unit;
 use App\Models\User;
+use App\Models\Goods;
+use App\Models\Category;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Warehouse;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
 
@@ -25,5 +29,40 @@ class DatabaseSeeder extends Seeder
         $this->call(UserSeeder::class);
 
 
+        Warehouse::create([
+            'code' => 'WH01',
+            'name' => 'Warehouse 1',
+        ]);
+
+        Category::create([
+            'name' => 'Category 1',
+        ]);
+
+        $units = [
+            ['nama' => 'satuan', 'simbol' => 'pcs', 'deskripsi' => 'Per satuan'],
+            ['nama' => 'lusin', 'simbol' => 'dz', 'deskripsi' => '12 satuan'],
+            ['nama' => 'kodi', 'simbol' => 'kodi', 'deskripsi' => '144 satuan'],
+            ['nama' => 'kg', 'simbol' => 'kg', 'deskripsi' => 'Kilogram'],
+            ['nama' => 'gram', 'simbol' => 'g', 'deskripsi' => 'Gram'],
+            ['nama' => 'ton', 'simbol' => 'ton', 'deskripsi' => 'Ton'],
+            ['nama' => 'liter', 'simbol' => 'L', 'deskripsi' => 'Liter'],
+            ['nama' => 'mililiter', 'simbol' => 'ml', 'deskripsi' => 'Mililiter'],
+            ['nama' => 'deciliter', 'simbol' => 'dl', 'deskripsi' => 'Deciliter'],
+            ['nama' => 'kiloliter', 'simbol' => 'kl', 'deskripsi' => 'Kiloliter'],
+            ['nama' => 'meter', 'simbol' => 'm', 'deskripsi' => 'Meter'],
+            ['nama' => 'centimeter', 'simbol' => 'cm', 'deskripsi' => 'Centimeter'],
+            ['nama' => 'kilometer', 'simbol' => 'km', 'deskripsi' => 'Kilometer'],
+            ['nama' => 'inci', 'simbol' => 'in', 'deskripsi' => 'Inci'],
+            ['nama' => 'rim', 'simbol' => 'rim', 'deskripsi' => '500 lembar'],
+            ['nama' => 'roll', 'simbol' => 'roll', 'deskripsi' => 'Gulungan'],
+        ];
+
+        foreach ($units as $unit) {
+            Unit::create([
+                'name' => $unit['nama'],
+                'symbol' => $unit['simbol'],
+                'description' => $unit['deskripsi'],
+            ]);
+        }
     }
 }

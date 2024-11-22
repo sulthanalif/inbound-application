@@ -3,13 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\Goods;
+use App\Models\Vendor;
 use App\Models\Category;
+use App\Models\Unit;
 use App\Models\Warehouse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
 use RealRashid\SweetAlert\Facades\Alert;
+use Illuminate\Support\Facades\Validator;
 
 class GoodsController extends Controller
 {
@@ -26,8 +28,10 @@ class GoodsController extends Controller
     {
         $warehouses = Warehouse::all();
         $categories = Category::all();
+        $vendors = Vendor::all();
+        $units = Unit::all();
 
-        return view('goods.create', compact('warehouses', 'categories'));
+        return view('goods.create', compact('warehouses', 'categories', 'vendors', 'units'));
     }
 
     public function store(Request $request)
@@ -36,7 +40,10 @@ class GoodsController extends Controller
 
         $validator = Validator::make($request->all(), [
            'name' => 'required|string',
-           'sk' => 'required|string',
+           'code' => 'required|string|unique:goods,code',
+           'vendor_id' => 'required',
+           'unit_id' => 'required',
+           'type' => 'required|string',
            'category_id' => 'required',
            'warehouse_id' => 'required',
            'price' => 'required|numeric',
@@ -57,9 +64,13 @@ class GoodsController extends Controller
             DB::transaction(function () use ($request) {
                 $goods = new Goods();
                 $goods->name = $request->name;
-                $goods->sk = $request->sk;
+                $goods->code = $request->code;
                 $goods->category_id = $request->category_id;
                 $goods->warehouse_id = $request->warehouse_id;
+                $goods->vendor_id = $request->vendor_id;
+                $goods->unit_id = $request->unit_id;
+                $goods->type = $request->type;
+                $goods->capital = $request->capital;
                 $goods->price = $request->price;
                 $goods->qty = $request->qty;
                 $goods->description = $request->description;
@@ -84,15 +95,17 @@ class GoodsController extends Controller
     {
         $warehouses = Warehouse::all();
         $categories = Category::all();
+        $units = Unit::all();
+        $vendors = Vendor::all();
 
-        return view('goods.edit', compact('goods', 'warehouses', 'categories'));
+        return view('goods.edit', compact('goods', 'warehouses', 'categories', 'units', 'vendors'));
     }
 
     public function update(Request $request, Goods $goods)
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string',
-            'sk' => 'required|string|unique:goods,sk,' . $goods->id,
+            'code' => 'required|string|unique:goods,code,' . $goods->id,
             'category_id' => 'required',
             'warehouse_id' => 'required',
             'price' => 'required|numeric',
@@ -112,7 +125,7 @@ class GoodsController extends Controller
         try {
             DB::transaction(function () use ($request, $goods) {
                 $goods->name = $request->name;
-                $goods->sk = $request->sk;
+                $goods->code = $request->code;
                 $goods->category_id = $request->category_id;
                 $goods->warehouse_id = $request->warehouse_id;
                 $goods->price = $request->price;

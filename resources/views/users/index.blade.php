@@ -27,7 +27,7 @@
                 <tbody>
                   @foreach ($users as $user)
                     <tr>
-                        <th scope="row">{{ $loop->iteration }}</th>
+                        <th scope="row">{{ ($users->currentPage() - 1) * $users->perPage() + $loop->iteration }}</th>
                         <td>{{ $user->name }}</td>
                         <td>{{ $user->email }}</td>
                         <td><p class="text-center">{{ $user->roles[0]->name }}</p></td>

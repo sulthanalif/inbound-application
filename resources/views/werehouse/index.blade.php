@@ -26,7 +26,7 @@
                         @if ($warehouses->count() > 0)
                             @foreach ($warehouses as $warehouse)
                                 <tr>
-                                    <th scope="row">{{ $loop->iteration }}</th>
+                                    <th scope="row">{{ ($warehouses->currentPage() - 1) * $warehouses->perPage() + $loop->iteration }}</th>
                                     <td>{{ $warehouse->code }}</td>
                                     <td>{{ $warehouse->name }}</td>
                                     <td align="center">
