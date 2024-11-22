@@ -56,10 +56,13 @@
                             <label for="item-select" class="form-label">Goods</label>
                             <div class="col-6">
                                 <div class="">
-                                    <select id="item-select" name="item_id" class="form-select select2" required onchange="addItem(this)">
+                                    <select id="item-select" name="item_id" class="form-select select2" required
+                                        onchange="addItem(this)">
                                         <option value="" selected disabled>Choose...</option>
                                         @foreach ($goods as $item)
-                                            <option value="{{ $item->id }}" data-code="{{ $item->code }}" data-name="{{ $item->name }}" data-price="{{ $item->price }}">{{ $item->code }} | {{ $item->name }}</option>
+                                            <option value="{{ $item->id }}" data-code="{{ $item->code }}"
+                                                data-name="{{ $item->name }}" data-price="{{ $item->price }}">
+                                                {{ $item->code }} | {{ $item->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -119,20 +122,29 @@
             const itemCode = selectedItem.getAttribute('data-code');
             const itemName = selectedItem.getAttribute('data-name');
             const itemPrice = selectedItem.getAttribute('data-price');
+            const itemQty = 1;
 
             if (!itemId) return;
 
-            const newRow = `
-                <tr>
-                    <td>${itemCode}</td>
-                    <td>${itemName}</td>
-                    <td><input type="number" name="request_item_qty[]" class="form-control" required onchange="calculateSubtotal(this)"></td>
-                    <td><input type="number" name="request_item_price[]" class="form-control" value="${itemPrice}" disabled readonly></td>
-                    <td><input type="number" name="request_item_subtotal[]" class="form-control" disabled readonly></td>
-                    <td><button type="button" class="btn btn-danger" onclick="removeRow(this)">Remove</button></td>
-                </tr>
-            `;
-            requestTable.insertAdjacentHTML('beforeend', newRow);
+            const existingRow = document.querySelector(`tr[data-item-id="${itemId}"]`);
+
+            if (existingRow) {
+                const qtyInput = existingRow.querySelector('input[name="request_item_qty[]"]');
+                qtyInput.value = parseInt(qtyInput.value) + 1;
+                calculateSubtotal(qtyInput);
+            } else {
+                const newRow = `
+                    <tr data-item-id="${itemId}">
+                        <td>${itemCode}</td>
+                        <td>${itemName}</td>
+                        <td><input type="number" name="request_item_qty[]" class="form-control" value="1" required onchange="calculateSubtotal(this)"></td>
+                        <td><input type="number" name="request_item_price[]" class="form-control" value="${itemPrice}" disabled readonly></td>
+                        <td><input type="number" name="request_item_subtotal[]" class="form-control" disabled readonly></td>
+                        <td><button type="button" class="btn btn-danger" onclick="removeRow(this)">Remove</button></td>
+                    </tr>
+                `;
+                requestTable.insertAdjacentHTML('beforeend', newRow);
+            }
 
             // Initialize Select2 on the newly added select element
             $('select').select2({
@@ -142,13 +154,14 @@
         };
 
         const calculateSubtotal = (el) => {
-            const qty = el.value;
-            const price = el.parentElement.parentElement.querySelector('input[name="request_item_price[]"]').value;
+            const row = el.closest('tr');
+            const item_id = row.getAttribute('data-item-id');
+            const qty = parseInt(el.value);
+            const price = parseFloat(row.querySelector('input[name="request_item_price[]"]').value);
             const subtotal = qty * price;
-            el.parentElement.parentElement.querySelector('input[name="request_item_subtotal[]"]').value = subtotal;
 
-            // Update or add item to data array
-            const item_id = el.parentElement.parentElement.querySelector('td:first-child').textContent;
+            row.querySelector('input[name="request_item_subtotal[]"]').value = subtotal.toFixed(2);
+
             const existingItemIndex = data.findIndex(item => item.item_id === item_id);
             if (existingItemIndex !== -1) {
                 data[existingItemIndex] = {
@@ -170,8 +183,8 @@
         };
 
         const removeRow = (el) => {
-            const row = el.parentElement.parentElement;
-            const item_id = row.querySelector('td:first-child').textContent;
+            const row = el.closest('tr');
+            const item_id = row.getAttribute('data-item-id');
             const index = data.findIndex(item => item.item_id === item_id);
             data.splice(index, 1);
             row.remove();
@@ -200,4 +213,3 @@
         });
     </script>
 @endpush
-
