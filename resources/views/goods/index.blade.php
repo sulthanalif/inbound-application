@@ -37,7 +37,7 @@
                             <td>{{ $item->code }}</td>
                             <td>{{ $item->name }}</td>
                             <td>{{ $item->vendor->name }}</td>
-                            <td>{{ $item->price }}</td>
+                            <td>Rp.{{ number_format($item->price, 0, ',', '.') }}</td>
                             <td>{{ $item->qty }}{{ $item->unit->symbol }}</td>
                             <td>{{ $item->category->name }}</td>
                             <td>{{ $item->warehouse->name }}</td>

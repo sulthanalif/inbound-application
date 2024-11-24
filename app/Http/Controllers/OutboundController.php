@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Area;
 use DateTime;
 use Carbon\Carbon;
 use App\Models\Note;
@@ -32,7 +33,8 @@ class OutboundController extends Controller
         // dd($outbound);
         // confirmDelete('Reject Data!', 'Are you sure you want to reject?');
         $goods = Goods::all();
-        return view('outbounds.show', compact('outbound', 'goods'));
+        $areas = Area::all();
+        return view('outbounds.show', compact('outbound', 'goods', 'areas'));
     }
 
     public function delivery(Request $request, Outbound $outbound)
@@ -68,13 +70,15 @@ class OutboundController extends Controller
                         $note->reject = $request->reject;
                         $note->save();
                     }
-                } else if ($request->status == 'Pickup') {
-                    foreach ($outbound->items as $item) {
-                        $goods = Goods::find($item->goods_id);
-                        $goods->qty = $goods->qty - $item->qty;
-                        $goods->save();
-                    }
                 } else {
+                    if ($request->status == 'Pickup') {
+                        foreach ($outbound->items as $item) {
+                            $goods = Goods::find($item->goods_id);
+                            $goods->qty = $goods->qty - $item->qty;
+                            $goods->save();
+                        }
+                    }
+
                     $outbound->status = $request->status;
                     $outbound->save();
                 }
@@ -192,6 +196,7 @@ class OutboundController extends Controller
 
                 $outbound->status = 'Approved to delivery';
                 $outbound->number = $number;
+                $outbound->area_id = $request->area_id;
                 $outbound->save();
             });
 

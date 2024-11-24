@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('vendor_id')->nullable()->constrained()->onDelete('cascade')->nullable();
             $table->foreignId('project_id')->nullable()->constrained()->onDelete('cascade')->nullable();
+            $table->foreignId('area_id')->nullable()->constrained()->onDelete('cascade')->nullable();
             $table->string('code')->unique();
             $table->date('date');
             $table->string('sender_name')->nullable();

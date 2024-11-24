@@ -2,10 +2,13 @@
 
 namespace Database\Seeders;
 
+use App\Models\Area;
 use App\Models\Unit;
 use App\Models\User;
 use App\Models\Goods;
 use App\Models\Category;
+use App\Models\Project;
+use App\Models\Vendor;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\Models\Warehouse;
 use Illuminate\Database\Seeder;
@@ -75,5 +78,32 @@ class DatabaseSeeder extends Seeder
                 'description' => $unit['deskripsi'],
             ]);
         }
+
+        Vendor::create([
+            'name' => 'Vendor 1',
+            'email' => 'Zs8d4@example.com',
+            'address' => 'Jl. Jenderal Sudirman No. 1',
+            'phone' => '08123456789',
+        ]);
+
+        Project::create([
+            'code' => 'PRJ01',
+            'name' => 'Project 1',
+            'address' => 'Jl. Kenangan No. 1',
+            'user_id' => User::where('name', 'Admin Engineer')->first()->id
+        ]);
+
+        Area::create([
+            'code' => 'AR01',
+            'name' => 'Area 1',
+            'address' => 'Jl. Kenangan No. 1',
+        ]);
+
+        Area::create([
+            'code' => 'AR02',
+            'name' => 'Area 2',
+            'address' => 'Jl. Kenangan No. 2',
+        ]);
     }
 }
+

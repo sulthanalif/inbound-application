@@ -13,6 +13,10 @@
                         <table class="table">
                             <tbody>
                                 <tr>
+                                    <th scope="row">Outbound Code</th>
+                                    <td>{{ $outbound->code }}</td>
+                                </tr>
+                                <tr>
                                     <th scope="row">Date</th>
                                     <td>{{ $outbound->date }}</td>
                                 </tr>
@@ -55,6 +59,18 @@
                                             } }}">
                                             {{ $outbound->status_payment }}</div>
                                     </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Driver Name</th>
+                                    <td>{{ $outbound->sender_name ?? '-' }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Vahicle Number</th>
+                                    <td>{{ $outbound->vehicle_number ?? '-' }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Area</th>
+                                    <td>{{ $outbound->area->name ?? '-' }}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -275,15 +291,16 @@
                                         <form class="row g-3 mt-1" action="{{ route('outbounds.approveDelivery', $outbound) }}" method="POST">
                                             @csrf
                                             @method('PUT')
-                                            <div class="col-sm-6">
-                                                <label for="area" class="form-label">Area<span
+                                            <div class="col-sm-12">
+                                                <label for="area_id" class="form-label">Area<span
                                                         class="text-danger">*</span></label>
-                                                <select name="area" id="area" class="form-select">
+                                                <select name="area_id" id="area_id" class="form-select">
                                                     <option value="" selected disabled>Choose...</option>
-                                                    <option value="A001">Area 1</option>
-                                                    <option value="A002">Area 2</option>
+                                                    @foreach ($areas as $area)
+                                                        <option value="{{ $area->id }}">{{ $area->code }}|{{ $area->name }}</option>
+                                                    @endforeach
                                                 </select>
-                                                @error('area')
+                                                @error('area_id')
                                                     <p class="text-danger text-xs mt-2">
                                                         {{ $message }}
                                                     </p>
@@ -380,6 +397,13 @@
 
 @push('scripts')
 <script>
+    $(document).ready(function() {
+            $('.form-select').select2({
+                placeholder: 'Choose..',
+                theme: 'bootstrap4',
+            });
+        });
+
     const checkbox = document.getElementById('flexSwitchCheckChecked');
     const label = document.querySelector('.form-check-label');
     const textarea = document.getElementById('reason');

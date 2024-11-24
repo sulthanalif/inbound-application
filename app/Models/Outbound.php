@@ -17,11 +17,17 @@ class Outbound extends Model
         'sender_name',
         'vehicle_number',
         'project_id',
+        'area_id',
         'status',
         'number',
         'status_payment',
         'total_price',
     ];
+
+    public function area()
+    {
+        return $this->belongsTo(Area::class);
+    }
 
     public function project()
     {

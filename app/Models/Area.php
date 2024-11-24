@@ -13,4 +13,9 @@ class Area extends Model
         'name',
         'address'
     ];
+
+    public function outbound()
+    {
+        return $this->hasMany(Outbound::class);
+    }
 }
