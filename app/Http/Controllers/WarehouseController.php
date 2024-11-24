@@ -29,6 +29,7 @@ class WarehouseController extends Controller
         $validator = Validator::make($request->all(), [
             'code' => 'required|unique:warehouses,code',
             'name' => 'required|string',
+            'address' => 'required|string',
         ]);
 
         if ($validator->fails()) {
@@ -40,6 +41,7 @@ class WarehouseController extends Controller
                 $warehouse = new Warehouse();
                 $warehouse->code = $request->code;
                 $warehouse->name = $request->name;
+                $warehouse->address = $request->address;
                 $warehouse->save();
             });
 
@@ -61,6 +63,7 @@ class WarehouseController extends Controller
         $validator = Validator::make($request->all(), [
             'code' => 'required|unique:warehouses,code,' . $warehouse->id,
             'name' => 'required|string',
+            'address' => 'required|string',
         ]);
 
         if ($validator->fails()) {
@@ -71,6 +74,7 @@ class WarehouseController extends Controller
             DB::transaction(function () use ($request, $warehouse) {
                 $warehouse->code = $request->code;
                 $warehouse->name = $request->name;
+                $warehouse->address = $request->address;
                 $warehouse->save();
             });
             Alert::success('Hore!', 'Warehouse updated successfully!');

@@ -62,17 +62,17 @@ class OutboundController extends Controller
                     $outbound->status = $status;
                     $outbound->save();
 
-                    foreach ($outbound->items as $item) {
-                        $goods = Goods::find($item->goods_id);
-                        $goods->qty = $goods->qty - $item->qty;
-                        $goods->save();
-                    }
-
                     if ($status == 'Rejected') {
                         $note = $outbound->note ?? new Note();
                         $note->outbound_id = $outbound->id;
                         $note->reject = $request->reject;
                         $note->save();
+                    }
+                } else if ($request->status == 'Pickup') {
+                    foreach ($outbound->items as $item) {
+                        $goods = Goods::find($item->goods_id);
+                        $goods->qty = $goods->qty - $item->qty;
+                        $goods->save();
                     }
                 } else {
                     $outbound->status = $request->status;

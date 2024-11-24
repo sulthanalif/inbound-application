@@ -34,6 +34,17 @@
                                 @enderror
                             </div>
 
+                            <div class="col-12">
+                                <label for="address" class="form-label">Address<span
+                                        class="text-danger">*</span></label>
+                                <textarea name="address" class="form-control @error('address') is-invalid @enderror" id="address" rows="3"  required>{{ $warehouse->address }}</textarea>
+                                @error('address')
+                                    <p class="text-danger text-xs mt-2">
+                                        {{ $message }}
+                                    </p>
+                                @enderror
+                            </div>
+
                             <div class="text-center">
                                 <button type="submit" class="btn btn-primary">Submit</button>
                                 <a href="{{ url()->previous() }}" class="btn btn-secondary">Back</a>

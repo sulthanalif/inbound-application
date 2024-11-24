@@ -32,10 +32,21 @@ class DatabaseSeeder extends Seeder
         Warehouse::create([
             'code' => 'WH01',
             'name' => 'Warehouse 1',
+            'address' => 'Jl. Jenderal Sudirman No. 1',
+        ]);
+
+        Warehouse::create([
+            'code' => 'WH02',
+            'name' => 'Warehouse 2',
+            'address' => 'Jl. Kenangan No. 2',
         ]);
 
         Category::create([
             'name' => 'Category 1',
+        ]);
+
+        Category::create([
+            'name' => 'Category 2',
         ]);
 
         $units = [

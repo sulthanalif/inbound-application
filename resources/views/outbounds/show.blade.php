@@ -77,7 +77,7 @@
                             <thead>
                                 <tr>
                                     <th scope="col">#</th>
-                                    <th scope="col">SK</th>
+                                    <th scope="col">Code</th>
                                     <th scope="col">Name</th>
                                     <th scope="col">Warehouse</th>
                                     <th scope="col">Quantity</th>
@@ -88,7 +88,7 @@
                                 @foreach ($outbound->items as $item)
                                     <tr style="font-size: 12px">
                                         <th scope="row">{{ $loop->iteration  }}</th>
-                                        <td>{{ $item->goods->sk }}</td>
+                                        <td>{{ $item->goods->code }}</td>
                                         <td>{{ Str::limit($item->goods->name, 12) }}</td>
                                         <td>{{ $item->goods->warehouse->name }}</td>
                                         <td>{{ $item->qty }}</td>
@@ -391,7 +391,7 @@
       } else {
         label.innerHTML = '<span class="badge bg-success">Approve</span>';
         textarea.style.display = 'none';
-        textarea.value = ''; // Kosongkan textarea jika checkbox dicentang kembali
+        textarea.value = '';
       }
     });
   </script>

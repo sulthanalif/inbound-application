@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AreaController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UnitController;
 use App\Http\Controllers\Usercontroller;
@@ -96,6 +97,13 @@ Route::middleware('auth')->group(function () {
         Route::get('/vendors/{vendor}/edit', [VendorController::class, 'edit'])->name('vendors.edit');
         Route::put('/vendors/{vendor}', [VendorController::class, 'update'])->name('vendors.update');
         Route::delete('/vendors/{vendor}', [VendorController::class, 'destroy'])->name('vendors.destroy');
+
+        Route::get('/areas', [AreaController::class, 'index'])->name('areas.index');
+        Route::get('/areas/create', [AreaController::class, 'create'])->name('areas.create');
+        Route::post('/areas', [AreaController::class, 'store'])->name('areas.store');
+        Route::get('/areas/{area}/edit', [AreaController::class, 'edit'])->name('areas.edit');
+        Route::put('/areas/{area}', [AreaController::class, 'update'])->name('areas.update');
+        Route::delete('/areas/{area}', [AreaController::class, 'destroy'])->name('areas.destroy');
 
     });
 

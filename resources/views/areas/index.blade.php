@@ -1,15 +1,15 @@
 @extends('layouts.app')
 
-@section('title', 'Warehouse')
+@section('title', 'Area')
 
 @section('content')
     <section class="section">
         <div class="card">
             <div class="card-body">
-                <h5 class="card-title">Warehouses Data</h5>
+                <h5 class="card-title">Area Data</h5>
 
                 <div class="flex">
-                    <a href="{{ route('warehouses.create') }}" class="btn btn-primary btn-sm mb-3">Create</a>
+                    <a href="{{ route('areas.create') }}" class="btn btn-primary btn-sm mb-3">Create</a>
                 </div>
 
                 <!-- Default Table -->
@@ -20,34 +20,35 @@
                             <th scope="col">Code</th>
                             <th scope="col">Name</th>
                             <th scope="col">Address</th>
+                            {{-- <th scope="col">Status</th> --}}
                             <th scope="col" style="text-align: center;">Action</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @if ($warehouses->count() > 0)
-                            @foreach ($warehouses as $warehouse)
+                        @if ($areas->count() > 0)
+                            @foreach ($areas as $area)
                                 <tr>
-                                    <th scope="row">{{ ($warehouses->currentPage() - 1) * $warehouses->perPage() + $loop->iteration }}</th>
-                                    <td>{{ $warehouse->code }}</td>
-                                    <td>{{ $warehouse->name }}</td>
-                                    <td>{{ $warehouse->address }}</td>
+                                    <th scope="row">{{ ($areas->currentPage() - 1) * $areas->perPage() + $loop->iteration }}</th>
+                                    <td>{{ $area->code }}</td>
+                                    <td>{{ $area->name }}</td>
+                                    <td>{{ $area->address }}</td>
+                                    {{-- <td><span class="badge bg-{{ $area->status == 'On Progress' ? 'primary' : 'success' }}">{{ $area->status }}</span></td> --}}
                                     <td align="center">
-                                        <a href="{{ route('warehouses.edit', $warehouse) }}"
+                                        <a href="{{ route('areas.edit', $area) }}"
                                             class="btn btn-primary btn-sm"><i class="bi bi-pencil-fill"></i></a>
-                                        <a href="{{ route('warehouses.destroy', $warehouse) }}"
-                                            class="btn btn-danger btn-sm" data-confirm-delete="true"><i class="bi bi-trash-fill"></i></a>
+                                        <a href="{{ route('areas.destroy', $area) }}" class="btn btn-danger btn-sm" data-confirm-delete="true"><i class="bi bi-trash-fill"></i></a>
                                     </td>
                                 </tr>
                             @endforeach
                         @else
                             <tr>
-                                <td colspan="4" align="center">No Data</td>
+                                <td colspan="5" align="center">No Data</td>
                             </tr>
                         @endif
                     </tbody>
                 </table>
                 <!-- End Default Table Example -->
-                {{ $warehouses->links('layouts.paginate') }}
+                {{ $areas->links('layouts.paginate') }}
 
             </div>
         </div>
