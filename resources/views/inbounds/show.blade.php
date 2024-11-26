@@ -13,12 +13,20 @@
                         <table class="table">
                             <tbody>
                                 <tr>
+                                    <th scope="row">Code</th>
+                                    <td>{{ $inbound->code }}</td>
+                                </tr>
+                                <tr>
                                     <th scope="row">Date</th>
                                     <td>{{ $inbound->date }}</td>
                                 </tr>
                                 <tr>
-                                    <th scope="row">Code</th>
-                                    <td>{{ $inbound->code }}</td>
+                                    <th scope="row">Project</th>
+                                    <td>{{ $inbound->project->name }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Address</th>
+                                    <td>{{ $inbound->project->address }}</td>
                                 </tr>
                                 <tr>
                                     <th scope="row">Status</th>

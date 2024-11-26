@@ -28,7 +28,7 @@
                             <label for="payment_method" class="form-label ">Method<span
                                     class="text-danger">*</span></label>
                             <select id="payment_method" name="payment_method"
-                                class="form-select select2 @error('payment_method')  is-invalid @enderror" required>
+                                class="form-select @error('payment_method')  is-invalid @enderror" required>
                                 <option value="" selected disabled>Choose...</option>
                                 <option value="Cash">Cash</option>
                                 <option value="Bank Transfer">Bank Transfer</option>
@@ -38,7 +38,7 @@
                         <div class="col-md-12 mt-2" id="bankSelect" style="display: none">
                             <label for="bank" class="form-label ">Bank<span class="text-danger">*</span></label>
                             <select id="bank" name="bank"
-                                class="form-select select2 @error('bank')  is-invalid @enderror">
+                                class="form-select @error('bank')  is-invalid @enderror">
                                 <option value="" selected disabled>Choose...</option>
                                 <option value="BCA">BCA</option>
                                 <option value="Bank Mandiri">Bank Mandiri</option>

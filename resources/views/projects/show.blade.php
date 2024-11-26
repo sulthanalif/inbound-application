@@ -106,12 +106,15 @@
                     </div>
                 </div>
 
+
+            </div>
+            <div class="col-lg-6">
                 <div class="card">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <h5 class="card-title">Inbound</h5>
 
-                            {{-- <a href="" class="btn btn-primary btn-sm">Add</a> --}}
+                            <a href="{{ route('projects.return', $project) }}" class="btn btn-primary btn-sm">Return</a>
                         </div>
 
                         <table class="table">
@@ -165,14 +168,12 @@
                         </table>
                     </div>
                 </div>
-            </div>
-            <div class="col-lg-6">
                 <div class="card">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <h5 class="card-title">Goods</h5>
 
-                            <a href="{{ route('projects.return', $project) }}" class="btn btn-primary btn-sm">Return</a>
+                            {{-- <a href="{{ route('projects.return', $project) }}" class="btn btn-primary btn-sm">Return</a> --}}
                         </div>
 
                         <table class="table">

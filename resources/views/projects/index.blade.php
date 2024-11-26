@@ -8,8 +8,19 @@
             <div class="card-body">
                 <h5 class="card-title">Projects Data</h5>
 
-                <div class="flex">
+                <div class="d-flex justify-content-between">
                     <a href="{{ route('projects.create') }}" class="btn btn-primary btn-sm mb-3">Create</a>
+
+                    <div class="search">
+                        <form action="{{ route('projects.index') }}" method="GET"></form>
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="Search" name="search" value="{{ request('search') }}">
+                                <button class="btn btn-primary" type="submit">
+                                    <i class="bi bi-search"></i>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
 
                 <!-- Default Table -->
