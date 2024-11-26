@@ -18,8 +18,8 @@ return new class extends Migration
             $table->string('code_payment');
             $table->date('date')->nullable();
             // $table->decimal('total_payment', 10, 2);
-            $table->decimal('paid', 10, 2)->nullable();
-            $table->decimal('remaining', 10, 2)->nullable();
+            $table->decimal('paid', 20, 2)->nullable();
+            $table->decimal('remaining', 20, 2)->nullable();
             $table->string('payment_method')->nullable();
             $table->string('bank')->nullable();
             $table->string('image')->nullable();
