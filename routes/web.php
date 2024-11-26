@@ -9,6 +9,7 @@ use App\Http\Controllers\GoodsController;
 use App\Http\Controllers\ReturnController;
 use App\Http\Controllers\VendorController;
 use App\Http\Controllers\InboundController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\OutboundController;
@@ -112,8 +113,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/projects', [ProjectController::class, 'index'])->name('projects.index');
         Route::get('/projects/create', [ProjectController::class, 'create'])->name('projects.create');
         Route::post('/projects', [ProjectController::class, 'store'])->name('projects.store');
-
-
+        Route::get('/projects/{project}/detail', [ProjectController::class, 'show'])->name('projects.show');
+        Route::get('/projects/{project}/return', [ProjectController::class, 'return'])->name('projects.return');
+        Route::post('/projects/{project}/return', [ProjectController::class, 'storeReturn'])->name('projects.storeReturn');
 
         //request
         Route::get('/request-goods', [OutboundController::class, 'request'])->name('outbounds.request');
@@ -126,6 +128,10 @@ Route::middleware('auth')->group(function () {
 
         //return
         Route::get('/returns', [ReturnController::class, 'index'])->name('returns.index');
+
+        //payment
+        Route::post('/payment/outbound', [PaymentController::class, 'paymentOutbound'])->name('payment.outbound');
+
     });
 
     Route::middleware('role:Super Admin|Admin Warehouse|Head Warehouse|Admin Engineer')->group(function () {
@@ -142,5 +148,9 @@ Route::middleware('auth')->group(function () {
        Route::get('/inbounds/{inbound}/show', [InboundController::class, 'show'])->name('inbounds.show');
        Route::get('/inbounds/{inbound}/{status}', [InboundController::class, 'changeStatus'])->name('inbounds.changeStatus');
        Route::put('/inbounds/{inbound}/delivery', [InboundController::class, 'delivery'])->name('inbounds.delivery');
+
+       //print image payment
+       Route::get('/download-image-payment/{payment}', [PaymentController::class, 'downloadImagePayment'])->name('payment.downloadImagePayment');
+
     });
 });

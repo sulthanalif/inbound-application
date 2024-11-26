@@ -36,6 +36,18 @@
                                             {{ $inbound->status }}</div>
                                     </td>
                                 </tr>
+                                <tr>
+                                    <th scope="row">Driver</th>
+                                    <td>{{ $inbound->sender_name ?? '-' }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Vehicle Number</th>
+                                    <td>{{ $inbound->vehicle_number ?? '-' }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Description</th>
+                                    <td>{{ $inbound->description }}</td>
+                                </tr>
                             </tbody>
                         </table>
 

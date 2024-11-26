@@ -25,4 +25,9 @@ class Project extends Model
     {
         return $this->hasMany(Outbound::class);
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Area;
 use DateTime;
 use Carbon\Carbon;
+use App\Models\Area;
 use App\Models\Note;
 use App\Models\Goods;
+use App\Models\Payment;
 use App\Models\Project;
+use App\Models\Category;
 use App\Models\Outbound;
 use App\Models\OutboundItem;
 use Illuminate\Http\Request;
@@ -19,11 +21,25 @@ use RealRashid\SweetAlert\Facades\Alert;
 
 class OutboundController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $outbounds = Outbound::latest()->paginate(10);
-
-
+        $search = $request->query('search');
+        $outbounds = Outbound::with(['project', 'vendor', 'user'])
+            ->latest()
+            ->where(function ($query) use ($search) {
+                $query->where('code', 'LIKE', "%{$search}%")
+                    ->orWhere('status', 'LIKE', "%{$search}%")
+                    ->orWhereHas('project', function ($query) use ($search) {
+                        $query->where('name', 'LIKE', "%{$search}%");
+                    })
+                    ->orWhereHas('user', function ($query) use ($search) {
+                        $query->where(function ($query) use ($search) {
+                            $query->where('name', 'LIKE', "%{$search}%")
+                                  ->orWhere('company', 'LIKE', "%{$search}%");
+                        });
+                    });
+            })
+            ->paginate(10);
 
         return view('outbounds.index', compact('outbounds'));
     }
@@ -34,7 +50,8 @@ class OutboundController extends Controller
         // confirmDelete('Reject Data!', 'Are you sure you want to reject?');
         $goods = Goods::all();
         $areas = Area::all();
-        return view('outbounds.show', compact('outbound', 'goods', 'areas'));
+        $categories = Category::all();
+        return view('outbounds.show', compact('outbound', 'goods', 'areas', 'categories'));
     }
 
     public function delivery(Request $request, Outbound $outbound)
@@ -96,16 +113,22 @@ class OutboundController extends Controller
     public function request()
     {
         // $vendors = Vendor::all();
+        $categories = Category::with('goods')->get();
         $goods = Goods::all();
         $projects = Project::all();
         $code_outbound = 'OUT' . date('Ymd') . Outbound::count() . rand(1000, 9999);
-        return view('request.index', compact('goods', 'code_outbound', 'projects'));
+        return view('request.index', compact('goods', 'code_outbound', 'projects', 'categories'));
     }
 
     public function storeRequest(Request $request)
     {
         // dd($request->all());
         $data = json_decode($request->input('data'), true);
+
+        if($data == null){
+            Alert::warning('Warning', 'Data cannot be empty');
+            return redirect()->back();
+        }
 
         try {
             DB::transaction(function () use ($request, $data) {
@@ -118,7 +141,15 @@ class OutboundController extends Controller
                 $outbound->date = $request->date;
                 $outbound->total_price = $request->total_price;
                 $outbound->status = 'Pending';
+                $outbound->payment = $request->payment;
                 $outbound->save();
+
+                //add payment
+                $payment = new Payment();
+                $payment->code_payment = 'PAY' . date('Ymd') . Outbound::count() . rand(1000, 9999);
+                $payment->outbound_id = $outbound->id;
+                // $payment->total_payment = $request->total_price;
+                $payment->save();
 
                 foreach ($data as $item) {
                     //add outbound item
@@ -128,8 +159,6 @@ class OutboundController extends Controller
                     $outboundItem->qty = $item['qty'];
                     $outboundItem->sub_total = $item['subtotal'];
                     $outboundItem->save();
-
-
                 }
             });
 

@@ -20,6 +20,7 @@ class Goods extends Model
         'price',
         'qty',
         'type',
+        'minimum_order',
         'unit_time',
         'capital',
         'unit_id',

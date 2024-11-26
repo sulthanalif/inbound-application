@@ -34,9 +34,7 @@
                                     <td>{{ $project->address }}</td>
                                     <td><span class="badge bg-{{ $project->status == 'On Progress' ? 'primary' : 'success' }}">{{ $project->status }}</span></td>
                                     <td align="center">
-                                        <a href=""
-                                            class="btn btn-primary btn-sm">Inbound</a>
-                                        <a href="" class="btn btn-secondary btn-sm">Next Project</a>
+                                        <a href="{{ route('projects.show', $project) }}" class="btn btn-sm btn-primary"><i class="bi bi-eye-fill"></i></a>
                                     </td>
                                 </tr>
                             @endforeach

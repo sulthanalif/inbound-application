@@ -37,9 +37,9 @@
                                 @enderror
                             </div>
                             <div class="col-12">
-                                <label for="project_id" class="form-label">Project<span class="text-danger">*</span></label>
+                                <label for="project_id" class="form-label ">Project<span class="text-danger">*</span></label>
                                 <select id="project_id" name="project_id"
-                                    class="form-select @error('project_id') is-invalid @enderror" required>
+                                    class="form-select select2 @error('project_id')  is-invalid @enderror" required>
                                     <option value="" selected disabled>Choose...</option>
                                     @foreach ($projects as $project)
                                         <option value="{{ $project->id }}">{{ $project->code }} | {{ $project->name }}
@@ -53,17 +53,28 @@
                                 @enderror
                             </div>
 
-                            <label for="item-select" class="form-label">Goods</label>
                             <div class="col-6">
                                 <div class="">
-                                    <select id="item-select" name="item_id" class="form-select select2" required
+                                    <label for="selext_category" class="form-label">Category</label>
+                                    <select id="selext_category" name="category_id" class="form-select select2"
+                                        onchange="populateGoods(this.value, {{ json_encode($categories) }})">
+                                        <option value="" selected disabled>Choose...</option>
+                                        @foreach ($categories as $category)
+                                            <option value="{{ $category->id }}" data-id="{{ $category->id }}"
+                                                data-name="{{ $category->name }}">
+                                                {{ $category->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-6">
+                                <div class="">
+                                    <label for="item-select" class="form-label">Goods</label>
+                                    <select id="item-select" name="item_id" class="form-select select2"
                                         onchange="addItem(this)">
                                         <option value="" selected disabled>Choose...</option>
-                                        @foreach ($goods as $item)
-                                            <option value="{{ $item->id }}" data-code="{{ $item->code }}"
-                                                data-name="{{ $item->name }}" data-price="{{ $item->price }}">
-                                                {{ $item->code }} | {{ $item->name }}</option>
-                                        @endforeach
+
                                     </select>
                                 </div>
                             </div>
@@ -97,6 +108,51 @@
 
                             </div>
 
+                            <div class="col-md-4">
+                                <label for="payment" class="form-label ">Payment<span class="text-danger">*</span></label>
+                                <select id="payment" name="payment"
+                                    class="form-select select2 @error('payment')  is-invalid @enderror" required>
+                                    <option value="" selected disabled>Choose...</option>
+                                    <option value="Full Payment">Full Payment</option>
+                                    <option value="Down Payment">Down Payment</option>
+                                </select>
+                                @error('payment')
+                                    <p class="text-danger text-xs mt-2">
+                                        {{ $message }}
+                                    </p>
+                                @enderror
+                            </div>
+                            {{-- <div class="col-md-4">
+                                <label for="payment_method" class="form-label ">Method<span class="text-danger">*</span></label>
+                                <select id="payment_method" name="payment_method"
+                                    class="form-select select2 @error('payment_method')  is-invalid @enderror" required>
+                                    <option value="" selected disabled>Choose...</option>
+                                    <option value="Cash">Cash</option>
+                                    <option value="Bank Transfer">Bank Transfer</option>
+                                </select>
+                                @error('payment_method')
+                                    <p class="text-danger text-xs mt-2">
+                                        {{ $message }}
+                                    </p>
+                                @enderror
+                            </div>
+                            <div class="col-md-4">
+                                <label for="bank" class="form-label ">Bank<span class="text-danger">*</span></label>
+                                <select id="bank" name="bank"
+                                    class="form-select select2 @error('bank')  is-invalid @enderror" required>
+                                    <option value="" selected disabled>Choose...</option>
+                                    <option value="BCA">BCA</option>
+                                    <option value="Bank Mandiri">Bank Mandiri</option>
+                                    <option value="BRI">BRI</option>
+                                    <option value="BNI">BNI</option>
+                                </select>
+                                @error('bank')
+                                    <p class="text-danger text-xs mt-2">
+                                        {{ $message }}
+                                    </p>
+                                @enderror
+                            </div> --}}
+
                             <div class="text-center">
                                 <button type="submit" class="btn btn-primary">Submit</button>
                                 <a href="{{ url()->previous() }}" class="btn btn-secondary">Back</a>
@@ -115,6 +171,29 @@
         const requestForm = document.getElementById('requestForm');
         const requestTable = document.getElementById('request-table');
         let data = [];
+
+        const selectCategory = document.getElementById('selext_category');
+        const selectGoods = document.getElementById('item-select');
+
+        const populateGoods = (categoryId, categories) => {
+            const selectedCategory = categories.find(category => category.id == categoryId);
+
+            if (selectedCategory) {
+                selectGoods.innerHTML = '<option value="" selected disabled>Choose...</option>';
+
+                selectedCategory.goods.forEach(good => {
+                    const option = document.createElement('option');
+                    option.value = good.id;
+                    option.setAttribute('data-code', good.code);
+                    option.setAttribute('data-name', good.name);
+                    option.setAttribute('data-price', good.price);
+                    option.text = `${good.code} | ${good.name}`;
+                    selectGoods.appendChild(option);
+                });
+            } else {
+                selectGoods.innerHTML = '<option value="" selected disabled>Choose...</option>';
+            }
+        };
 
         const addItem = (selectElement) => {
             const selectedItem = selectElement.options[selectElement.selectedIndex];
@@ -147,7 +226,7 @@
             }
 
             // Initialize Select2 on the newly added select element
-            $('select').select2({
+            $('.select2').select2({
                 placeholder: 'Choose..',
                 theme: 'bootstrap4',
             });
@@ -206,10 +285,11 @@
         });
 
         $(document).ready(function() {
-            $('select').select2({
+            $('.select2').select2({
                 placeholder: 'Choose..',
                 theme: 'bootstrap4',
             });
         });
     </script>
 @endpush
+

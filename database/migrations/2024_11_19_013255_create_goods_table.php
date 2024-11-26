@@ -25,6 +25,7 @@ return new class extends Migration
             $table->integer('qty');
             $table->string('type');
             $table->string('unit_time')->nullable();
+            $table->integer('minimum_order')->nullable();
             $table->decimal('capital', 10, 2);
             $table->foreignId('unit_id')->constrained();
             $table->foreignId('vendor_id')->constrained();

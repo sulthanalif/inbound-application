@@ -20,9 +20,17 @@ class Outbound extends Model
         'area_id',
         'status',
         'number',
+
+        'payment',
+
         'status_payment',
         'total_price',
     ];
+
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
+    }
 
     public function area()
     {

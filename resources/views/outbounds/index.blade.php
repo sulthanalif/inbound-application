@@ -8,8 +8,18 @@
             <div class="card-body">
               {{-- <h5 class="card-title">Outbound Data</h5> --}}
 
-              <div class="flex mt-3">
+              <div class="d-flex justify-content-between mt-3">
                 <a href="{{ route('outbounds.request') }}" class="btn btn-primary btn-sm mb-3">Request</a>
+                <div class="">
+                    <form action="{{ route('outbounds.index') }}" method="GET">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Search" name="search" value="{{ request('search') }}">
+                            <button class="btn btn-primary" type="submit">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
               </div>
 
               <!-- Default Table -->
@@ -30,7 +40,7 @@
                   @foreach ($outbounds as $outbound)
                     <tr>
                         <th scope="row">{{ ($outbounds->currentPage() - 1) * $outbounds->perPage() + $loop->iteration }}</th>
-                        <td>{{ $outbound->date }}</td>
+                        <td>{{ Carbon\Carbon::parse($outbound->date)->format('d F Y') }}</td>
                         <td>{{ $outbound->code }}</td>
                         <td>{{ $outbound->project->name }}</td>
                         <td>{{ $outbound->company_name ?? '-' }}</td>
