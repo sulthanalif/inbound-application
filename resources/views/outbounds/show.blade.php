@@ -84,13 +84,12 @@
                         <div class="d-flex justify-content-between align-items-center">
                             <h5 class="card-title">Items</h5>
                             @if ($outbound->status == 'Pending')
-                            <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                data-bs-target="#basicModal">
+                            <a href="{{ route('outbounds.editItems', $outbound) }}" class="btn btn-primary" >
                                 Edit
-                            </button>
+                            </a>
                             @endif
                         </div>
-                        @include('outbounds.modals.edit-item')
+                        {{-- @include('outbounds.modals.edit-item') --}}
                         <table class="table">
                             <thead>
                                 <tr>

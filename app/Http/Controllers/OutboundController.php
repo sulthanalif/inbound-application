@@ -170,9 +170,15 @@ class OutboundController extends Controller
         }
     }
 
+    public function editItems(Outbound $outbound)
+    {
+        $categories = Category::with('goods')->get();
+        return view('outbounds.edit', compact('outbound', 'categories'));
+    }
+
     public function updateRequest(Request $request, Outbound $outbound)
     {
-        // dd($request->all());
+        dd($request->all());
         $data = json_decode($request->input('data'), true);
 
         try {

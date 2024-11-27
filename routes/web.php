@@ -120,6 +120,7 @@ Route::middleware('auth')->group(function () {
         //request
         Route::get('/request-goods', [OutboundController::class, 'request'])->name('outbounds.request');
         Route::post('/request-goods', [OutboundController::class, 'storeRequest'])->name('outbounds.storeRequest');
+        Route::get('/request-goods/{outbound}/edit', [OutboundController::class, 'editItems'])->name('outbounds.editItems');
         Route::put('/request-goods/update/{outbound}', [OutboundController::class, 'updateRequest'])->name('outbounds.updateRequest');
 
         //order
