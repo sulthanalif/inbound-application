@@ -87,6 +87,7 @@
                                                 <th>Name</th>
                                                 <th width="10%">Quantity</th>
                                                 <th width="15%">Price</th>
+                                                <th width="10%">Unit</th>
                                                 <th width="15%">Subtotal</th>
                                                 <th>Action</th>
                                             </tr>
@@ -96,7 +97,7 @@
                                         </tbody>
                                         <tfoot>
                                             <tr></tr>
-                                            <td colspan="3"></td>
+                                            <td colspan="4"></td>
                                             <td>Total</td>
                                             <td><input type="number" name="total_price" class="form-control"
                                                     id="total_price" readonly></td>
@@ -187,6 +188,7 @@
                     option.setAttribute('data-code', good.code);
                     option.setAttribute('data-name', good.name);
                     option.setAttribute('data-price', good.price);
+                    option.setAttribute('data-unit-symbol', good.unit?.symbol || '');
                     option.text = `${good.code} | ${good.name}`;
                     selectGoods.appendChild(option);
                 });
@@ -201,6 +203,7 @@
             const itemCode = selectedItem.getAttribute('data-code');
             const itemName = selectedItem.getAttribute('data-name');
             const itemPrice = selectedItem.getAttribute('data-price');
+            const itemUnit = selectedItem.getAttribute('data-unit-symbol');
             const itemQty = 1;
 
             if (!itemId) return;
@@ -218,6 +221,7 @@
                         <td>${itemName}</td>
                         <td><input type="number" name="request_item_qty[]" class="form-control" value="1" required onchange="calculateSubtotal(this)"></td>
                         <td><input type="number" name="request_item_price[]" class="form-control" value="${itemPrice}" disabled readonly></td>
+                        <td>${itemUnit}</td>
                         <td><input type="number" name="request_item_subtotal[]" class="form-control" disabled readonly></td>
                         <td><button type="button" class="btn btn-danger" onclick="removeRow(this)">Remove</button></td>
                     </tr>

@@ -113,7 +113,7 @@ class OutboundController extends Controller
     public function request()
     {
         // $vendors = Vendor::all();
-        $categories = Category::with('goods')->get();
+        $categories = Category::with(['goods.unit'])->get();
         $goods = Goods::all();
         $projects = Project::all();
         $code_outbound = 'OUT' . date('Ymd') . Outbound::count() . rand(1000, 9999);
@@ -172,7 +172,7 @@ class OutboundController extends Controller
 
     public function editItems(Outbound $outbound)
     {
-        $categories = Category::with('goods')->get();
+        $categories = Category::with(['goods.unit'])->get();
         return view('outbounds.edit', compact('outbound', 'categories'));
     }
 
