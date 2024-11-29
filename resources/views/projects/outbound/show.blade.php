@@ -179,11 +179,13 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <h5 class="card-title">Inbound Problem Items</h5>
-                            @if ($outbound->status == 'Success')
-                                <a href="{{ route('inbounds.resend', $outbound) }}" class="btn btn-sm btn-primary">
+                            {{-- @if ($outbound->status == 'Success')
+                                <a href="
+                                {{ route('inbounds.resend', $outbound) }}
+                                 " class="btn btn-sm btn-primary">
                                     Resend
                                 </a>
-                            @endif
+                            @endif --}}
                         </div>
                         {{-- @include('outbounds.modals.edit-item') --}}
                         <table class="table">
