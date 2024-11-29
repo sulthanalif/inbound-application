@@ -205,6 +205,7 @@
             const itemPrice = selectedItem.getAttribute('data-price');
             const itemUnit = selectedItem.getAttribute('data-unit-symbol');
             const itemQty = 1;
+            const subTotal = itemPrice * itemQty;
 
             if (!itemId) return;
 
@@ -222,7 +223,7 @@
                         <td><input type="number" name="request_item_qty[]" class="form-control" value="1" required onchange="calculateSubtotal(this)"></td>
                         <td><input type="number" name="request_item_price[]" class="form-control" value="${itemPrice}" disabled readonly></td>
                         <td>${itemUnit}</td>
-                        <td><input type="number" name="request_item_subtotal[]" class="form-control" disabled readonly></td>
+                        <td><input type="number" name="request_item_subtotal[]" class="form-control" value="${subTotal}" disabled readonly></td>
                         <td><button type="button" class="btn btn-danger" onclick="removeRow(this)">Remove</button></td>
                     </tr>
                 `;
