@@ -23,6 +23,7 @@ class ReturnController extends Controller
 
     public function store(Request $request)
     {
+        dd($request->all());
         $data = json_decode($request->input('data'), true);
 
         try {

@@ -10,13 +10,13 @@
 
               @hasrole('Super Admin|Admin Engineer')
                 <div class="flex mt-3">
-                    <a href="{{ route('returns.index') }}" class="btn btn-primary btn-sm mb-3">Return</a>
+                    {{-- <a href="{{ route('returns.index') }}" class="btn btn-primary btn-sm mb-3">Return</a> --}}
                     <a href="{{ route('orders.index') }}" class="btn btn-primary btn-sm mb-3">Order</a>
                 </div>
               @endhasrole
 
               <!-- Default Table -->
-              <table class="table">
+              <table class="table datatable">
                 <thead>
                   <tr>
                     <th scope="col">#</th>

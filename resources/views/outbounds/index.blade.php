@@ -10,7 +10,7 @@
 
               <div class="d-flex justify-content-between mt-3">
                 <a href="{{ route('outbounds.request') }}" class="btn btn-primary btn-sm mb-3">Request</a>
-                <div class="">
+                {{-- <div class="">
                     <form action="{{ route('outbounds.index') }}" method="GET">
                         <div class="input-group">
                             <input type="text" class="form-control" placeholder="Search" name="search" value="{{ request('search') }}">
@@ -19,11 +19,11 @@
                             </button>
                         </div>
                     </form>
-                </div>
+                </div> --}}
               </div>
 
               <!-- Default Table -->
-              <table class="table">
+              <table class="table datatable">
                 <thead>
                   <tr>
                     <th scope="col">#</th>
@@ -64,8 +64,8 @@
                   @endforeach
                 </tbody>
               </table>
-              <!-- End Default Table Example -->
-              {{ $outbounds->links('layouts.paginate') }}
+              {{-- <!-- End Default Table Example -->
+              {{ $outbounds->links('layouts.paginate') }} --}}
 
             </div>
           </div>

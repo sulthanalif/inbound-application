@@ -24,7 +24,7 @@
                                 @enderror
                             </div>
                             <div class="col-6">
-                                <label for="code" class="form-label">Tanggal<span class="text-danger">*</span></label>
+                                <label for="code" class="form-label">Inbound Code<span class="text-danger">*</span></label>
                                 <input type="text" value="{{ $code }}" name="code"
                                     class="form-control @error('code') is-invalid @enderror" id="code" readonly>
                                 @error('code')
@@ -44,7 +44,7 @@
                                     class="form-select select2" required onchange="getItems(this)">
                                     <option value="" selected disabled>Choose...</option>
                                     @foreach ($project->outbounds as $outbound)
-                                       @if ($outbound->items->pluck('goods.type')->contains('Rentable'))
+                                       @if ($outbound->items->pluck('goods.type')->contains('Rentable') && $outbound->status == 'Success')
                                        <option value="{{ $outbound->id }}" data-items="{{ json_encode($outbound->items->load('goods.warehouse')) }}">
                                         {{ $outbound->code }}</option>
                                        @endif
@@ -92,6 +92,8 @@
                 theme: 'bootstrap4',
             });
         })
+
+
 
 
         function getItems(el) {

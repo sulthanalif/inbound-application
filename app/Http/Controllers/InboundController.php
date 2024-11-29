@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Goods;
 use App\Models\Inbound;
+use App\Models\Project;
 use App\Models\Outbound;
 use App\Models\InboundItem;
 use Illuminate\Http\Request;
@@ -75,14 +76,16 @@ class InboundController extends Controller
         // $vendors = Vendor::all();
         $goods = Goods::all();
         $outbounds = Outbound::all();
+        $projects = Project::all();
         $inbound_code = 'IN'.date('Ymd').Inbound::count().rand(1000, 9999);
 
         // dd($inbound_code);
-        return view('order.index', compact('goods', 'outbounds', 'inbound_code'));
+        return view('order.index', compact('goods', 'outbounds', 'inbound_code', 'projects'));
     }
 
     public function storeOrder(Request $request)
     {
+        // dd($request->all());
         $data = json_decode($request->input('data'), true);
 
         try {
@@ -91,6 +94,9 @@ class InboundController extends Controller
                 $inbound->vendor_id = $request->vendor_id;
                 $inbound->code = $request->code;
                 $inbound->user_id = Auth::user()->id;
+                $inbound->is_return = 1;
+                $inbound->project_id = Outbound::find($request->outbound_id)->project_id;
+                $inbound->outbound_id = $request->outbound_id;
                 $inbound->date = $request->date;
                 $inbound->sender_name = $request->sender_name;
                 $inbound->vehicle_number = $request->vehicle_number;
@@ -105,9 +111,9 @@ class InboundController extends Controller
                     $inboundItem->save();
                 }
 
-                $goods = Goods::find($item['item_id']);
-                $goods->qty += $item['qty'];
-                $goods->save();
+                // $goods = Goods::find($item['item_id']);
+                // $goods->qty += $item['qty'];
+                // $goods->save();
             });
 
             Alert::success('Hore!', 'Return Created Successfully');

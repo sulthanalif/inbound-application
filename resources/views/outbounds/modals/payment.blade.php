@@ -21,7 +21,7 @@
                             <div class="col-12">
                                 <label for="paid" class="form-label">Paid <span class="text-danger">*</span></label>
                                 <input type="number" class="form-control @error('paid') is-invalid @enderror"
-                                    name="paid" id="paid" max="{{ $outbound->payments->sum('remaining') ?? $outbound->total_price }}" required>
+                                    name="paid" id="paid" max="{{ $outbound->total_price }}" required>
                             </div>
                         @endif
                         <div class="col-md-12 mt-2">

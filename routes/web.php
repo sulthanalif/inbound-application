@@ -116,6 +116,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/projects/{project}/detail', [ProjectController::class, 'show'])->name('projects.show');
         Route::get('/projects/{project}/return', [ProjectController::class, 'return'])->name('projects.return');
         Route::post('/projects/{project}/return', [ProjectController::class, 'storeReturn'])->name('projects.storeReturn');
+        Route::get('/projects/{outbound}/show', [ProjectController::class, 'showOutbound'])->name('projects.showOutbound');
 
         //request
         Route::get('/request-goods', [OutboundController::class, 'request'])->name('outbounds.request');
@@ -132,6 +133,9 @@ Route::middleware('auth')->group(function () {
 
         //payment
         Route::post('/payment/outbound', [PaymentController::class, 'paymentOutbound'])->name('payment.outbound');
+
+        //resend
+        Route::get('/projects/{outbound}/resend', [ProjectController::class, 'resend'])->name('inbounds.resend');
 
     });
 

@@ -129,6 +129,100 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="card-title">Items Inbound</h5>
+                            @if ($outbound->status == 'Pending')
+                            <a href="{{ route('outbounds.editItems', $outbound) }}" class="btn btn-primary" >
+                                Edit
+                            </a>
+                            @endif
+                        </div>
+                        {{-- @include('outbounds.modals.edit-item') --}}
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Code</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Warehouse</th>
+                                    <th scope="col">Quantity</th>
+                                    <th scope="col">Sub Price</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($outbound->items as $item)
+                                    <tr style="font-size: 12px">
+                                        <th scope="row">{{ $loop->iteration }}</th>
+                                        <td>{{ $item->goods->code }}</td>
+                                        <td>{{ Str::limit($item->goods->name, 12) }}</td>
+                                        <td>{{ $item->goods->warehouse->name }}</td>
+                                        <td>{{ $item->qty }}</td>
+                                        <td>{{ 'Rp. ' . number_format($item->sub_total, 0, ',', '.') }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                            <tfoot></tfoot>
+                            <tr style="font-size: 12px">
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td colspan="2" style="font-weight: bold">Total</td>
+                                <td style="font-weight: bold">
+                                    {{ 'Rp. ' . number_format($outbound->total_price, 0, ',', '.') }}</td>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="card-title">Items Yang DIganti</h5>
+                            @if ($outbound->status == 'Pending')
+                            <a href="{{ route('outbounds.editItems', $outbound) }}" class="btn btn-primary" >
+                                Edit
+                            </a>
+                            @endif
+                        </div>
+                        {{-- @include('outbounds.modals.edit-item') --}}
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Code</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Warehouse</th>
+                                    <th scope="col">Quantity</th>
+                                    <th scope="col">Sub Price</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($outbound->items as $item)
+                                    <tr style="font-size: 12px">
+                                        <th scope="row">{{ $loop->iteration }}</th>
+                                        <td>{{ $item->goods->code }}</td>
+                                        <td>{{ Str::limit($item->goods->name, 12) }}</td>
+                                        <td>{{ $item->goods->warehouse->name }}</td>
+                                        <td>{{ $item->qty }}</td>
+                                        <td>{{ 'Rp. ' . number_format($item->sub_total, 0, ',', '.') }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                            <tfoot></tfoot>
+                            <tr style="font-size: 12px">
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td colspan="2" style="font-weight: bold">Total</td>
+                                <td style="font-weight: bold">
+                                    {{ 'Rp. ' . number_format($outbound->total_price, 0, ',', '.') }}</td>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
                             <h5 class="card-title">Payments</h5>
                             @if ($outbound->status_payment == 'Unpaid' || $outbound->status_payment == 'Partially Paid')
                                 <button type="button" class="btn btn-primary" data-bs-toggle="modal"

@@ -14,7 +14,7 @@
               </div>
 
               <!-- Default Table -->
-              <table class="table">
+              <table class="table datatable">
                 <thead>
                   <tr>
                     <th scope="col">#</th>
@@ -56,8 +56,8 @@
                   @endif
                 </tbody>
               </table>
-              <!-- End Default Table Example -->
-              {{ $goods->links('layouts.paginate') }}
+              {{-- <!-- End Default Table Example -->
+              {{ $goods->links('layouts.paginate') }} --}}
 
             </div>
           </div>

@@ -21,6 +21,33 @@ class ProjectController extends Controller
         return view('projects.index', compact('projects'));
     }
 
+    public function showOutbound(Outbound $outbound)
+    {
+        $inboundItemsProblems = $outbound->inbound()->where('is_return', 1)->get()->flatMap->items;
+
+        // dd($inboundItemsProblems);
+        return view('projects.outbound.show', compact('outbound', 'inboundItemsProblems'));
+    }
+
+    public function resend(Outbound $outbound)
+    {
+        $items = Inbound::where('outbound_id', $outbound->id)->where('is_return', 1)->get()->flatMap->items;
+
+        try {
+            DB::transaction(function () use ($outbound, $items) {
+                $new_outbound = Outbound::create([
+                    'code' => 'OUT-R-' . date('Ymd') . str_pad($outbound->outbounds()->count() + 1, 4, '0', STR_PAD_LEFT),
+                    'project_id' => $outbound->project_id,
+                    'user_id' => Auth::user()->id,
+                    'date' => now(),
+
+                ]);
+            });
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+    }
+
     public function show(Project $project)
     {
         // $outboundGoods = $project->outbounds->flatMap(function ($outbound) {
@@ -108,6 +135,7 @@ class ProjectController extends Controller
                 $inbound->date = $request->date;
                 $inbound->code = $request->code;
                 $inbound->project_id = $project->id;
+                $inbound->outbound_id = $request->outbound_id;
                 // $inbound->vendor_id = $request->vendor_id;
                 $inbound->user_id = Auth::user()->id;
                 // $inbound->sender_name = $request->sender_name;

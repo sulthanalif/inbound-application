@@ -10,6 +10,7 @@ class Inbound extends Model
 
     protected $fillable = [
         'code',
+        'outbound_id',
         'vendor_id',
         'user_id',
         'date',
@@ -17,8 +18,19 @@ class Inbound extends Model
         'sender_name',
         'vehicle_number',
         'status',
+        'is_return',
         'description',
     ];
+
+    public function resend()
+    {
+        return $this->hasMany(Resend::class);
+    }
+
+    public function outbound()
+    {
+        return $this->belongsTo(Outbound::class);
+    }
 
     public function project()
     {

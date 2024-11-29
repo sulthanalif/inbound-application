@@ -91,7 +91,7 @@
                                                     {{ $outbound->status_payment }}</div>
                                             </td>
                                             <td style="text-align: center">
-                                                <a href="{{ route('outbounds.show', $outbound) }}"
+                                                <a href="{{ route('projects.showOutbound', $outbound) }}"
                                                     class="btn btn-primary btn-sm"><i class="bi bi-eye-fill"></i></a>
                                             </td>
                                         </tr>
@@ -199,7 +199,7 @@
                                                 {{ $item['name'] }}
                                             </td>
                                             <td>
-                                                {{ $item['qty'] }}
+                                                {{ $item['qty'] }}{{ $item['symbol'] }}
                                             </td>
                                             <td>
                                                 {{ $item['type'] }}

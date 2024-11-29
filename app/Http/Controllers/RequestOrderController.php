@@ -15,9 +15,8 @@ class RequestOrderController extends Controller
 {
     public function index()
     {
-        $vendors = Vendor::all();
-        $goods = Goods::all();
-        return view('request.index', compact('vendors', 'goods'));
+        $outbounds = Outbound::all();
+        return view('request.index', compact('outbounds'));
     }
 
     public function store(Request $request)

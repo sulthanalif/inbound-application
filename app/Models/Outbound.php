@@ -20,12 +20,16 @@ class Outbound extends Model
         'area_id',
         'status',
         'number',
-
         'payment',
-
         'status_payment',
+        'is_resend',
         'total_price',
     ];
+
+    public function inbound()
+    {
+        return $this->hasOne(Inbound::class);
+    }
 
     public function payments()
     {
