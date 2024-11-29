@@ -88,6 +88,10 @@ class InboundController extends Controller
         // dd($request->all());
         $data = json_decode($request->input('data'), true);
 
+        // $validator = Validator::make($data, [
+        //     'qty' => 'max'.
+        // ]);
+
         try {
             DB::transaction(function () use ($request, $data) {
                 $inbound = new Inbound();

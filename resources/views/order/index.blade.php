@@ -43,7 +43,7 @@
                                     @foreach ($outbounds as $outbound)
                                         @if ($outbound->status == 'Success')
                                             <option value="{{ $outbound->id }}"
-                                                data-items="{{ json_encode($outbound->items->load('goods.warehouse')) }}">
+                                                data-items="{{ json_encode($outbound->items->load(['goods.warehouse', 'goods.unit'])) }}">
                                                 {{ $outbound->code }}</option>
                                         @endif
                                     @endforeach
@@ -60,6 +60,7 @@
                                                 <th>Code</th>
                                                 <th>Name</th>
                                                 <th width="15%">Quantity</th>
+                                                <th>Unit</th>
                                                 <th>Warehouse</th>
                                                 {{-- <th>Action</th> --}}
                                             </tr>
@@ -116,7 +117,8 @@
                 html += `<tr>
                             <td data-id="${item.goods.id}">${item.goods.code}</td>
                             <td>${item.goods.name}</td>
-                            <td><input class="form-control" name="qty" max="${item.qty}" value="0"></input></td>
+                            <td><input class="form-control" type="number" name="qty" max="${item.qty}" value="0"></input></td>
+                            <td>${item.goods.unit.symbol}</td>
                             <td>${item.goods.warehouse.name}</td>
 
                         </tr>`;
