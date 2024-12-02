@@ -23,6 +23,7 @@
                     <th scope="col">Date</th>
                     <th scope="col">Code</th>
                     <th scope="col">Status</th>
+                    <th scope="col">Inbound</th>
                     {{-- <th scope="col">Active</th> --}}
                     <th scope="col" style="text-align: center;">Action</th>
                   </tr>
@@ -43,6 +44,11 @@
                                                 'Success' => 'success',
                                                 default => 'danger',
                                             } }}">{{ $inbound->status }}</div>
+                        </td>
+                        <td>
+                            <div class="badge bg-{{ $inbound->is_return ? 'danger' : 'primary' }}">
+                                {{ $inbound->is_return ? 'Problem' : 'Return' }}
+                            </div>
                         </td>
                         <td align="center">
                             <a href="{{ route('inbounds.show', $inbound) }}" class="btn btn-primary btn-sm"><i class="bi bi-eye-fill"></i></a>

@@ -23,10 +23,19 @@ class ProjectController extends Controller
 
     public function showOutbound(Outbound $outbound)
     {
+        $inboundItems = $outbound->inbound()->where('is_return', 0)->get()->flatMap->items;
+
         $inboundItemsProblems = $outbound->inbound()->where('is_return', 1)->get()->flatMap->items;
 
+        $inboundProblem = $outbound->inbound()->where('is_return', 1)->first();
+        // return response()->json($outbound->inbound);
+        $outbounItemsdResend = $inboundProblem ? Outbound::where('code_inbound', $inboundProblem->code)
+            ->where('is_resend', 1)
+            ->get()
+            ->flatMap->items : [];
+
         // dd($inboundItemsProblems);
-        return view('projects.outbound.show', compact('outbound', 'inboundItemsProblems'));
+        return view('projects.outbound.show', compact('outbound', 'inboundItemsProblems', 'outbounItemsdResend', 'inboundItems'));
     }
 
     public function resend(Outbound $outbound)

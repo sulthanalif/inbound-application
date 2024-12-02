@@ -8,8 +8,10 @@ use App\Http\Controllers\Usercontroller;
 use App\Http\Controllers\GoodsController;
 use App\Http\Controllers\ReturnController;
 use App\Http\Controllers\VendorController;
+use App\Http\Controllers\GetDataController;
 use App\Http\Controllers\InboundController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\OutboundController;
@@ -17,14 +19,16 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\WarehouseController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\ProblemItemController;
 use App\Http\Controllers\RequestOrderController;
+use Symfony\Component\HttpKernel\Profiler\Profile;
 
 // Route::get('/', function () {
 //     return view('welcome');
 // });
 
 Route::get('/coba', function () {
-    $outbound = \App\Models\Outbound::find(7);
+    $outbound = \App\Models\Outbound::find(1);
    return view('outbounds.pdf.outbound', compact('outbound'));
 });
 
@@ -32,10 +36,18 @@ Route::get('/coba', function () {
 Route::get('/', LoginController::class)->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('submitLogin');
 
-Route::middleware('auth')->group(function () {
+Route::middleware('auth', 'is_active')->group(function () {
     Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
+    //profile
+    Route::get('/profile', [ProfileController::class, 'index'])->name('users.showProfile');
+    Route::put('/profile/{user}', [ProfileController::class, 'update'])->name('users.updateProfile');
+    Route::put('/profile/{user}/password', [ProfileController::class, 'updatePassword'])->name('users.updatePassword');
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    //get date
+    Route::get('/get-categories', [GetDataController::class, 'getCategories'])->name('getCategories');
+    Route::get('/get-goods/{category}', [GetDataController::class, 'getGoods'])->name('getGoods');
 
     Route::middleware('role:Super Admin')->group(function () {
         //user
@@ -106,6 +118,10 @@ Route::middleware('auth')->group(function () {
         Route::put('/areas/{area}', [AreaController::class, 'update'])->name('areas.update');
         Route::delete('/areas/{area}', [AreaController::class, 'destroy'])->name('areas.destroy');
 
+        //problems_item
+        Route::get('/problem-items', [ProblemItemController::class, 'index'])->name('problems.index');
+        Route::post('/resend-items', [InboundController::class, 'resendItems'])->name('inbounds.resendItems');
+        Route::put('/problem-items/{problem_item}', [ProblemItemController::class, 'updateWorthy'])->name('problems.updateWorthy');
     });
 
     Route::middleware('role:Super Admin|Admin Engineer')->group(function () {
@@ -156,6 +172,8 @@ Route::middleware('auth')->group(function () {
 
        //print image payment
        Route::get('/download-image-payment/{payment}', [PaymentController::class, 'downloadImagePayment'])->name('payment.downloadImagePayment');
+
+       Route::get('/download-invoice-delivery-inbound/{inbound}', [InboundController::class, 'downloadInvoiceDelivery'])->name('inbounds.downloadInvoiceDelivery');
 
     });
 });

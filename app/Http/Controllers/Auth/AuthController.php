@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class AuthController extends Controller
 {
@@ -15,7 +16,8 @@ class AuthController extends Controller
         if(Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
             return redirect()->route('dashboard');
         } else {
-            return redirect()->back()->with('error', 'Email or Password is incorrect');
+            Alert::error('Oops!', 'Wrong email or password');
+            return redirect()->back();
         }
     }
 

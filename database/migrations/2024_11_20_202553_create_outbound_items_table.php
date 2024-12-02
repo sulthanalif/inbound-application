@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('outbound_id')->constrained()->onDelete('cascade');
             $table->foreignId('goods_id')->constrained()->onDelete('cascade');
             $table->integer('qty');
-            $table->decimal('sub_total', 20, 2);
+            $table->decimal('sub_total', 20, 2)->nullable();
             $table->timestamps();
         });
     }

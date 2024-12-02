@@ -13,7 +13,7 @@
                 </div>
 
                 <!-- Default Table -->
-                <table class="table">
+                <table class="table datatable">
                     <thead>
                         <tr>
                             <th scope="col">#</th>
@@ -27,7 +27,7 @@
                         @if ($warehouses->count() > 0)
                             @foreach ($warehouses as $warehouse)
                                 <tr>
-                                    <th scope="row">{{ ($warehouses->currentPage() - 1) * $warehouses->perPage() + $loop->iteration }}</th>
+                                    <th scope="row">{{ $loop->iteration }}</th>
                                     <td>{{ $warehouse->code }}</td>
                                     <td>{{ $warehouse->name }}</td>
                                     <td>{{ $warehouse->address }}</td>
@@ -47,7 +47,7 @@
                     </tbody>
                 </table>
                 <!-- End Default Table Example -->
-                {{ $warehouses->links('layouts.paginate') }}
+                {{-- {{ $warehouses->links('layouts.paginate') }} --}}
 
             </div>
         </div>

@@ -12,7 +12,7 @@ class RoleController extends Controller
 {
     public function index()
     {
-        $roles = Role::select('id', 'name')->paginate(10);
+        $roles = Role::select('id', 'name')->latest()->get();
 
         confirmDelete('Delete Data!', 'Are you sure you want to delete?');
 

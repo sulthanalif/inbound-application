@@ -13,7 +13,7 @@
               </div>
 
               <!-- Default Table -->
-              <table class="table">
+              <table class="table datatable">
                 <thead>
                   <tr>
                     <th scope="col">#</th>
@@ -26,7 +26,7 @@
                 <tbody>
                   @foreach ($vendors as $vendor)
                     <tr>
-                        <th scope="row">{{ ($vendors->currentPage() - 1) * $vendors->perPage() + $loop->iteration }}</th>
+                        <th scope="row">{{ $loop->iteration }}</th>
                         <td>{{ $vendor->name }}</td>
                         <td>{{ $vendor->email }}</td>
                         <td>{{ Str::limit($vendor->address, 30) }}</td>
@@ -40,7 +40,7 @@
                 </tbody>
               </table>
               <!-- End Default Table Example -->
-              {{ $vendors->links('layouts.paginate') }}
+              {{-- {{ $vendors->links('layouts.paginate') }} --}}
 
             </div>
           </div>

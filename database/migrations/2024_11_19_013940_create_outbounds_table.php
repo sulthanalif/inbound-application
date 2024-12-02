@@ -21,11 +21,13 @@ return new class extends Migration
             $table->date('date');
             $table->string('sender_name')->nullable();
             $table->string('vehicle_number')->nullable();
-            $table->decimal('total_price', 20, 2);
+            $table->decimal('total_price', 20, 2)->nullable();
             $table->string('number')->nullable();
             $table->string('status')->default('Pending');
             $table->string('status_payment')->default('Unpaid');
             $table->string('payment')->nullable();
+            $table->boolean('is_resend')->default(false);
+            $table->string('code_inbound')->nullable();
             // $table->string('payment_method')->nullable();
             // $table->string('bank')->nullable();
             $table->timestamps();

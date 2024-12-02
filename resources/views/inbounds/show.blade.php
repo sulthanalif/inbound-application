@@ -64,7 +64,18 @@
 
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">Items</h5>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="card-title">Items</h5>
+                            @if ($inbound->is_return)
+                            @if ($inbound->status == 'Success' && !$inbound->outbound->where('is_resend', 1)->first())
+                            <a href="" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#resendModal">Resend</a>
+                            @include('inbounds.modal.resend')
+                        {{-- @endif --}}
+                        @elseif ($inbound->outbound->where('is_resend', 1)->first())
+                            <a href="{{ route('outbounds.show', $inbound->outbound->where('is_resend', 1)->first()) }}" class="btn btn-sm btn-primary">Outbound</a>
+                        @endif
+                            @endif
+                        </div>
 
                         <table class="table">
                             <thead>
@@ -155,10 +166,15 @@
                                             default => 'This order is ready for delivery.',
                                         } }}
                                         </p>
+                                        @if ($inbound->status == 'Delivery' || $inbound->status == 'Approved')
+                                        <a target="_blank" href="{{ route('inbounds.downloadInvoiceDelivery', $inbound) }}"
+                                        class="btn btn-primary btn-sm  mb-3">Download Invoice Delivery</a>
+                                        @endif
                                         @hasrole('Super Admin|Admin Engineering')
                                             @if ($inbound->status == 'Approved')
                                                 {{-- <a href="{{ route('inbounds.changeStatus', [$inbound, 'status' => 'Delivery']) }}" class="btn btn-warning btn-sm text-white  mb-3" >Submit</a> --}}
-                                                <form class="row g-3 mt-1" action="{{ route('inbounds.delivery', $inbound) }}" method="POST">
+                                                <form class="row g-3 mt-1" action="{{ route('inbounds.delivery', $inbound) }}"
+                                                    method="POST">
                                                     @csrf
                                                     @method('PUT')
                                                     <div class="col-sm-6">
@@ -188,7 +204,7 @@
                                                     </div>
                                                     <div class="text-center">
                                                         <button type="submit"
-                                                        class="btn btn-warning btn-sm text-white mb-3">Submit</button>
+                                                            class="btn btn-warning btn-sm text-white mb-3">Submit</button>
                                                     </div>
                                                 </form>
                                             @endif

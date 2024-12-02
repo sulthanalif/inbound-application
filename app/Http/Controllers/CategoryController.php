@@ -12,7 +12,7 @@ class CategoryController extends Controller
 {
     public function index(Request $request)
     {
-        $categories = Category::latest()->paginate(10);
+        $categories = Category::latest()->get();
 
         $title = 'Delete Data!';
         $text = "Are you sure you want to delete?";

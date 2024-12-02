@@ -4,51 +4,40 @@
 <head>
     <title>Delivery Note</title>
     <style>
-        @page {
-            size: A4;
-            margin: 20mm;
-        }
-
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #fff;
+            font-size: 12px;
         }
-
         .content {
-            width: 100%;
-            margin: 0 auto;
-            padding: 10mm;
+            margin: 20mm;
         }
-
         table {
-            border-collapse: collapse;
             width: 100%;
-            margin-top: 20px;
+            border-collapse: collapse;
+            margin-bottom: 20px;
         }
-
-        th,
-        td {
-            border: 1px solid #ddd;
-            padding: 8px;
+        th, td {
+            border: 1px solid #000;
+            padding: 5px;
             text-align: left;
         }
-
         th {
             background-color: #f2f2f2;
         }
-
-        .header {
-            text-align: center;
-            margin-bottom: 20px;
+        .header th {
+            border: none;
+            padding-bottom: 10px;
+        }
+        .footer td {
+            border: none;
+            padding-top: 40px;
+        }
+        .footer tr:first-child {
+            height: 100px;
         }
 
-        .footer {
-            text-align: center;
-            vertical-align: top;
-            margin-top: 20px;
-        }
     </style>
 </head>
 
@@ -56,33 +45,45 @@
     <div class="content">
         <table class="header">
             <tr>
+                <th style="width: 50%">
+                    <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('images/logo.jpg'))) }}" width="150" height="50" alt="logo">
+                </th>
+                <th style="width: 50%; text-align: ">
+                    <h1>Delivery Note</h1>
+                </th>
+            </tr>
+            <tr>
+                <td>
+                    Stockyard KWJJV Package 2 & 3<br>
+                    Jl. sunter permai raya depan perumahan t.s.a 2 tanah kosong, RT.2/RW.12, Sunter Agung, Kec. Tj. Priok,
+                    Jkt Utara. <br> Daerah Khusus Ibukota Jakarta 14350
+                </td>
+                <td>
+                    No: {{ $outbound->number }} <br>
+                    Tanggal: {{ \Carbon\Carbon::parse($outbound->date)->format('d F Y') }} <br>
+                    Project: {{ $outbound->project->name }}
+                </td>
+            </tr>
+            {{-- <tr>
                 <th colspan="3">
                     <h2 align="center">Delivery Note</h2>
                 </th>
             </tr>
             <tr>
                 <td rowspan="2">
-                    <b>NITTOC STOCKYARD ISS</b><br>
+                    <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('images/logo.jpg'))) }}" width="150" height="50" alt="logo"><br>
                     Stockyard KWJJV Package 2 & 3<br>
                     Jl. sunter permai raya depan perumahan t.s.a 2 tanah kosong, RT.2/RW.12, Sunter Agung, Kec. Tj. Priok,
-                    Jkt
-                    Utara. <br> Daerah Khusus Ibukota Jakarta 14350
+                    Jkt Utara. <br> Daerah Khusus Ibukota Jakarta 14350
                 </td>
-                <th style="text-align: left">No:</th>
-                <td>274/DN-35521PK2-PJ-X1-2024</td>
+                <td rowspan="2">No: {{ $outbound->number }} <br> Tanggal: {{ \Carbon\Carbon::parse($outbound->date)->format('d F Y') }} </td>
             </tr>
             <tr>
-                <th style="text-align: left">Tanggal: </th>
-                <td>{{ now()->timezone('Asia/Jakarta')->format('l, d F Y') }}</td>
-            </tr>
-            <tr>
-                <td colspan="3"><b>To Project: </b>{{ $outbound->project->name }}</td>
-            </tr>
-
+                <td colspan="3"><b>To Project: </b>{{ $outbound->project->name }}</td> --}}
         </table>
         <table>
             <tr>
-                <td style="width: 15%">
+                <td style="width: 30%">
                     <b>Penerima</b><br>
                     <b>Alamat</b><br>
                     <b>No Kendaraan</b><br>
@@ -96,7 +97,6 @@
                 </td>
             </tr>
         </table>
-
         <table>
             <thead>
                 <tr>
@@ -128,17 +128,16 @@
                 </tr>
             </tfoot>
         </table>
-
         <table class="footer">
-            <tr style="height: 200px">
+            <tr>
                 <td style="vertical-align: top; text-align: center; width: 33.33%"><b>Pengirim</b></td>
                 <td style="vertical-align: top; text-align: center; width: 33.33%"><b>Pembawa</b></td>
                 <td style="vertical-align: top; text-align: center; width: 33.33%"><b>Penerima</b></td>
             </tr>
             <tr>
-                <td style="vertical-align: top; text-align: center; width: 33.33%">Stockkeeper</td>
-                <td style="vertical-align: top; text-align: center; width: 33.33%">Driver</td>
-                <td style="vertical-align: top; text-align: center; width: 33.33%">{{ $outbound->project->name }}</td>
+                <td style="vertical-align: top; text-align: center;">{{ $outbound->user->name }}</td>
+                <td style="vertical-align: top; text-align: center;">{{ $outbound->sender_name }}</td>
+                <td style="vertical-align: top; text-align: center;">{{ $outbound->project->name }}</td>
             </tr>
         </table>
     </div>

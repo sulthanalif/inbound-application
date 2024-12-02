@@ -100,6 +100,7 @@
                                     <th scope="col">Name</th>
                                     <th scope="col">Warehouse</th>
                                     <th scope="col">Quantity</th>
+                                    <th scope="col">Type</th>
                                     {{-- <th scope="col">Sub Price</th> --}}
                                 </tr>
                             </thead>
@@ -111,6 +112,7 @@
                                         <td>{{ Str::limit($item->goods->name, 12) }}</td>
                                         <td>{{ $item->goods->warehouse->name }}</td>
                                         <td>{{ $item->qty }}{{ $item->goods->unit->symbol }}</td>
+                                        <td>{{ $item->goods->type }}</td>
                                         {{-- <td>{{ 'Rp. ' . number_format($item->sub_total, 0, ',', '.') }}</td> --}}
                                     </tr>
                                 @endforeach
@@ -151,24 +153,26 @@
                                     <th scope="col">Name</th>
                                     <th scope="col">Warehouse</th>
                                     <th scope="col">Quantity</th>
+                                    <th scope="col">Type</th>
                                     {{-- <th scope="col">Sub Price</th> --}}
                                 </tr>
                             </thead>
                             <tbody>
-                                @if ($outbound->inbound)
-                                    @foreach ($outbound->inbound->items as $item)
+                                @if ($inboundItems->count() > 0)
+                                    @foreach ($inboundItems as $item)
                                         <tr style="font-size: 12px">
                                             <th scope="row">{{ $loop->iteration }}</th>
                                             <td>{{ $item->goods->code }}</td>
                                             <td>{{ Str::limit($item->goods->name, 12) }}</td>
                                             <td>{{ $item->goods->warehouse->name }}</td>
                                             <td>{{ $item->qty }}{{ $item->goods->unit->symbol }}</td>
+                                            <td>{{ $item->goods->type }}</td>
                                             {{-- <td>{{ 'Rp. ' . number_format($item->sub_total, 0, ',', '.') }}</td> --}}
                                         </tr>
                                     @endforeach
                                 @else
                                     <tr>
-                                        <td colspan="5" style="font-size: 12px; text-align: center">No Data</td>
+                                        <td colspan="6" style="font-size: 12px; text-align: center">No Data</td>
                                     </tr>
                                 @endif
                             </tbody>
@@ -196,24 +200,26 @@
                                     <th scope="col">Name</th>
                                     <th scope="col">Warehouse</th>
                                     <th scope="col">Quantity</th>
+                                    <th>Type</th>
                                     {{-- <th scope="col">Sub Price</th> --}}
                                 </tr>
                             </thead>
                             <tbody>
-                                @if ($outbound->inbound)
-                                    @foreach ($outbound->inbound->items->where('inbound.is_return', 1) as $item)
+                                @if ($inboundItemsProblems->count() > 0)
+                                    @foreach ($inboundItemsProblems as $item)
                                         <tr style="font-size: 12px">
                                             <th scope="row">{{ $loop->iteration }}</th>
                                             <td>{{ $item->goods->code }}</td>
                                             <td>{{ Str::limit($item->goods->name, 12) }}</td>
                                             <td>{{ $item->goods->warehouse->name }}</td>
                                             <td>{{ $item->qty }}{{ $item->goods->unit->symbol }}</td>
+                                            <td>{{ $item->goods->type }}</td>
                                             {{-- <td>{{ 'Rp. ' . number_format($item->sub_total, 0, ',', '.') }}</td> --}}
                                         </tr>
                                     @endforeach
                                 @else
                                     <tr>
-                                        <td colspan="5" style="font-size: 12px; text-align: center">No Data</td>
+                                        <td colspan="6" style="font-size: 12px; text-align: center">No Data</td>
                                     </tr>
                                 @endif
                         </table>
@@ -238,24 +244,26 @@
                                     <th scope="col">Name</th>
                                     <th scope="col">Warehouse</th>
                                     <th scope="col">Quantity</th>
+                                    <th>Type</th>
                                     {{-- <th scope="col">Sub Price</th> --}}
                                 </tr>
                             </thead>
                             <tbody>
-                                @if ($outbound->is_resend == 1)
-                                    @foreach ($outbound->items->where('outbound.is_resend', 1) as $item)
+                                @if (!empty($outbounItemsdResend))
+                                    @foreach ($outbounItemsdResend as $item)
                                         <tr style="font-size: 12px">
                                             <th scope="row">{{ $loop->iteration }}</th>
                                             <td>{{ $item->goods->code }}</td>
                                             <td>{{ Str::limit($item->goods->name, 12) }}</td>
                                             <td>{{ $item->goods->warehouse->name }}</td>
                                             <td>{{ $item->qty }}{{ $item->goods->unit->symbol }}</td>
+                                            <td>{{ $item->goods->type }}</td>
                                             {{-- <td>{{ 'Rp. ' . number_format($item->sub_total, 0, ',', '.') }}</td> --}}
                                         </tr>
                                     @endforeach
                                 @else
                                     <tr>
-                                        <td colspan="5" style="font-size: 12px; text-align: center">No Data</td>
+                                        <td colspan="6" style="font-size: 12px; text-align: center">No Data</td>
                                     </tr>
                                 @endif
                             </tbody>

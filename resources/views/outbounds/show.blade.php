@@ -48,19 +48,21 @@
                                             {{ $outbound->status }}</div>
                                     </td>
                                 </tr>
-                                <tr>
-                                    <th scope="row">Status Payment</th>
-                                    <td>
-                                        <div
-                                            class="badge bg-{{ match ($outbound->status_payment) {
-                                                'Unpaid' => 'danger',
-                                                'Paid' => 'success',
-                                                'Partially Paid' => 'warning',
-                                                default => 'danger',
-                                            } }}">
-                                            {{ $outbound->status_payment }} ({{ $outbound->payment }})</div>
-                                    </td>
-                                </tr>
+                                @if (!$outbound->is_resend)
+                                    <tr>
+                                        <th scope="row">Status Payment</th>
+                                        <td>
+                                            <div
+                                                class="badge bg-{{ match ($outbound->status_payment) {
+                                                    'Unpaid' => 'danger',
+                                                    'Paid' => 'success',
+                                                    'Partially Paid' => 'warning',
+                                                    default => 'danger',
+                                                } }}">
+                                                {{ $outbound->status_payment }} ({{ $outbound->payment }})</div>
+                                        </td>
+                                    </tr>
+                                @endif
                                 <tr>
                                     <th scope="row">Driver Name</th>
                                     <td>{{ $outbound->sender_name ?? '-' }}</td>
@@ -83,10 +85,12 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <h5 class="card-title">Items</h5>
-                            @if ($outbound->status == 'Pending')
-                            <a href="{{ route('outbounds.editItems', $outbound) }}" class="btn btn-primary" >
-                                Edit
-                            </a>
+                            @if (!$outbound->is_resend)
+                                @if ($outbound->status == 'Pending')
+                                    <a href="{{ route('outbounds.editItems', $outbound) }}" class="btn btn-primary">
+                                        Edit
+                                    </a>
+                                @endif
                             @endif
                         </div>
                         {{-- @include('outbounds.modals.edit-item') --}}
@@ -98,7 +102,9 @@
                                     <th scope="col">Name</th>
                                     <th scope="col">Warehouse</th>
                                     <th scope="col">Quantity</th>
-                                    <th scope="col">Sub Price</th>
+                                    @if (!$outbound->is_resend)
+                                        <th scope="col">Sub Price</th>
+                                    @endif
                                 </tr>
                             </thead>
                             <tbody>
@@ -109,95 +115,101 @@
                                         <td>{{ Str::limit($item->goods->name, 12) }}</td>
                                         <td>{{ $item->goods->warehouse->name }}</td>
                                         <td>{{ $item->qty }}</td>
-                                        <td>{{ 'Rp. ' . number_format($item->sub_total, 0, ',', '.') }}</td>
+                                        @if (!$outbound->is_resend)
+                                            <td>{{ 'Rp. ' . number_format($item->sub_total, 0, ',', '.') }}</td>
+                                        @endif
                                     </tr>
                                 @endforeach
                             </tbody>
-                            <tfoot></tfoot>
-                            <tr style="font-size: 12px">
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td colspan="2" style="font-weight: bold">Total</td>
-                                <td style="font-weight: bold">
-                                    {{ 'Rp. ' . number_format($outbound->total_price, 0, ',', '.') }}</td>
-                            </tr>
-                            </tfoot>
-                        </table>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h5 class="card-title">Payments</h5>
-                            @if ($outbound->status_payment == 'Unpaid' || $outbound->status_payment == 'Partially Paid')
-                                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                    data-bs-target="#basicModal2">
-                                    Pay
-                                </button>
+                            @if (!$outbound->is_resend)
+                                <tfoot>
+                                    <tr style="font-size: 12px">
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td colspan="2" style="font-weight: bold">Total</td>
+                                        <td style="font-weight: bold">
+                                            {{ 'Rp. ' . number_format($outbound->total_price, 0, ',', '.') }}</td>
+                                    </tr>
+                                </tfoot>
                             @endif
-                        </div>
-
-                        @include('outbounds.modals.payment')
-                        <table class="table">
-                            <thead>
-                                <tr style="font-size: 15px">
-                                    <th scope="col">#</th>
-                                    <th scope="col">Date</th>
-                                    {{-- <th scope="col">Code</th> --}}
-                                    <th scope="col">Method</th>
-                                    <th scope="col">Paid</th>
-                                    <th scope="col" style="text-align: center;">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @if ($outbound->payments()->first()->date == null)
-                                    <td colspan="5" style="font-size: 12px; text-align: center">No Data</td>
-                                @else
-                                    @foreach ($outbound->payments as $payment)
-                                        <tr style="font-size: 12px">
-                                            <th scope="row">{{ $loop->iteration }}</th>
-                                            <td>{{ Carbon\Carbon::parse($payment->date)->format('d F Y') }}</td>
-                                            {{-- <td>{{ $payment->code_payment }}</td> --}}
-                                            <td>{{ $payment->payment_method . ($payment->bank ? " ($payment->bank)" : '') }}
-                                            </td>
-                                            <td>{{ 'Rp. ' . number_format($payment->paid, 0, ',', '.') }}</td>
-                                            <td style="text-align: center">
-                                                <a href="{{ route('payment.downloadImagePayment', $payment) }}"
-                                                    class="btn btn-sm btn-primary" target="_blank"><i
-                                                        class="bi bi-card-image"></i></a>
-                                                <a class="btn btn-sm btn-secondary" href=""><i
-                                                        class="bi bi-printer"></i></a>
-                                            </td>
-                                        </tr>
-                                        {{-- @include('outbounds.modals.image-payment') --}}
-                                    @endforeach
-                                @endif
-                            </tbody>
-                            <tfoot></tfoot>
-                            <tr style="font-size: 12px">
-                                {{-- <td></td> --}}
-                                {{-- <td></td> --}}
-                                <td></td>
-                                <td colspan="2" style="font-weight: bold; text-align: center">Total</td>
-                                <td style="font-weight: bold">
-                                    {{ 'Rp. ' . number_format($outbound->payments->sum('paid'), 0, ',', '.') }}</td>
-
-                            </tr>
-                            <tr style="font-size: 12px">
-                                {{-- <td></td> --}}
-                                {{-- <td></td> --}}
-                                <td></td>
-                                <td colspan="2" style="font-weight: bold; text-align: center">Remaining Payment</td>
-                                <td style="font-weight: bold">
-                                    {{ 'Rp. ' . number_format($outbound->total_price - $outbound->payments->sum('paid'), 0, ',', '.') }}
-                                </td>
-                            </tr>
-                            </tfoot>
                         </table>
                     </div>
                 </div>
+
+                @if (!$outbound->is_resend)
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="card-title">Payments</h5>
+                                @if ($outbound->status_payment == 'Unpaid' || $outbound->status_payment == 'Partially Paid')
+                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                        data-bs-target="#basicModal2">
+                                        Pay
+                                    </button>
+                                @endif
+                            </div>
+
+                            @include('outbounds.modals.payment')
+                            <table class="table">
+                                <thead>
+                                    <tr style="font-size: 15px">
+                                        <th scope="col">#</th>
+                                        <th scope="col">Date</th>
+                                        {{-- <th scope="col">Code</th> --}}
+                                        <th scope="col">Method</th>
+                                        <th scope="col">Paid</th>
+                                        <th scope="col" style="text-align: center;">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if ($outbound->payments()->first()->date == null)
+                                        <td colspan="5" style="font-size: 12px; text-align: center">No Data</td>
+                                    @else
+                                        @foreach ($outbound->payments as $payment)
+                                            <tr style="font-size: 12px">
+                                                <th scope="row">{{ $loop->iteration }}</th>
+                                                <td>{{ Carbon\Carbon::parse($payment->date)->format('d F Y') }}</td>
+                                                {{-- <td>{{ $payment->code_payment }}</td> --}}
+                                                <td>{{ $payment->payment_method . ($payment->bank ? " ($payment->bank)" : '') }}
+                                                </td>
+                                                <td>{{ 'Rp. ' . number_format($payment->paid, 0, ',', '.') }}</td>
+                                                <td style="text-align: center">
+                                                    <a href="{{ route('payment.downloadImagePayment', $payment) }}"
+                                                        class="btn btn-sm btn-primary" target="_blank"><i
+                                                            class="bi bi-card-image"></i></a>
+                                                    <a class="btn btn-sm btn-secondary" href=""><i
+                                                            class="bi bi-printer"></i></a>
+                                                </td>
+                                            </tr>
+                                            {{-- @include('outbounds.modals.image-payment') --}}
+                                        @endforeach
+                                    @endif
+                                </tbody>
+                                <tfoot></tfoot>
+                                <tr style="font-size: 12px">
+                                    {{-- <td></td> --}}
+                                    {{-- <td></td> --}}
+                                    <td></td>
+                                    <td colspan="2" style="font-weight: bold; text-align: center">Total</td>
+                                    <td style="font-weight: bold">
+                                        {{ 'Rp. ' . number_format($outbound->payments->sum('paid'), 0, ',', '.') }}</td>
+
+                                </tr>
+                                <tr style="font-size: 12px">
+                                    {{-- <td></td> --}}
+                                    {{-- <td></td> --}}
+                                    <td></td>
+                                    <td colspan="2" style="font-weight: bold; text-align: center">Remaining Payment</td>
+                                    <td style="font-weight: bold">
+                                        {{ 'Rp. ' . number_format($outbound->total_price - $outbound->payments->sum('paid'), 0, ',', '.') }}
+                                    </td>
+                                </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                @endif
 
             </div>
             <div class="col-lg-5">
@@ -404,8 +416,8 @@
                                             @endif
                                         @endhasrole
 
-                                        @if ($outbound->status == 'Approved to delivery')
-                                            <a href="{{ route('outbounds.downloadInvoiceDelivery', $outbound) }}"
+                                        @if ($outbound->status == 'Approved to delivery' || $outbound->status == 'Success')
+                                            <a target="_blank" href="{{ route('outbounds.downloadInvoiceDelivery', $outbound) }}"
                                                 class="btn btn-primary btn-sm  mb-3">Download Invoice Delivery</a>
                                         @endif
                                     </div>
@@ -507,7 +519,7 @@
             $('.select2').select2({
                 dropdownParent: $('#basicModal .modal-body'),
                 placeholder: 'Choose..',
-                    theme: 'bootstrap4',
+                theme: 'bootstrap4',
             });
         });
 
@@ -525,6 +537,5 @@
                 textarea.value = '';
             }
         });
-
     </script>
 @endpush

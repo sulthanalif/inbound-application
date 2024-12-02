@@ -13,7 +13,7 @@
                 </div>
 
                 <!-- Default Table -->
-                <table class="table">
+                <table class="table datatable">
                     <thead>
                         <tr>
                             <th scope="col">#</th>
@@ -25,7 +25,7 @@
                         @if ($categories->count() > 0)
                             @foreach ($categories as $category)
                                 <tr>
-                                    <th scope="row">{{ ($categories->currentPage() - 1) * $categories->perPage() + $loop->iteration }}</th>
+                                    <th scope="row">{{ $loop->iteration }}</th>
                                     <td>{{ $category->name }}</td>
                                     <td align="center">
                                         <a href="{{ route('categories.edit', $category) }}"
@@ -42,7 +42,7 @@
                     </tbody>
                 </table>
                 <!-- End Default Table Example -->
-                {{ $categories->links('layouts.paginate') }}
+                {{-- {{ $categories->links('layouts.paginate') }} --}}
 
             </div>
         </div>

@@ -13,7 +13,7 @@
                 </div>
 
                 <!-- Default Table -->
-                <table class="table">
+                <table class="table datatable">
                     <thead>
                         <tr>
                             <th scope="col">#</th>
@@ -28,7 +28,7 @@
                         @if ($areas->count() > 0)
                             @foreach ($areas as $area)
                                 <tr>
-                                    <th scope="row">{{ ($areas->currentPage() - 1) * $areas->perPage() + $loop->iteration }}</th>
+                                    <th scope="row">{{ $loop->iteration }}</th>
                                     <td>{{ $area->code }}</td>
                                     <td>{{ $area->name }}</td>
                                     <td>{{ $area->address }}</td>
@@ -48,7 +48,7 @@
                     </tbody>
                 </table>
                 <!-- End Default Table Example -->
-                {{ $areas->links('layouts.paginate') }}
+                {{-- {{ $areas->links('layouts.paginate') }} --}}
 
             </div>
         </div>

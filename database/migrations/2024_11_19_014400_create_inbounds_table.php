@@ -24,6 +24,8 @@ return new class extends Migration
             // $table->integer('qty')->default(0);
             $table->string('status')->default('Pending');
             $table->boolean('is_return')->default(false);
+            $table->string('code_outbound')->nullable();
+            $table->string('number')->nullable();
             $table->text('description')->nullable();
             $table->timestamps();
         });

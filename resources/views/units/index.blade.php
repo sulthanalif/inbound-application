@@ -13,7 +13,7 @@
                 </div>
 
                 <!-- Default Table -->
-                <table class="table">
+                <table class="table datatable">
                     <thead>
                         <tr>
                             <th scope="col">#</th>
@@ -27,7 +27,7 @@
                         @if ($units->count() > 0)
                             @foreach ($units as $unit)
                                 <tr>
-                                    <th scope="row">{{ ($units->currentPage() - 1) * $units->perPage() + $loop->iteration }}</th>
+                                    <th scope="row">{{ $loop->iteration }}</th>
                                     <td>{{ $unit->name }}</td>
                                     <td>{{ $unit->symbol }}</td>
                                     <td>{{ $unit->description }}</td>
@@ -46,7 +46,7 @@
                     </tbody>
                 </table>
                 <!-- End Default Table Example -->
-                {{ $units->links('layouts.paginate') }}
+                {{-- {{ $units->links('layouts.paginate') }} --}}
 
             </div>
         </div>

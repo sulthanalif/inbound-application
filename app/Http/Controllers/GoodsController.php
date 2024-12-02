@@ -103,6 +103,7 @@ class GoodsController extends Controller
 
     public function update(Request $request, Goods $goods)
     {
+        // dd($request->all());
         $validator = Validator::make($request->all(), [
             'name' => 'required|string',
             'code' => 'required|string|unique:goods,code,' . $goods->id,

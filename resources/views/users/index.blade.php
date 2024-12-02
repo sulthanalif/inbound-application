@@ -13,7 +13,7 @@
               </div>
 
               <!-- Default Table -->
-              <table class="table">
+              <table class="table datatable">
                 <thead>
                   <tr align="center">
                     <th scope="col">#</th>
@@ -27,7 +27,7 @@
                 <tbody>
                   @foreach ($users as $user)
                     <tr>
-                        <th scope="row">{{ ($users->currentPage() - 1) * $users->perPage() + $loop->iteration }}</th>
+                        <th scope="row">{{ $loop->iteration }}</th>
                         <td>{{ $user->name }}</td>
                         <td>{{ $user->email }}</td>
                         <td><p class="text-center">{{ $user->roles[0]->name }}</p></td>
@@ -41,7 +41,7 @@
                 </tbody>
               </table>
               <!-- End Default Table Example -->
-              {{ $users->links('layouts.paginate') }}
+              {{-- {{ $users->links('layouts.paginate') }} --}}
 
             </div>
           </div>

@@ -12,7 +12,7 @@ class WarehouseController extends Controller
 {
     public function index(Request $request)
     {
-        $warehouses = Warehouse::latest()->paginate(10);
+        $warehouses = Warehouse::latest()->get();
 
         confirmDelete('Delete Data!', 'Are you sure you want to delete?');
 

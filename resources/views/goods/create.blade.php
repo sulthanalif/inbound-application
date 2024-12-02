@@ -209,10 +209,18 @@
                                 </div>
                                 <input type="range" class="form-range" min="10" max="100" step="10"
                                     id="customRange2" name="condition">
-                                <div class="d-flex justify-content-between">
-                                    <span>10%</span>
-                                    <span>100%</span>
-                                </div>
+                                    <div class="d-flex justify-content-between">
+                                        <span>10%</span>
+                                        <span>20%</span>
+                                        <span>30%</span>
+                                        <span>40%</span>
+                                        <span>50%</span>
+                                        <span>60%</span>
+                                        <span>70%</span>
+                                        <span>80%</span>
+                                        <span>90%</span>
+                                        <span>100%</span>
+                                    </div>
                                 @error('condition')
                                     <p class="text-danger text-xs mt-2">
                                         {{ $message }}

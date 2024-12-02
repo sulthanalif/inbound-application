@@ -13,7 +13,7 @@ class AreaController extends Controller
 {
     public function index()
     {
-        $areas = Area::latest()->paginate(10);
+        $areas = Area::latest()->get();
 
         confirmDelete('Delete Data!', 'Are you sure you want to delete?');
         return view('areas.index', compact('areas'));

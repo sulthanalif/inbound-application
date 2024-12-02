@@ -30,6 +30,11 @@ class Goods extends Model
         'user_id',
     ];
 
+    public function problemItems()
+    {
+        return $this->hasMany(ProblemItem::class);
+    }
+
     public function vendor()
     {
         return $this->belongsTo(Vendor::class);

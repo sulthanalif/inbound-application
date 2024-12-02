@@ -19,8 +19,15 @@ class Inbound extends Model
         'vehicle_number',
         'status',
         'is_return',
+        'number',
+        'code_outbound',
         'description',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
     public function resend()
     {

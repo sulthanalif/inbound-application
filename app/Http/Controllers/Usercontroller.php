@@ -14,7 +14,7 @@ class Usercontroller extends Controller
 {
     public function index(Request $request)
     {
-        $users = User::with('roles')->latest()->paginate(5);
+        $users = User::with('roles')->latest()->get();
 
         confirmDelete('Delete Data!', 'Are you sure you want to delete?');
 

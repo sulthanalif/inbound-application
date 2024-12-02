@@ -12,7 +12,7 @@ class VendorController extends Controller
 {
     public function index()
     {
-        $vendors = Vendor::latest()->paginate(10);
+        $vendors = Vendor::latest()->get();
 
         confirmDelete('Delete Data!', 'Are you sure you want to delete?');
 

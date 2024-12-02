@@ -31,19 +31,18 @@
                     <th scope="col">Code</th>
                     <th scope="col">Project</th>
                     <th scope="col">PT</th>
-                    <th scope="col">User</th>
                     <th scope="col">Status</th>
+                    <th scope="col">Outbound</th>
                     <th scope="col" style="text-align: center;">Action</th>
                   </tr>
                 </thead>
                 <tbody>
                   @foreach ($outbounds as $outbound)
                     <tr>
-                        <th scope="row">{{ ($outbounds->currentPage() - 1) * $outbounds->perPage() + $loop->iteration }}</th>
+                        <th scope="row">{{ $loop->iteration }}</th>
                         <td>{{ Carbon\Carbon::parse($outbound->date)->format('d F Y') }}</td>
                         <td>{{ $outbound->code }}</td>
                         <td>{{ $outbound->project->name }}</td>
-                        <td>{{ $outbound->company_name ?? '-' }}</td>
                         <td>{{ auth()->user()->name }}</td>
                         <td>
                             <div class="badge bg-{{ match ($outbound->status) {
@@ -56,7 +55,11 @@
                                                 default => 'danger',
                                             } }}">{{ $outbound->status }}</div>
                         </td>
-
+                        <td>
+                            <div class="badge bg-{{ $outbound->is_resend ? 'warning' : 'primary' }}">
+                                {{ $outbound->is_resend ? 'Resend' : 'Request' }}
+                            </div>
+                        </td>
                         <td align="center">
                             <a href="{{ route('outbounds.show', $outbound) }}" class="btn btn-primary btn-sm"><i class="bi bi-eye-fill"></i></a>
                         </td>

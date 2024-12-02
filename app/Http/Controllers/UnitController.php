@@ -12,7 +12,7 @@ class UnitController extends Controller
 {
     public function index()
     {
-        $units = Unit::latest()->paginate(10);
+        $units = Unit::latest()->get();
 
         confirmDelete('Delete Data!', 'Are you sure you want to delete?');
 

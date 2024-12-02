@@ -23,23 +23,10 @@ class OutboundController extends Controller
 {
     public function index(Request $request)
     {
-        $search = $request->query('search');
+        // $search = $request->query('search');
         $outbounds = Outbound::with(['project', 'vendor', 'user'])
             ->latest()
-            ->where(function ($query) use ($search) {
-                $query->where('code', 'LIKE', "%{$search}%")
-                    ->orWhere('status', 'LIKE', "%{$search}%")
-                    ->orWhereHas('project', function ($query) use ($search) {
-                        $query->where('name', 'LIKE', "%{$search}%");
-                    })
-                    ->orWhereHas('user', function ($query) use ($search) {
-                        $query->where(function ($query) use ($search) {
-                            $query->where('name', 'LIKE', "%{$search}%")
-                                  ->orWhere('company', 'LIKE', "%{$search}%");
-                        });
-                    });
-            })
-            ->paginate(10);
+            ->get();
 
         return view('outbounds.index', compact('outbounds'));
     }
@@ -178,24 +165,24 @@ class OutboundController extends Controller
 
     public function updateRequest(Request $request, Outbound $outbound)
     {
-        dd($request->all());
+        // dd($outbound);
         $data = json_decode($request->input('data'), true);
 
         try {
             DB::transaction(function () use ($request, $data, $outbound) {
                 //update outbound
                 $outbound->update([
-                   'total_price' => $request->total_price
+                   'total_price' => array_sum(array_column($data, 'subtotal'))
                 ]);
 
-                //hapus semua data outboud item
-                OutboundItem::where('outbound_id', $outbound->id)->delete();
+                //delete all outbound items
+                $outbound->items()->delete();
 
                 //input data item
                 foreach ($data as $item) {
                     $outboundItem = new OutboundItem();
                     $outboundItem->outbound_id = $outbound->id;
-                    $outboundItem->goods_id = $item['id'];
+                    $outboundItem->goods_id = $item['item_id'];
                     $outboundItem->qty = $item['qty'];
                     $outboundItem->sub_total = $item['subtotal'];
                     $outboundItem->save();
@@ -203,7 +190,7 @@ class OutboundController extends Controller
             });
 
             Alert::success('Success', 'Update request successfully');
-            return back();
+            return redirect()->route('outbounds.show', $outbound);
         } catch (\Throwable $th) {
             Alert::error('Error', $th->getMessage());
             return back();
@@ -216,12 +203,13 @@ class OutboundController extends Controller
         // if (Storage::disk('public')->put('pdf/Outbound_OUT2024112215861.pdf', $pdf->output())) {
         //     return response()->json('OKK');
         // }
+        // dd($request->all());
         try {
             DB::transaction(function () use ($outbound, $request) {
                 $order_count = str_pad(Outbound::where('status', 'Approved')->count() + 1, 3, '0', STR_PAD_LEFT);
                 $outbound_goods = 'DN';
                 $default = 'JSSZ1';
-                $area = $request->area;
+                $area = Area::find($request->area_id)->code;
                 // $mounth = DateTime::createFromFormat('!m', date('m'))->format('F');
                 $romanNumerals = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
                 $monthNumber = Carbon::parse(now())->month;
@@ -236,11 +224,12 @@ class OutboundController extends Controller
             });
 
             $pdf = Pdf::loadView('outbounds.pdf.outbound', ['outbound' => $outbound]);
-            if (Storage::disk('public')->put('pdf/Outbound_'.$outbound->code.'.pdf', $pdf->output())) {
-                Alert::success('Success', 'Data Delivered');
-                return back();
-            }
-            Alert::error('Error', 'Something went wrong');
+            // if (Storage::disk('public')->put('pdf/Outbound_'.$outbound->code.'.pdf', $pdf->output())) {
+            //     Alert::success('Success', 'Data Delivered');
+            //     return back();
+            // }
+            // Alert::error('Error', 'Something went wrong');
+            Alert::success('Success', 'Data Delivered');
             return back();
         } catch (\Throwable $th) {
             Alert::error('Error', $th->getMessage());
@@ -250,14 +239,8 @@ class OutboundController extends Controller
 
     public function downloadInvoiceDelivery(Outbound $outbound)
     {
-        $filePath = 'pdf/Outbound_' . $outbound->code . '.pdf';
-        if (Storage::disk('public')->exists($filePath)) {
-            $file = Storage::disk('public')->get($filePath);
-            return response($file, 200)
-                ->header('Content-Type', 'application/pdf')
-                ->header('Content-Disposition', 'inline; filename="Outbound_' . $outbound->code . '.pdf"');
-        } else {
-            return response()->json(['message' => 'File tidak ditemukan'], 404);
-        }
+        $pdf = Pdf::loadView('outbounds.pdf.outbound', ['outbound' => $outbound]);
+
+        return $pdf->stream('Surat Jalan - '.$outbound->code.'.pdf');
     }
 }

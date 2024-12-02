@@ -23,8 +23,14 @@ class Outbound extends Model
         'payment',
         'status_payment',
         'is_resend',
+        'code_inbound',
         'total_price',
     ];
+
+    public function problemItems()
+    {
+        return $this->hasMany(ProblemItem::class);
+    }
 
     public function inbound()
     {
