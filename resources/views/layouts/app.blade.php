@@ -54,7 +54,7 @@
         href="https://cdn.jsdelivr.net/npm/@ttskch/select2-bootstrap4-theme@x.x.x/dist/select2-bootstrap4.min.css">
     @stack('styles')
 
-    @livewireStyles
+    {{-- @livewireStyles --}}
 </head>
 
 <body>
@@ -168,7 +168,7 @@
     <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
         class="bi bi-arrow-up-short"></i></a>
 
-    @livewireScripts
+    {{-- @livewireScripts --}}
     @include('sweetalert::alert')
 
     <!-- Vendor JS Files -->
