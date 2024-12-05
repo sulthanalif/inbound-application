@@ -89,6 +89,7 @@ class DatabaseSeeder extends Seeder
         Project::create([
             'code' => 'PRJ01',
             'name' => 'Project 1',
+            'start_date' => now(),
             'address' => 'Jl. Kenangan No. 1',
             'user_id' => User::where('name', 'Admin Engineer')->first()->id
         ]);

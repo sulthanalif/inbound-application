@@ -13,7 +13,9 @@ class Project extends Model
         'name',
         'address',
         'status',
-        'user_id'
+        'user_id',
+        'start_date',
+        'end_date',
     ];
 
     public function inbounds()

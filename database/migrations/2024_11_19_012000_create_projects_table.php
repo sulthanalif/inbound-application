@@ -18,6 +18,8 @@ return new class extends Migration
             $table->text('address')->nullable();
             $table->string('status')->default('On Progress');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->date('start_date')->nullable();
+            $table->date('end_date')->nullable();
             $table->timestamps();
         });
     }
