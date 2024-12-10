@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Area;
+use App\Models\Warehouse;
 // use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -19,17 +20,18 @@ class AreaController extends Controller
         return view('areas.index', compact('areas'));
     }
 
-    public function create()
+    public function create(Warehouse $warehouse)
     {
-        return view('areas.create');
+        return view('areas.create', compact('warehouse'));
     }
 
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
+            'warehouse_id' => 'required',
             'code' => 'required|string|unique:areas,code',
             'name' => 'required|string',
-            'address' => 'required|string'
+            'description' => 'required|string'
         ]);
 
         if ($validator->fails()) {
@@ -39,17 +41,18 @@ class AreaController extends Controller
         try {
             DB::transaction(function () use ($request) {
                 $area = new Area();
+                $area->warehouse_id = $request->warehouse_id;
                 $area->code = $request->code;
                 $area->name = $request->name;
-                $area->address = $request->address;
+                $area->description = $request->description;
                 $area->save();
             });
 
             Alert::success('Hore!', 'Area Created Successfully');
-            return redirect()->route('areas.index');
+            return redirect()->route('warehouses.show', $request->warehouse_id);
         } catch (\Throwable $th) {
             Alert::error('Oops!', $th->getMessage());
-            return redirect()->route('areas.index');
+            return redirect()->route('warehouses.show', $request->warehouse_id);
         }
     }
 

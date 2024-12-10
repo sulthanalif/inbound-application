@@ -14,6 +14,12 @@ class Warehouse extends Model
         'address',
     ];
 
+
+    public function contrainers()
+    {
+        return $this->hasMany(Container::class);
+    }
+
     public function goods()
     {
         return $this->hasMany(Goods::class);

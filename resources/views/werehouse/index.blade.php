@@ -1,4 +1,8 @@
-@extends('layouts.app')
+@extends('layouts.app', [
+    // 'breadcrumbs' => [
+    //     ['name' => 'Warehouses', 'route' => 'warehouses.index'],
+    // ]
+])
 
 @section('title', 'Warehouse')
 
@@ -29,7 +33,7 @@
                                 <tr>
                                     <th scope="row">{{ $loop->iteration }}</th>
                                     <td>{{ $warehouse->code }}</td>
-                                    <td>{{ $warehouse->name }}</td>
+                                    <td><a href="{{ route('warehouses.show', $warehouse) }}">{{ $warehouse->name }}</a></td>
                                     <td>{{ $warehouse->address }}</td>
                                     <td align="center">
                                         <a href="{{ route('warehouses.edit', $warehouse) }}"

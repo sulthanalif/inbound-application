@@ -16,6 +16,7 @@ use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\OutboundController;
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\ContainerController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\WarehouseController;
 use App\Http\Controllers\Auth\LoginController;
@@ -73,11 +74,15 @@ Route::middleware('auth', 'is_active')->group(function () {
     Route::middleware('role:Super Admin|Admin Warehouse')->group(function () {
         //warehouse
         Route::get('/warehouses', [WarehouseController::class, 'index'])->name('warehouses.index');
+        Route::get('/warehouses/{warehouse}', [WarehouseController::class, 'show'])->name('warehouses.show');
         Route::get('/warehouses/create', [WarehouseController::class, 'create'])->name('warehouses.create');
         Route::post('/warehouses', [WarehouseController::class, 'store'])->name('warehouses.store');
         Route::get('/warehouses/{warehouse}/edit', [WarehouseController::class, 'edit'])->name('warehouses.edit');
         Route::put('/warehouses/{warehouse}', [WarehouseController::class, 'update'])->name('warehouses.update');
         Route::delete('/warehouses/{warehouse}', [WarehouseController::class, 'destroy'])->name('warehouses.destroy');
+
+        //containers
+        Route::resource('containers', ContainerController::class);
 
         //categories
         Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
@@ -111,8 +116,9 @@ Route::middleware('auth', 'is_active')->group(function () {
         Route::put('/vendors/{vendor}', [VendorController::class, 'update'])->name('vendors.update');
         Route::delete('/vendors/{vendor}', [VendorController::class, 'destroy'])->name('vendors.destroy');
 
+        //area
         Route::get('/areas', [AreaController::class, 'index'])->name('areas.index');
-        Route::get('/areas/create', [AreaController::class, 'create'])->name('areas.create');
+        Route::get('/areas/create/{warehouse}', [AreaController::class, 'create'])->name('areas.create');
         Route::post('/areas', [AreaController::class, 'store'])->name('areas.store');
         Route::get('/areas/{area}/edit', [AreaController::class, 'edit'])->name('areas.edit');
         Route::put('/areas/{area}', [AreaController::class, 'update'])->name('areas.update');

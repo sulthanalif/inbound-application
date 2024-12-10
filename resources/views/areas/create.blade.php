@@ -13,6 +13,7 @@
                         <!-- Multi Columns Form -->
                         <form class="row g-3 mt-1" method="POST" action="{{ route('areas.store') }}">
                             @csrf
+                            <input type="hidden" name="warehouse_id" value="{{ $warehouse->id }}">
                             <div class="col-md-6">
                                 <label for="code" class="form-label">Code<span
                                         class="text-danger">*</span></label>
@@ -35,10 +36,10 @@
                             </div>
 
                             <div class="col-sm-12">
-                                <label for="address" class="form-label">Address</label>
-                                <textarea name="address" id="address" class="form-control @error('address') is-invalid @enderror"
+                                <label for="description" class="form-label">Description</label>
+                                <textarea name="description" id="description" class="form-control @error('description') is-invalid @enderror"
                                     id="" cols="30" rows="3"></textarea>
-                                @error('address')
+                                @error('description')
                                     <p class="text-danger text-xs mt-2">
                                         {{ $message }}
                                     </p>

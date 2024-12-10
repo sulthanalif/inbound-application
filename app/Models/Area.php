@@ -11,8 +11,14 @@ class Area extends Model
     protected $fillable = [
         'code',
         'name',
-        'address'
+        'description',
+        'container_id',
     ];
+
+    public function container()
+    {
+        return $this->belongsTo(Container::class);
+    }
 
     public function outbound()
     {

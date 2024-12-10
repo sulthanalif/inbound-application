@@ -94,17 +94,17 @@ class DatabaseSeeder extends Seeder
             'user_id' => User::where('name', 'Admin Engineer')->first()->id
         ]);
 
-        Area::create([
-            'code' => 'AR01',
-            'name' => 'Area 1',
-            'address' => 'Jl. Kenangan No. 1',
-        ]);
+        // Area::create([
+        //     'code' => 'AR01',
+        //     'name' => 'Area 1',
+        //     'address' => 'Jl. Kenangan No. 1',
+        // ]);
 
-        Area::create([
-            'code' => 'AR02',
-            'name' => 'Area 2',
-            'address' => 'Jl. Kenangan No. 2',
-        ]);
+        // Area::create([
+        //     'code' => 'AR02',
+        //     'name' => 'Area 2',
+        //     'address' => 'Jl. Kenangan No. 2',
+        // ]);
     }
 }
 

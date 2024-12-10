@@ -19,6 +19,11 @@ class WarehouseController extends Controller
         return view('werehouse.index', compact('warehouses'));
     }
 
+    public function show(Warehouse $warehouse)
+    {
+        return view('werehouse.show', compact('warehouse'));
+    }
+
     public function create(Request $request)
     {
         return view('werehouse.create');

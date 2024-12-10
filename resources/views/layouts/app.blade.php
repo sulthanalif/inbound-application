@@ -141,7 +141,13 @@
             <h1>@yield('title')</h1>
             <nav>
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
+                    @if (isset($breadcrumbs))
+                        @foreach ($breadcrumbs as $link)
+                            <li class="breadcrumb-item"><a href="{{ route($link['route']) }}">{{ $link['name'] }}</a>
+                            </li>
+                        @endforeach
+                    @endif
                     <li class="breadcrumb-item active">@yield('title')</li>
                 </ol>
             </nav>
@@ -166,7 +172,7 @@
     </footer><!-- End Footer -->
 
     <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
-        class="bi bi-arrow-up-short"></i></a>
+            class="bi bi-arrow-up-short"></i></a>
 
     {{-- @livewireScripts --}}
     @include('sweetalert::alert')
