@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Area;
 use App\Models\Warehouse;
-// use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -27,11 +26,14 @@ class AreaController extends Controller
 
     public function store(Request $request)
     {
+        // dd($request->all());
         $validator = Validator::make($request->all(), [
-            'warehouse_id' => 'required',
+            'warehouse_id' => 'required|exists:warehouses,id',
             'code' => 'required|string|unique:areas,code',
             'name' => 'required|string',
-            'description' => 'required|string'
+            'container' => 'nullable|string',
+            'rack' => 'nullable|string',
+            'number' => 'nullable|string',
         ]);
 
         if ($validator->fails()) {
@@ -44,7 +46,9 @@ class AreaController extends Controller
                 $area->warehouse_id = $request->warehouse_id;
                 $area->code = $request->code;
                 $area->name = $request->name;
-                $area->description = $request->description;
+                $area->container = $request->container;
+                $area->rack = $request->rack;
+                $area->number = $request->number;
                 $area->save();
             });
 
@@ -64,9 +68,11 @@ class AreaController extends Controller
     public function update(Request $request, Area $area)
     {
         $validator = Validator::make($request->all(), [
-            'code' => 'required|string|unique:areas,code,'. $area->id,
+            'code' => 'required|string|unique:areas,code,' . $area->id,
             'name' => 'required|string',
-            'address' => 'required|string',
+            'container' => 'nullable|string',
+            'rack' => 'nullable|string',
+            'number' => 'nullable|string',
         ]);
 
         if ($validator->fails()) {
@@ -77,15 +83,17 @@ class AreaController extends Controller
             DB::transaction(function () use ($request, $area) {
                 $area->code = $request->code;
                 $area->name = $request->name;
-                $area->address = $request->address;
+                $area->container = $request->container;
+                $area->rack = $request->rack;
+                $area->number = $request->number;
                 $area->save();
             });
 
             Alert::success('Hore', 'Area Updated Successfully');
-            return redirect()->route('areas.index');
+            return redirect()->route('warehouses.show', $area->warehouse_id);
         } catch (\Throwable $th) {
             Alert::error('Oops!', $th->getMessage());
-            return redirect()->route('areas.index');
+            return redirect()->route('warehouses.show', $area->warehouse_id);
         }
     }
 
@@ -97,10 +105,11 @@ class AreaController extends Controller
             });
 
             Alert::success('Hore!', 'Area Deletion Successfully');
-            return redirect()->route('areas.index');
+            return redirect()->route('warehouses.show', $area->warehouse_id);
         } catch (\Throwable $th) {
             Alert::error('Oops!', $th->getMessage());
-            return redirect()->route('areas.index');
+            return redirect()->route('warehouses.show', $area->warehouse_id);
         }
     }
 }
+

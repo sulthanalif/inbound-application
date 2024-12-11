@@ -11,13 +11,15 @@ class Area extends Model
     protected $fillable = [
         'code',
         'name',
-        'description',
-        'container_id',
+        'container',
+        'rack',
+        'number',
+        'warehouse_id',
     ];
 
-    public function container()
+    public function warehouse()
     {
-        return $this->belongsTo(Container::class);
+        return $this->belongsTo(Warehouse::class);
     }
 
     public function outbound()

@@ -15,8 +15,10 @@ return new class extends Migration
             $table->id();
             $table->string('code')->unique();
             $table->string('name');
-            $table->text('description')->nullable();
-            $table->foreignId('container_id')->constrained('containers')->onDelete('cascade');
+            $table->string('container')->nullable();
+            $table->string('rack')->nullable();
+            $table->string('number')->nullable();
+            $table->foreignId('warehouse_id')->constrained('warehouses')->onDelete('cascade');
             $table->timestamps();
         });
     }

@@ -1,5 +1,7 @@
 @extends('layouts.app', [
-    'home' => 'warehouses.index',
+ 'breadcrumbs' => [
+        ['route' => 'warehouses.index', 'name' => 'Warehouses', 'params' => null]
+    ]
 ])
 
 @section('title', 'Warehouse Detail')
@@ -9,7 +11,10 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title">Warehouse Detail</h5>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="card-title">Warehouse Detail</h5>
+                    <a href="{{ route('warehouses.index') }}" class="btn btn-danger btn-sm ms-auto">Back</a>
+                    </div>
                     <table class="table">
                         <tbody>
                             <tr>
@@ -44,7 +49,9 @@
                                <th>#</th>
                                <th>Code</th>
                                <th>Name</th>
-                               <th>Description</th>
+                               <th>Container</th>
+                               <th>Rack</th>
+                               <th>Number</th>
                                <th style="width: 200px; text-align: center;">Action</th>
                             </tr>
                         </thead>
@@ -54,9 +61,11 @@
                                     <th scope="row">{{ $loop->iteration }}</th>
                                     <td>{{ $area->code }}</td>
                                     <td>{{ $area->name }}</td>
-                                    <td>{{ $area->description }}</td>
+                                    <td>{{ $area->container }}</td>
+                                    <td>{{ $area->rack }}</td>
+                                    <td>{{ $area->number }}</td>
                                     <td style="text-align: center">
-                                        <a href="" class="btn btn-primary btn-sm"><i class="bi bi-eye-fill"></i></a>
+                                        {{-- <a href="" class="btn btn-primary btn-sm"><i class="bi bi-eye-fill"></i></a> --}}
                                         <a href="{{ route('areas.edit', $area) }}" class="btn btn-primary btn-sm"><i class="bi bi-pencil-fill"></i></a>
                                         <a href="{{ route('areas.destroy', $area) }}" class="btn btn-danger btn-sm" data-confirm-delete="true"><i class="bi bi-trash-fill"></i></a>
                                     </td>

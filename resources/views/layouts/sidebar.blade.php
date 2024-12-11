@@ -90,12 +90,6 @@
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link {{ request()->is('areas*') ? '' : 'collapsed' }}" href="{{ route('areas.index') }}">
-          <i class="bi bi-cone-striped"></i>
-          <span>Areas</span>
-        </a>
-      </li>
-      <li class="nav-item">
         <a class="nav-link {{ request()->is('users*') ? '' : 'collapsed' }}" href="{{ route('users.index') }}">
           <i class="bi bi-person"></i>
           <span>Users</span>

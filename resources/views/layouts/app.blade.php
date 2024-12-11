@@ -141,10 +141,12 @@
             <h1>@yield('title')</h1>
             <nav>
                 <ol class="breadcrumb">
+                    @if (!request()->is('dashboard'))
                     <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
+                    @endif
                     @if (isset($breadcrumbs))
                         @foreach ($breadcrumbs as $link)
-                            <li class="breadcrumb-item"><a href="{{ route($link['route']) }}">{{ $link['name'] }}</a>
+                            <li class="breadcrumb-item"><a href="{{ $link['params'] ? route($link['route'], $link['params']) : route($link['route']) }}">{{ $link['name'] }}</a>
                             </li>
                         @endforeach
                     @endif

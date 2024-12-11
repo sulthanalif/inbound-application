@@ -1,4 +1,9 @@
-@extends('layouts.app')
+@extends('layouts.app', [
+    'breadcrumbs' => [
+        ['route' => 'warehouses.index', 'name' => 'Warehouses', 'params' => null],
+        ['route' => 'warehouses.show', 'params' => $warehouse, 'name' => 'Warehouse Detail'],
+    ]
+])
 
 @section('title', 'Create Area')
 
@@ -35,11 +40,28 @@
                                 @enderror
                             </div>
 
-                            <div class="col-sm-12">
-                                <label for="description" class="form-label">Description</label>
-                                <textarea name="description" id="description" class="form-control @error('description') is-invalid @enderror"
-                                    id="" cols="30" rows="3"></textarea>
-                                @error('description')
+                            <div class="col-sm-4">
+                                <label for="container" class="form-label">Container</label>
+                               <input type="text" name="container" class="form-control @error('container') is-invalid @enderror" id="container">
+                                @error('container')
+                                    <p class="text-danger text-xs mt-2">
+                                        {{ $message }}
+                                    </p>
+                                @enderror
+                            </div>
+                            <div class="col-sm-4">
+                                <label for="rack" class="form-label">Rack</label>
+                               <input type="text" name="rack" class="form-control @error('rack') is-invalid @enderror" id="rack">
+                                @error('rack')
+                                    <p class="text-danger text-xs mt-2">
+                                        {{ $message }}
+                                    </p>
+                                @enderror
+                            </div>
+                            <div class="col-sm-4">
+                                <label for="number" class="form-label">Number</label>
+                               <input type="text" name="number" class="form-control @error('number') is-invalid @enderror" id="number">
+                                @error('number')
                                     <p class="text-danger text-xs mt-2">
                                         {{ $message }}
                                     </p>

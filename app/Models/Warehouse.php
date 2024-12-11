@@ -15,9 +15,9 @@ class Warehouse extends Model
     ];
 
 
-    public function contrainers()
+    public function areas()
     {
-        return $this->hasMany(Container::class);
+        return $this->hasMany(Area::class);
     }
 
     public function goods()
