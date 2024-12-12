@@ -25,15 +25,13 @@
                     <th scope="col">Qty</th>
                     <th scope="col">Category</th>
                     <th scope="col">Warehouse</th>
-                    {{-- <th scope="col">User</th> --}}
                     <th scope="col" style="text-align: center;">Action</th>
                   </tr>
                 </thead>
                 <tbody>
-                  @if ($goods->count() > 0)
                     @foreach ($goods as $item)
                         <tr>
-                            <th scope="row">{{ ($goods->currentPage() - 1) * $goods->perPage() + $loop->iteration }}</th>
+                            <th scope="row">{{ $loop->iteration }}</th>
                             <td>{{ $item->code }}</td>
                             <td>{{ $item->name }}</td>
                             <td>{{ $item->vendor->name }}</td>
@@ -41,7 +39,6 @@
                             <td>{{ $item->qty }}{{ $item->unit->symbol }}</td>
                             <td>{{ $item->category->name }}</td>
                             <td>{{ $item->warehouse->name }}</td>
-                            {{-- <td>{{ $item->user->name }}</td> --}}
 
                             <td align="center">
                                 <a href="{{ route('goods.edit', $item) }}" class="btn btn-primary btn-sm"><i class="bi bi-pencil-fill"></i></a>
@@ -49,16 +46,8 @@
                             </td>
                         </tr>
                     @endforeach
-                  @else
-                    <tr>
-                        <td colspan="10" align="center">No Data</td>
-                    </tr>
-                  @endif
                 </tbody>
               </table>
-              {{-- <!-- End Default Table Example -->
-              {{ $goods->links('layouts.paginate') }} --}}
-
             </div>
           </div>
     </section>
