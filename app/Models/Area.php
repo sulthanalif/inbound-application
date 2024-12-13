@@ -22,6 +22,11 @@ class Area extends Model
         return $this->belongsTo(Warehouse::class);
     }
 
+    public function goods()
+    {
+        return $this->hasMany(Goods::class);
+    }
+
     public function outbound()
     {
         return $this->hasMany(Outbound::class);

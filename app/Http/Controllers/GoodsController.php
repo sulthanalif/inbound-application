@@ -26,7 +26,7 @@ class GoodsController extends Controller
 
     public function create()
     {
-        $warehouses = Warehouse::all();
+        $warehouses = Warehouse::with('areas')->get();
         $categories = Category::all();
         $vendors = Vendor::all();
         $units = Unit::all();
@@ -45,7 +45,7 @@ class GoodsController extends Controller
             'unit_id' => 'required',
             'type' => 'required|string',
             'category_id' => 'required',
-            'warehouse_id' => 'required',
+            'area_id' => 'required',
             'price' => 'required|numeric',
             'qty' => 'required|numeric',
             'description' => 'nullable|string',
@@ -66,7 +66,7 @@ class GoodsController extends Controller
                 $goods->name = $request->name;
                 $goods->code = $request->code;
                 $goods->category_id = $request->category_id;
-                $goods->warehouse_id = $request->warehouse_id;
+                $goods->area_id = $request->area_id;
                 $goods->vendor_id = $request->vendor_id;
                 $goods->unit_id = $request->unit_id;
                 $goods->type = $request->type;
@@ -111,7 +111,7 @@ class GoodsController extends Controller
             'unit_id' => 'required',
             'type' => 'required|string',
             'category_id' => 'required',
-            'warehouse_id' => 'required',
+            'area_id' => 'required',
             'price' => 'required|numeric',
             'qty' => 'required|numeric',
             'description' => 'nullable|string',
@@ -134,7 +134,7 @@ class GoodsController extends Controller
                 $goods->unit_id = $request->unit_id;
                 $goods->type = $request->type;
                 $goods->category_id = $request->category_id;
-                $goods->warehouse_id = $request->warehouse_id;
+                $goods->area_id = $request->area_id;
                 $goods->price = $request->price;
                 $goods->qty = $request->qty;
                 $goods->description = $request->description;

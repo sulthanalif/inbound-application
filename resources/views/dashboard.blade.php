@@ -8,78 +8,99 @@
 
             <div class="col-lg-6">
                 <div class="card">
-                  <div class="card-body">
-                    <h5 class="card-title">Line Chart</h5>
+                    <div class="card-body">
+                        <h5 class="card-title">Transaction Amount</h5>
 
-                    <!-- Line Chart -->
-                    <div id="lineChart"></div>
+                        <!-- Column Chart -->
+                        <div id="columnChart"></div>
 
-                    <script>
-                      document.addEventListener("DOMContentLoaded", () => {
-                        new ApexCharts(document.querySelector("#lineChart"), {
-                          series: [{
-                            name: "Desktops",
-                            data: [10, 41, 35, 51, 49, 62, 69, 91, 148]
-                          }],
-                          chart: {
-                            height: 350,
-                            type: 'line',
-                            zoom: {
-                              enabled: false
-                            }
-                          },
-                          dataLabels: {
-                            enabled: false
-                          },
-                          stroke: {
-                            curve: 'straight'
-                          },
-                          grid: {
-                            row: {
-                              colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
-                              opacity: 0.5
-                            },
-                          },
-                          xaxis: {
-                            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
-                          }
-                        }).render();
-                      });
-                    </script>
-                    <!-- End Line Chart -->
+                        <script>
+                            document.addEventListener("DOMContentLoaded", () => {
+                                new ApexCharts(document.querySelector("#columnChart"), {
+                                    series: [{
+                                        name: 'Outbound',
+                                        data: [44, 55, 57, 56, 61, 58, 63, 60, 66, 55, 34, 67]
+                                    }, {
+                                        name: 'Inbound',
+                                        data: [76, 85, 101, 98, 87, 105, 91, 114, 94, 63, 60, 66]
+                                    }, {
+                                        name: 'Return',
+                                        data: [35, 41, 36, 26, 45, 48, 52, 53, 41, 85, 101, 98                                  ]
+                                    }],
+                                    chart: {
+                                        type: 'bar',
+                                        height: 350
+                                    },
+                                    plotOptions: {
+                                        bar: {
+                                            horizontal: false,
+                                            columnWidth: '55%',
+                                            endingShape: 'rounded'
+                                        },
+                                    },
+                                    dataLabels: {
+                                        enabled: false
+                                    },
+                                    stroke: {
+                                        show: true,
+                                        width: 2,
+                                        colors: ['transparent']
+                                    },
+                                    xaxis: {
+                                        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                                    },
+                                    yaxis: {
+                                        title: {
+                                            text: ''
+                                        }
+                                    },
+                                    fill: {
+                                        opacity: 1
+                                    },
+                                    tooltip: {
+                                        y: {
+                                            formatter: function(val) {
+                                                return  val
+                                            }
+                                        }
+                                    }
+                                }).render();
+                            });
+                        </script>
+                        <!-- End Column Chart -->
 
-                  </div>
+                    </div>
                 </div>
-              </div>
+            </div>
 
-              <div class="col-lg-6">
+            <div class="col-lg-6">
                 <div class="card">
-                  <div class="card-body">
-                    <h5 class="card-title">Pie Chart</h5>
+                    <div class="card-body">
+                        <h5 class="card-title">Comparison Type Items</h5>
 
-                    <!-- Pie Chart -->
-                    <div id="pieChart"></div>
+                        <!-- Donut Chart -->
+                        <div id="donutChart"></div>
 
-                    <script>
-                      document.addEventListener("DOMContentLoaded", () => {
-                        new ApexCharts(document.querySelector("#pieChart"), {
-                          series: [{{ $count_inbound }}, {{ $count_outbound }}],
-                          chart: {
-                            height: 350,
-                            type: 'pie',
-                            toolbar: {
-                              show: true
-                            }
-                          },
-                          labels: ['Inbound', 'Outbound']
-                        }).render();
-                      });
-                    </script>
-                    <!-- End Pie Chart -->
+                        <script>
+                            document.addEventListener("DOMContentLoaded", () => {
+                                new ApexCharts(document.querySelector("#donutChart"), {
+                                    series: [44, 55],
+                                    chart: {
+                                        height: 350,
+                                        type: 'donut',
+                                        toolbar: {
+                                            show: true
+                                        }
+                                    },
+                                    labels: ['Rentable', 'Consumable'],
+                                }).render();
+                            });
+                        </script>
+                        <!-- End Donut Chart -->
 
-                  </div>
+                    </div>
                 </div>
-              </div>
+            </div>
 
         </div>
     </section>

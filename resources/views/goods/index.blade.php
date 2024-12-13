@@ -38,7 +38,7 @@
                             <td>Rp.{{ number_format($item->price, 0, ',', '.') }}</td>
                             <td>{{ $item->qty }}{{ $item->unit->symbol }}</td>
                             <td>{{ $item->category->name }}</td>
-                            <td>{{ $item->warehouse->name }}</td>
+                            <td>{{ $item->area->warehouse->name }}</td>
 
                             <td align="center">
                                 <a href="{{ route('goods.edit', $item) }}" class="btn btn-primary btn-sm"><i class="bi bi-pencil-fill"></i></a>

@@ -37,13 +37,14 @@
                                 @enderror
                             </div>
                             <div class="col-md-4">
-                                <label for="type" class="form-label">Type<span
-                                        class="text-danger">*</span></label>
+                                <label for="type" class="form-label">Type<span class="text-danger">*</span></label>
                                 <select id="type" name="type"
                                     class="form-select @error('type') is-invalid @enderror" required>
                                     <option value="" selected disabled>Choose...</option>
-                                    <option value="Rentable" {{ $goods->type == 'Rentable' ? 'selected' : '' }}>Rentable</option>
-                                    <option value="Consumable" {{ $goods->type == 'Consumable' ? 'selected' : '' }}>Consumable</option>
+                                    <option value="Rentable" {{ $goods->type == 'Rentable' ? 'selected' : '' }}>Rentable
+                                    </option>
+                                    <option value="Consumable" {{ $goods->type == 'Consumable' ? 'selected' : '' }}>
+                                        Consumable</option>
 
                                 </select>
                                 @error('type')
@@ -52,14 +53,16 @@
                                     </p>
                                 @enderror
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <label for="category_id" class="form-label">Category<span
                                         class="text-danger">*</span></label>
                                 <select id="category_id" name="category_id"
                                     class="form-select @error('category_id') is-invalid @enderror" required>
                                     <option value="" selected disabled>Choose...</option>
                                     @foreach ($categories as $category)
-                                        <option value="{{ $category->id }}" {{ $goods->category_id == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
+                                        <option value="{{ $category->id }}"
+                                            {{ $goods->category_id == $category->id ? 'selected' : '' }}>
+                                            {{ $category->name }}</option>
                                     @endforeach
                                 </select>
                                 @error('category_id')
@@ -68,14 +71,17 @@
                                     </p>
                                 @enderror
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <label for="warehouse_id" class="form-label">Warehouse<span
                                         class="text-danger">*</span></label>
                                 <select id="warehouse_id" name="warehouse_id"
-                                    class="form-select @error('warehouse_id') is-invalid @enderror" required>
+                                    class="form-select @error('warehouse_id') is-invalid @enderror"
+                                    onchange="populateArea(this.value, {{ json_encode($warehouses) }})" required>
                                     <option value="" selected disabled>Choose...</option>
                                     @foreach ($warehouses as $warehouse)
-                                        <option value="{{ $warehouse->id }}" {{ $goods->warehouse_id == $warehouse->id ? 'selected' : '' }}>{{ $warehouse->code }} | {{ $warehouse->name }}
+                                        <option value="{{ $warehouse->id }}"
+                                            {{ $goods->area->warehouse_id == $warehouse->id ? 'selected' : '' }}>
+                                            {{ $warehouse->code }} | {{ $warehouse->name }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -85,13 +91,27 @@
                                     </p>
                                 @enderror
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-3">
+                                <label for="area_id" class="form-label">Area<span class="text-danger">*</span></label>
+                                <select id="area_id" name="area_id"
+                                    class="form-select @error('area_id') is-invalid @enderror" required>
+                                    <option value="" selected disabled>Choose...</option>
+
+                                </select>
+                                @error('area_id')
+                                    <p class="text-danger text-xs mt-2">
+                                        {{ $message }}
+                                    </p>
+                                @enderror
+                            </div>
+                            <div class="col-md-3">
                                 <label for="vendor_id" class="form-label">Vendor<span class="text-danger">*</span></label>
                                 <select id="vendor_id" name="vendor_id"
                                     class="form-select @error('vendor_id') is-invalid @enderror" required>
                                     <option value="" selected disabled>Choose...</option>
                                     @foreach ($vendors as $vendor)
-                                        <option value="{{ $vendor->id }}" {{ $goods->vendor_id == $vendor->id ? 'selected' : '' }}>{{ $vendor->name }}
+                                        <option value="{{ $vendor->id }}"
+                                            {{ $goods->vendor_id == $vendor->id ? 'selected' : '' }}>{{ $vendor->name }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -187,7 +207,9 @@
                                     class="form-select @error('unit_id') is-invalid @enderror" required>
                                     <option value="" selected disabled>Choose...</option>
                                     @foreach ($units as $unit)
-                                        <option value="{{ $unit->id }}" {{ $goods->unit_id == $unit->id ? 'selected' : '' }}>{{ $unit->name }} | {{ $unit->symbol }}
+                                        <option value="{{ $unit->id }}"
+                                            {{ $goods->unit_id == $unit->id ? 'selected' : '' }}>{{ $unit->name }} |
+                                            {{ $unit->symbol }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -215,8 +237,8 @@
                                     <span>Bad</span>
                                     <span>Goods</span>
                                 </div>
-                                <input type="range" class="form-range" value="{{ $goods->condition }}" min="10" max="100" step="10"
-                                    id="customRange2" name="condition">
+                                <input type="range" class="form-range" value="{{ $goods->condition }}" min="10"
+                                    max="100" step="10" id="customRange2" name="condition">
                                 <div class="d-flex justify-content-between">
                                     <span>10%</span>
                                     <span>20%</span>
@@ -252,6 +274,25 @@
 
 @push('scripts')
     <script>
+        const selectWarehouse = document.getElementById('warehouse_id');
+        const selectArea = document.getElementById('area_id');
+
+        const populateArea = (warehouseId, warehouses) => {
+            const selectedWarehouse = warehouses.find(warehouse => warehouse.id == warehouseId);
+            if (selectedWarehouse != null) {
+                selectArea.innerHTML = '<option value="" selected disabled>Belum Ada...</option>';
+                // console.log(selectedWarehouse.areas);
+
+                selectedWarehouse.areas.forEach(area => {
+                    const option = document.createElement('option');
+                    option.value = area.id;
+                    option.text = `${area.name}`;
+                    selectArea.appendChild(option);
+                });
+            } else {
+                selectArea.innerHTML = '<option value="" selected disabled>Tidak Ada...</option>';
+            }
+        };
         $(document).ready(function() {
             $('.form-select').select2({
                 placeholder: 'Choose..',
@@ -260,3 +301,4 @@
         });
     </script>
 @endpush
+

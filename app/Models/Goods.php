@@ -26,7 +26,7 @@ class Goods extends Model
         'unit_id',
         'vendor_id',
         'category_id',
-        'warehouse_id',
+        'area_id',
         'user_id',
     ];
 
@@ -50,9 +50,9 @@ class Goods extends Model
         return $this->belongsTo(Category::class);
     }
 
-    public function warehouse()
+    public function area()
     {
-        return $this->belongsTo(Warehouse::class);
+        return $this->belongsTo(Area::class);
     }
 
     public function user()

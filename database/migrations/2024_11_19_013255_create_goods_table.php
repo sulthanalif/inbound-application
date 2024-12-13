@@ -30,7 +30,7 @@ return new class extends Migration
             $table->foreignId('unit_id')->constrained();
             $table->foreignId('vendor_id')->constrained();
             $table->foreignId('category_id')->constrained();
-            $table->foreignId('warehouse_id')->constrained();
+            $table->foreignId('area_id')->constrained();
             $table->foreignId('user_id')->constrained();
             $table->timestamps();
         });

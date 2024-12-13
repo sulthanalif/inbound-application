@@ -71,7 +71,7 @@
                                         class="text-danger">*</span></label>
                                 <select id="warehouse_id" name="warehouse_id"
                                     class="form-select @error('warehouse_id') is-invalid @enderror"
-                                    data-warehouses="{{ $warehouses->toJson() }}" required>
+                                    onchange="populateArea(this.value, {{ json_encode($warehouses) }})" required>
                                     <option value="" selected disabled>Choose...</option>
                                     @foreach ($warehouses as $warehouse)
                                         <option value="{{ $warehouse->id }}">{{ $warehouse->code }} |
@@ -88,10 +88,10 @@
                                 <label for="area_id" class="form-label">Area<span class="text-danger">*</span></label>
                                 <select id="area_id" name="area_id"
                                     class="form-select @error('area_id') is-invalid @enderror" required>
-                                    <option value="" selected disabled>Choose...</option>
+                                    {{-- <option value="" sel   ected disabled>Choose...</option> --}}
 
                                 </select>
-                                @error('warehouse_id')
+                                @error('area_id')
                                     <p class="text-danger text-xs mt-2">
                                         {{ $message }}
                                     </p>
@@ -286,33 +286,30 @@
         const selectArea = document.getElementById('area_id');
 
         const populateArea = (warehouseId, warehouses) => {
-            const selectedWarehouse = warehouses.find(warehouse => warehouse.id === parseInt(warehouseId));
+            const selectedWarehouse = warehouses.find(warehouse => warehouse.id == warehouseId);
+            if (selectedWarehouse != null) {
+                selectArea.innerHTML = '<option value="" selected disabled>Belum Ada...</option>';
+                // console.log(selectedWarehouse.areas);
 
-            if (selectedWarehouse) {
-                selectArea.innerHTML = '<option value="" selected disabled>Choose...</option>';
                 selectedWarehouse.areas.forEach(area => {
                     const option = document.createElement('option');
                     option.value = area.id;
-                    option.textContent = `${area.code} | ${area.name}`;
+                    option.text = `${area.name}`;
                     selectArea.appendChild(option);
                 });
             } else {
-                selectArea.innerHTML = '<option value="" selected disabled>Choose...</option>';
+                selectArea.innerHTML = '<option value="" selected disabled>Tidak Ada...</option>';
             }
         };
 
-        $(document).ready(function() {
-            $('#warehouse_id, #area_id, #type, #category_id, #vendor_id, #unit_id').select2({
-                placeholder: 'Choose...',
+        $('document').ready(function() {
+            $('select').select2({
+                placeholder: 'Choose..',
                 theme: 'bootstrap4',
-                allowClear: true,
-            });
-
-            $('#warehouse_id').on('change', function() {
-                const warehouseId = this.value;
-                const warehouses = JSON.parse(this.dataset.warehouses);
-                populateArea(warehouseId, warehouses);
             });
         });
     </script>
 @endpush
+
+
+
