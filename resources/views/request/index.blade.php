@@ -37,7 +37,8 @@
                                 @enderror
                             </div>
                             <div class="col-12">
-                                <label for="project_id" class="form-label ">Project<span class="text-danger">*</span></label>
+                                <label for="project_id" class="form-label ">Project<span
+                                        class="text-danger">*</span></label>
                                 <select id="project_id" name="project_id"
                                     class="form-select select2 @error('project_id')  is-invalid @enderror" required>
                                     <option value="" selected disabled>Choose...</option>
@@ -64,11 +65,12 @@
                                                 data-name="{{ $category->name }}">
                                                 {{ $category->name }}</option>
                                         @endforeach
+                                        <option value="other">Other</option>
                                     </select>
                                 </div>
                             </div>
 
-                            <div class="col-6">
+                            <div class="col-6" id="goods">
                                 <div class="">
                                     <label for="item-select" class="form-label">Goods</label>
                                     <select id="item-select" name="item_id" class="form-select select2"
@@ -76,6 +78,16 @@
                                         <option value="" selected disabled>Choose...</option>
 
                                     </select>
+
+                                    {{-- <input type="text" name="other_category" id="other_category" style="display: none"> --}}
+                                </div>
+                            </div>
+
+                            <div class="col-6" id="other_cat" style="display: none">
+                                <div class="">
+                                    <label for="other_cat" class="form-label">Goods</label>
+
+                                    <input type="text" name="other_category" id="other_category" class="form-control" >
                                 </div>
                             </div>
                             <div class="col-12">
@@ -176,8 +188,29 @@
         const selectCategory = document.getElementById('selext_category');
         const selectGoods = document.getElementById('item-select');
 
+        // document.getElementById('selext_category').addEventListener('change', function() {
+
+        // });
+
+
         const populateGoods = (categoryId, categories) => {
             const selectedCategory = categories.find(category => category.id == categoryId);
+
+            const input = document.getElementById('other_cat');
+            const goodsSelect = document.getElementById('goods');
+            // const label = document.querySelector('.form-check-label');
+
+            if (categoryId === 'other') {
+                input.style.display = 'block';
+                input.required = true;
+                goodsSelect.style.display = 'none';
+                goodsSelect.required = false;
+            } else {
+                input.style.display = 'none';
+                goodsSelect.style.display = 'block';
+                // selectGoods.required = true;
+            }
+
 
             if (selectedCategory) {
                 selectGoods.innerHTML = '<option value="" selected disabled>Choose...</option>';
@@ -202,7 +235,7 @@
             const itemId = selectedItem.value;
             const itemCode = selectedItem.getAttribute('data-code');
             const itemName = selectedItem.getAttribute('data-name');
-            const itemPrice = selectedItem.getAttribute('data-price');
+            const itemPrice = parseFloat(selectedItem.getAttribute('data-price'));
             const itemUnit = selectedItem.getAttribute('data-unit-symbol');
             const itemQty = 1;
             const subTotal = itemPrice * itemQty;
@@ -220,17 +253,22 @@
                     <tr data-item-id="${itemId}">
                         <td>${itemCode}</td>
                         <td>${itemName}</td>
-                        <td><input type="number" name="request_item_qty[]" class="form-control" value="1" required onchange="calculateSubtotal(this)"></td>
+                        <td><input type="number" name="request_item_qty[]" min="1" class="form-control" value="1" required onchange="calculateSubtotal(this)"></td>
                         <td><input type="number" name="request_item_price[]" class="form-control" value="${itemPrice}" disabled readonly></td>
                         <td>${itemUnit}</td>
-                        <td><input type="number" name="request_item_subtotal[]" class="form-control" value="${subTotal}" disabled readonly></td>
+                        <td><input type="number" name="request_item_subtotal[]" class="form-control" value="${subTotal.toFixed(2)}" disabled readonly></td>
                         <td><button type="button" class="btn btn-danger" onclick="removeRow(this)">Remove</button></td>
                     </tr>
                 `;
                 requestTable.insertAdjacentHTML('beforeend', newRow);
+                data.push({
+                    item_id: itemId,
+                    qty: itemQty,
+                    subtotal: subTotal
+                });
+                calculateTotal();
             }
 
-            // Initialize Select2 on the newly added select element
             $('.select2').select2({
                 placeholder: 'Choose..',
                 theme: 'bootstrap4',
@@ -260,10 +298,12 @@
                     subtotal
                 });
             }
+            calculateTotal();
+        };
 
-            // Update total price
+        const calculateTotal = () => {
             const total_price = data.reduce((total, item) => total + item.subtotal, 0);
-            document.getElementById('total_price').value = total_price;
+            document.getElementById('total_price').value = total_price.toFixed(2);
         };
 
         const removeRow = (el) => {
@@ -272,10 +312,7 @@
             const index = data.findIndex(item => item.item_id === item_id);
             data.splice(index, 1);
             row.remove();
-
-            // Update total price
-            const total_price = data.reduce((total, item) => total + item.subtotal, 0);
-            document.getElementById('total_price').value = total_price;
+            calculateTotal();
         };
 
         // Add a hidden input to the form to send the data array
@@ -297,4 +334,3 @@
         });
     </script>
 @endpush
-

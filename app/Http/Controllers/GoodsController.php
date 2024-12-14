@@ -93,7 +93,7 @@ class GoodsController extends Controller
 
     public function edit(Goods $goods)
     {
-        $warehouses = Warehouse::all();
+        $warehouses = Warehouse::with('areas')->get();
         $categories = Category::all();
         $units = Unit::all();
         $vendors = Vendor::all();

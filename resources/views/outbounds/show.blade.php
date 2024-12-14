@@ -113,7 +113,7 @@
                                         <th scope="row">{{ $loop->iteration }}</th>
                                         <td>{{ $item->goods->code }}</td>
                                         <td>{{ Str::limit($item->goods->name, 12) }}</td>
-                                        <td>{{ $item->goods->warehouse->name }}</td>
+                                        <td>{{ $item->goods->area->warehouse->name }}</td>
                                         <td>{{ $item->qty }}</td>
                                         @if (!$outbound->is_resend)
                                             <td>{{ 'Rp. ' . number_format($item->sub_total, 0, ',', '.') }}</td>

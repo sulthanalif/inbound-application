@@ -13,7 +13,7 @@
                 </div> --}}
 
                 <!-- Default Table -->
-                <table class="table datatable">
+                <table class="table" id="problems-table">
                     <thead>
                         <tr>
                             <th scope="col">#</th>
@@ -78,3 +78,48 @@
         </div>
     </section>
 @endsection
+
+
+@push('scripts')
+    <script>
+        // DataTables initialisation
+        var table = $('#problems-table').DataTable({
+            layout: {
+                top1Start: {
+                    buttons: [
+                        'copy',
+                        {
+                            extend: 'csv',
+                            title: 'Projects Data',
+                            exportOptions: {
+                                columns: [0, 1, 2, 3, 4, 5, 6]
+                            }
+                        },
+                        {
+                            extend: 'excel',
+                            title: 'Projects Data',
+                            exportOptions: {
+                                columns: [0, 1, 2, 3, 4, 5, 6]
+                            }
+                        },
+                        {
+                            extend: 'pdf',
+                            title: 'Projects Data',
+                            exportOptions: {
+                                columns: [0, 1, 2, 3, 4, 5, 6]
+                            }
+                        },
+                        {
+                            extend: 'print',
+                            title: 'Projects Data',
+                            exportOptions: {
+                                columns: [0, 1, 2, 3, 4, 5, 6]
+                            }
+                        },
+
+                    ]
+                }
+            },
+        });
+    </script>
+@endpush

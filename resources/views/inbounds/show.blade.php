@@ -92,7 +92,7 @@
                                         <th scope="row">{{ $loop->iteration }}</th>
                                         <td>{{ $item->goods->name }}</td>
                                         <td>{{ $item->qty }}</td>
-                                        <td>{{ $item->goods->warehouse->name }}</td>
+                                        <td>{{ $item->goods->area->warehouse->name }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -166,7 +166,7 @@
                                             default => 'This order is ready for delivery.',
                                         } }}
                                         </p>
-                                        @if ($inbound->status == 'Delivery' || $inbound->status == 'Approved')
+                                        @if ($inbound->status == 'Delivery')
                                         <a target="_blank" href="{{ route('inbounds.downloadInvoiceDelivery', $inbound) }}"
                                         class="btn btn-primary btn-sm  mb-3">Download Invoice Delivery</a>
                                         @endif

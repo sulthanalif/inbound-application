@@ -95,7 +95,7 @@
                                 <label for="area_id" class="form-label">Area<span class="text-danger">*</span></label>
                                 <select id="area_id" name="area_id"
                                     class="form-select @error('area_id') is-invalid @enderror" required>
-                                    <option value="" selected disabled>Choose...</option>
+                                    {{-- <option value="" selected disabled>Choose...</option> --}}
 
                                 </select>
                                 @error('area_id')
@@ -123,9 +123,12 @@
                             </div>
                             <div class="col-md-3">
                                 <label for="lenght" class="form-label">Lenght<span class="text-danger">*</span></label>
-                                <input type="number" step="0.01" min="0" name="length"
-                                    class="form-control @error('length') is-invalid @enderror" id="lenght"
-                                    value="{{ $goods->length }}" required>
+                                <div class="input-group">
+                                    <input type="number" step="0.01" min="0" name="length"
+                                        class="form-control @error('length') is-invalid @enderror" id="lenght"
+                                        value="{{ $goods->length }}" aria-describedby="basic-addon1" required>
+                                    <span class="input-group-text" id="basic-addon1">cm</span>
+                                </div>
                                 @error('length')
                                     <p class="text-danger text-xs mt-2">
                                         {{ $message }}
@@ -134,9 +137,12 @@
                             </div>
                             <div class="col-md-3">
                                 <label for="width" class="form-label">Width<span class="text-danger">*</span></label>
-                                <input type="number" step="0.01" min="0" name="width"
-                                    class="form-control @error('width') is-invalid @enderror" id="width"
-                                    value="{{ $goods->width }}" required>
+                                <div class="input-group">
+                                    <input type="number" step="0.01" min="0" name="width"
+                                        class="form-control @error('width') is-invalid @enderror" id="width"
+                                        value="{{ $goods->width }}" aria-describedby="basic-addon1" required>
+                                    <span class="input-group-text" id="basic-addon1">cm</span>
+                                </div>
                                 @error('width')
                                     <p class="text-danger text-xs mt-2">
                                         {{ $message }}
@@ -145,9 +151,12 @@
                             </div>
                             <div class="col-md-3">
                                 <label for="height" class="form-label">Height<span class="text-danger">*</span></label>
-                                <input type="number" step="0.01" min="0" name="height"
-                                    class="form-control @error('height') is-invalid @enderror" id="height"
-                                    value="{{ $goods->height }}" required>
+                                <div class="input-group">
+                                    <input type="number" step="0.01" min="0" name="height"
+                                        class="form-control @error('height') is-invalid @enderror" id="height"
+                                        value="{{ $goods->height }}" aria-describedby="basic-addon1" required>
+                                    <span class="input-group-text" id="basic-addon1">cm</span>
+                                </div>
                                 @error('height')
                                     <p class="text-danger text-xs mt-2">
                                         {{ $message }}
@@ -156,9 +165,12 @@
                             </div>
                             <div class="col-md-3">
                                 <label for="weight" class="form-label">Weight<span class="text-danger">*</span></label>
-                                <input type="number" step="0.01" min="0" name="weight"
-                                    class="form-control @error('weight') is-invalid @enderror" id="weight"
-                                    value="{{ $goods->weight }}" required>
+                                <div class="input-group">
+                                    <input type="number" step="0.01" min="0" name="weight"
+                                        class="form-control @error('weight') is-invalid @enderror" id="weight"
+                                        value="{{ $goods->weight }}" aria-describedby="basic-addon1" required>
+                                    <span class="input-group-text" id="basic-addon1">kg</span>
+                                </div>
                                 @error('weight')
                                     <p class="text-danger text-xs mt-2">
                                         {{ $message }}
@@ -169,9 +181,12 @@
                             <div class="col-md-6">
                                 <label for="capital" class="form-label">Capital<span
                                         class="text-danger">*</span></label>
-                                <input type="number" name="capital"
-                                    class="form-control @error('capital') is-invalid @enderror" id="capital"
-                                    value="{{ $goods->capital }}" required>
+                                <div class="input-group">
+                                    <span class="input-group-text" id="basic-addon1">Rp</span>
+                                    <input type="number" name="capital"
+                                        class="form-control @error('capital') is-invalid @enderror" id="capital"
+                                        value="{{ number_format($goods->capital, 0, '', '') }}" aria-describedby="basic-addon1" required>
+                                </div>
                                 @error('capital')
                                     <p class="text-danger text-xs mt-2">
                                         {{ $message }}
@@ -180,9 +195,12 @@
                             </div>
                             <div class="col-md-6">
                                 <label for="price" class="form-label">Price<span class="text-danger">*</span></label>
-                                <input type="number" name="price"
-                                    class="form-control @error('price') is-invalid @enderror" id="price"
-                                    value="{{ $goods->price }}" required>
+                                <div class="input-group">
+                                    <span class="input-group-text" id="basic-addon1">Rp</span>
+                                    <input type="number" name="price"
+                                        class="form-control @error('price') is-invalid @enderror" id="price"
+                                        value="{{ number_format($goods->price, 0, '', '') }}" aria-describedby="basic-addon1" required>
+                                </div>
                                 @error('price')
                                     <p class="text-danger text-xs mt-2">
                                         {{ $message }}
@@ -279,21 +297,28 @@
 
         const populateArea = (warehouseId, warehouses) => {
             const selectedWarehouse = warehouses.find(warehouse => warehouse.id == warehouseId);
+            // console.log("");
             if (selectedWarehouse != null) {
                 selectArea.innerHTML = '<option value="" selected disabled>Belum Ada...</option>';
-                // console.log(selectedWarehouse.areas);
-
                 selectedWarehouse.areas.forEach(area => {
                     const option = document.createElement('option');
                     option.value = area.id;
                     option.text = `${area.name}`;
+                    if (area.id == "{{ $goods->area_id }}") {
+                        option.selected = true;
+                    }
                     selectArea.appendChild(option);
                 });
             } else {
                 selectArea.innerHTML = '<option value="" selected disabled>Tidak Ada...</option>';
             }
         };
+
         $(document).ready(function() {
+            const warehouses = @json($warehouses);
+
+            populateArea("{{ $goods->area->warehouse_id }}", warehouses);
+
             $('.form-select').select2({
                 placeholder: 'Choose..',
                 theme: 'bootstrap4',

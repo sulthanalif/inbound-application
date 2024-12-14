@@ -1,4 +1,9 @@
-@extends('layouts.app')
+@extends('layouts.app', [
+    'breadcrumbs' => [
+        ['route' => 'projects.index', 'name' => 'Projects', 'params' => null],
+        ['route' => 'projects.show', 'params' => $outbound->project, 'name' => 'Project Detail'],
+    ]
+])
 
 @section('title', 'Outbounds Detail')
 
@@ -110,7 +115,7 @@
                                         <th scope="row">{{ $loop->iteration }}</th>
                                         <td>{{ $item->goods->code }}</td>
                                         <td>{{ Str::limit($item->goods->name, 12) }}</td>
-                                        <td>{{ $item->goods->warehouse->name }}</td>
+                                        <td>{{ $item->goods->area->warehouse->name }}</td>
                                         <td>{{ $item->qty }}{{ $item->goods->unit->symbol }}</td>
                                         <td>{{ $item->goods->type }}</td>
                                         {{-- <td>{{ 'Rp. ' . number_format($item->sub_total, 0, ',', '.') }}</td> --}}
@@ -164,7 +169,7 @@
                                             <th scope="row">{{ $loop->iteration }}</th>
                                             <td>{{ $item->goods->code }}</td>
                                             <td>{{ Str::limit($item->goods->name, 12) }}</td>
-                                            <td>{{ $item->goods->warehouse->name }}</td>
+                                            <td>{{ $item->goods->area->warehouse->name }}</td>
                                             <td>{{ $item->qty }}{{ $item->goods->unit->symbol }}</td>
                                             <td>{{ $item->goods->type }}</td>
                                             {{-- <td>{{ 'Rp. ' . number_format($item->sub_total, 0, ',', '.') }}</td> --}}
@@ -211,7 +216,7 @@
                                             <th scope="row">{{ $loop->iteration }}</th>
                                             <td>{{ $item->goods->code }}</td>
                                             <td>{{ Str::limit($item->goods->name, 12) }}</td>
-                                            <td>{{ $item->goods->warehouse->name }}</td>
+                                            <td>{{ $item->goods->area->warehouse->name }}</td>
                                             <td>{{ $item->qty }}{{ $item->goods->unit->symbol }}</td>
                                             <td>{{ $item->goods->type }}</td>
                                             {{-- <td>{{ 'Rp. ' . number_format($item->sub_total, 0, ',', '.') }}</td> --}}
@@ -255,7 +260,7 @@
                                             <th scope="row">{{ $loop->iteration }}</th>
                                             <td>{{ $item->goods->code }}</td>
                                             <td>{{ Str::limit($item->goods->name, 12) }}</td>
-                                            <td>{{ $item->goods->warehouse->name }}</td>
+                                            <td>{{ $item->goods->area->warehouse->name }}</td>
                                             <td>{{ $item->qty }}{{ $item->goods->unit->symbol }}</td>
                                             <td>{{ $item->goods->type }}</td>
                                             {{-- <td>{{ 'Rp. ' . number_format($item->sub_total, 0, ',', '.') }}</td> --}}

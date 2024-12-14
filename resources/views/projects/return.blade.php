@@ -45,7 +45,7 @@
                                     <option value="" selected disabled>Choose...</option>
                                     @foreach ($project->outbounds as $outbound)
                                        @if ($outbound->items->pluck('goods.type')->contains('Rentable') && $outbound->status == 'Success')
-                                       <option value="{{ $outbound->id }}" data-items="{{ json_encode($outbound->items->load('goods.warehouse')) }}">
+                                       <option value="{{ $outbound->id }}" data-items="{{ json_encode($outbound->items->load('goods.area.warehouse')) }}">
                                         {{ $outbound->code }}</option>
                                        @endif
                                     @endforeach
@@ -106,7 +106,7 @@
                             <td>${item.goods.code}</td>
                             <td>${item.goods.name}</td>
                             <td>${item.qty}</td>
-                            <td>${item.goods.warehouse.name}</td>
+                            <td>${item.goods.area.warehouse.name}</td>
 
                         </tr>`;
                 }

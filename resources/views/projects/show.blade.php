@@ -1,4 +1,8 @@
-@extends('layouts.app')
+@extends('layouts.app', [
+    'breadcrumbs' => [
+        ['route' => 'projects.index', 'name' => 'Projects', 'params' => null],
+    ]
+])
 
 @section('title', 'Project Detail')
 
@@ -8,7 +12,13 @@
             <div class="col-lg-6">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">Project Detail</h5>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="card-title">Project Detail</h5>
+                            <div class="d-flex">
+                                <a href="" class="btn btn-primary btn-sm mx-2"><i class="bi bi-printer-fill"></i> PDF</a>
+                                <a href="" class="btn btn-primary btn-sm"><i class="bi bi-printer-fill"></i> Excel</a>
+                            </div>
+                        </div>
 
                         <table class="table">
                             <tbody>
