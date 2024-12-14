@@ -135,7 +135,7 @@
     </div><!-- End Revenue Card -->
 </div>
 <div class="row">
-    <div class="col-xxl-4 col-md-6">
+    <div class="col-xxl-4 col-md-4">
         <div class="card info-card sales-card">
 
             <div class="filter">
@@ -168,7 +168,7 @@
 
         </div>
     </div><!-- End Sales Card -->
-    <div class="col-xxl-4 col-md-3">
+    <div class="col-xxl-4 col-md-4">
         <div class="card info-card customers-card">
 
             <div class="filter">
@@ -201,7 +201,7 @@
 
         </div>
     </div><!-- End Sales Card -->
-    <div class="col-xxl-4 col-md-6">
+    <div class="col-xxl-4 col-md-4">
         <div class="card info-card revenue-card">
 
             <div class="filter">
