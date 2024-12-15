@@ -6,7 +6,9 @@ use App\Models\Inbound;
 use App\Models\Project;
 use App\Models\Outbound;
 use App\Models\InboundItem;
+use App\Serverces\GenerateCode;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use RealRashid\SweetAlert\Facades\Alert;
@@ -16,7 +18,11 @@ class ProjectController extends Controller
 {
     public function index()
     {
-        $projects = Project::latest()->get();
+        if (Auth::user()->roles[0]->name == 'Admin Engineer') {
+            $projects = Project::where('user_id', Auth::user()->id)->latest()->get();
+        } else {
+            $projects = Project::latest()->get();
+        }
 
         return view('projects.index', compact('projects'));
     }
@@ -38,12 +44,55 @@ class ProjectController extends Controller
         return view('projects.outbound.show', compact('outbound', 'inboundItemsProblems', 'outbounItemsdResend', 'inboundItems'));
     }
 
+    public function print(Project $project)
+    {
+        $outboundGoods = [];
+
+        foreach ($project->outbounds as $outbound) {
+            foreach ($outbound->items as $item) {
+                $key = $item->goods->code;
+                if (array_key_exists($key, $outboundGoods)) {
+                    $outboundGoods[$key]['qty'] += $item->qty;
+                } else {
+                    $outboundGoods[$key] = [
+                        'code' => $item->goods->code,
+                        'name' => $item->goods->name,
+                        'qty' => $item->qty,
+                        'symbol' => $item->goods->unit->symbol,
+                        'type' => $item->goods->type
+                    ];
+                }
+            }
+        }
+        $pdf = Pdf::loadView('projects.print.pdf', ['project' => $project, 'outboundGoods' => $outboundGoods]);
+
+        return $pdf->stream('Project Detail '.$project->code.'.pdf');
+    }
+
+    public function printOutbound(Outbound $outbound)
+    {
+        $inboundItems = $outbound->inbound()->where('is_return', 0)->get()->flatMap->items;
+
+        $inboundItemsProblems = $outbound->inbound()->where('is_return', 1)->get()->flatMap->items;
+
+        $inboundProblem = $outbound->inbound()->where('is_return', 1)->first();
+        // return response()->json($outbound->inbound);
+        $outbounItemsdResend = $inboundProblem ? Outbound::where('code_inbound', $inboundProblem->code)
+            ->where('is_resend', 1)
+            ->get()
+            ->flatMap->items : [];
+
+        $pdf = Pdf::loadView('projects.print.pdf-outbound', ['outbound' => $outbound, 'inboundItemsProblems' => $inboundItemsProblems, 'outbounItemsdResend' => $outbounItemsdResend, 'inboundItems' => $inboundItems]);
+
+        return $pdf->stream('Outbound Detail'.$outbound->code.'.pdf');
+    }
+
     public function resend(Outbound $outbound)
     {
         $items = Inbound::where('outbound_id', $outbound->id)->where('is_return', 1)->get()->flatMap->items;
-
+        $generateCOde = new GenerateCode();
         try {
-            DB::transaction(function () use ($outbound, $items) {
+            DB::transaction(function () use ($outbound, $items, $generateCOde) {
                 $new_outbound = Outbound::create([
                     'code' => 'OUT-R-' . date('Ymd') . str_pad($outbound->outbounds()->count() + 1, 4, '0', STR_PAD_LEFT),
                     'project_id' => $outbound->project_id,
@@ -131,7 +180,8 @@ class ProjectController extends Controller
 
     public function return(Project $project)
     {
-        $code = 'IN' . date('Ymd') . str_pad($project->inbounds()->count() + 1, 4, '0', STR_PAD_LEFT);
+        $generateCode = new GenerateCode();
+        $code = $generateCode->make(Inbound::count(), 'IN');
         return view('projects.return', compact('project', 'code'));
     }
 

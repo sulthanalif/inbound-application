@@ -13,7 +13,10 @@
             <div class="col-lg-6">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">Outbound Detail</h5>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="card-title">Outbound Detail</h5>
+                            <a target="_blank" href="{{ route('projects.printOutbound', $outbound) }}" class="btn btn-primary btn-sm"><i class="bi bi-printer-fill"></i> Pdf</a>
+                        </div>
 
                         <table class="table">
                             <tbody>

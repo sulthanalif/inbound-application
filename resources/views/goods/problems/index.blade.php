@@ -53,7 +53,7 @@
                                                   <div class="row mb-3">
                                                     <div class="col-12 d-flex justify-content-center align-items-center">
                                                         {{-- <label for="qty" class="form-label me-2">Qty</label> --}}
-                                                        <input type="number" class="form-control" id="qty" name="qty" max="{{ $item->qty }}" required style="width: 90px;" value="{{ $item->qty }}" required>
+                                                        <input type="number" class="form-control" id="qty" name="qty" min="1" max="{{ $item->qty }}" required style="width: 90px;" value="{{ $item->qty }}" required>
                                                         <label for="unit" class="form-label ms-2">{{ $item->goods->unit->symbol }}</label>
                                                     </div>
                                                 </div>
@@ -90,30 +90,30 @@
                         'copy',
                         {
                             extend: 'csv',
-                            title: 'Projects Data',
+                            title: 'Item Problem Data',
                             exportOptions: {
-                                columns: [0, 1, 2, 3, 4, 5, 6]
+                                columns: [0, 1, 2, 3, 4, 5]
                             }
                         },
                         {
                             extend: 'excel',
-                            title: 'Projects Data',
+                            title: 'Item Problem Data',
                             exportOptions: {
-                                columns: [0, 1, 2, 3, 4, 5, 6]
+                                columns: [0, 1, 2, 3, 4, 5]
                             }
                         },
                         {
                             extend: 'pdf',
-                            title: 'Projects Data',
+                            title: 'Item Problem Data',
                             exportOptions: {
-                                columns: [0, 1, 2, 3, 4, 5, 6]
+                                columns: [0, 1, 2, 3, 4, 5]
                             }
                         },
                         {
                             extend: 'print',
-                            title: 'Projects Data',
+                            title: 'Item Problem Data',
                             exportOptions: {
-                                columns: [0, 1, 2, 3, 4, 5, 6]
+                                columns: [0, 1, 2, 3, 4, 5]
                             }
                         },
 

@@ -43,7 +43,7 @@
                         <td>{{ Carbon\Carbon::parse($outbound->date)->format('d F Y') }}</td>
                         <td>{{ $outbound->code }}</td>
                         <td>{{ $outbound->project->name }}</td>
-                        <td>{{ auth()->user()->name }}</td>
+                        <td>{{ $outbound->user->company }}</td>
                         <td>
                             <div class="badge bg-{{ match ($outbound->status) {
                                                 'Pending' => 'primary',

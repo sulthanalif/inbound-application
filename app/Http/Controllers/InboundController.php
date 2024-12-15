@@ -12,6 +12,7 @@ use App\Models\ProblemItem;
 use App\Models\OutboundItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use App\Serverces\GenerateCode;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -22,7 +23,11 @@ class InboundController extends Controller
 {
     public function index()
     {
-        $inbounds = Inbound::latest()->paginate(10);
+        if (Auth::user()->roles[0]->name == 'Admin Engineer') {
+            $inbounds = Inbound::where('user_id', Auth::user()->id)->latest()->get();
+        } else {
+            $inbounds = Inbound::latest()->get();
+        }
 
         return view('inbounds.index', compact('inbounds'));
     }
@@ -109,9 +114,14 @@ class InboundController extends Controller
     {
         // $vendors = Vendor::all();
         $goods = Goods::all();
-        $outbounds = Outbound::all();
+        if (Auth::user()->roles[0]->name == 'Admin Engineer') {
+            $outbounds = Outbound::where('user_id', Auth::user()->id)->latest()->get();
+        } else {
+            $outbounds = Outbound::latest()->get();
+        }
         $projects = Project::all();
-        $inbound_code = 'IN' . date('Ymd') . Inbound::count() . rand(1000, 9999);
+        $generateCode = new GenerateCode();
+        $inbound_code = $generateCode->make(Inbound::count(), 'IN');
 
         // dd($inbound_code);
         return view('order.index', compact('goods', 'outbounds', 'inbound_code', 'projects'));
@@ -174,11 +184,12 @@ class InboundController extends Controller
     public function resendItems(Request $request)
     {
         $inbound = Inbound::find($request->inbound_id);
+        $generateCode = new GenerateCode();
         try {
-            DB::transaction(function () use ($request, $inbound, &$outbound) {
+            DB::transaction(function () use ($request, $inbound,$generateCode , &$outbound) {
                 $outbound = Outbound::create([
                     'user_id' => Auth::user()->id,
-                    'code' => 'OUT' . date('Ymd') . str_pad(Outbound::count() + 1, 4, '0', STR_PAD_LEFT),
+                    'code' => $generateCode->make(Outbound::count(), 'OUT'),
                     'code_inbound' => $inbound->code,
                     'date' => $request->date,
                     'project_id' => $inbound->project_id,

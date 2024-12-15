@@ -15,7 +15,12 @@ class RequestOrderController extends Controller
 {
     public function index()
     {
-        $outbounds = Outbound::all();
+        if (Auth::user()->roles[0]->name == 'Admin Engineer') {
+            $outbounds = Outbound::where('user_id', Auth::user()->id)->latest()->get();
+        } else {
+            $outbounds = Outbound::latest()->get();
+        }
+
         return view('request.index', compact('outbounds'));
     }
 

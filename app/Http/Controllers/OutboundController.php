@@ -6,6 +6,7 @@ use DateTime;
 use Carbon\Carbon;
 use App\Models\Area;
 use App\Models\Note;
+// use App\GenerateCode;
 use App\Models\Goods;
 use App\Models\Payment;
 use App\Models\Project;
@@ -13,6 +14,7 @@ use App\Models\Category;
 use App\Models\Outbound;
 use App\Models\OutboundItem;
 use Illuminate\Http\Request;
+use App\Serverces\GenerateCode;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -21,12 +23,20 @@ use RealRashid\SweetAlert\Facades\Alert;
 
 class OutboundController extends Controller
 {
+    // use GenerateCode;
     public function index(Request $request)
     {
         // $search = $request->query('search');
-        $outbounds = Outbound::with(['project', 'vendor', 'user'])
+        if (Auth::user()->roles[0]->name == 'Admin Engineer') {
+            $outbounds = Outbound::with(['project', 'vendor', 'user'])
+            ->where('user_id', Auth::user()->id)
             ->latest()
             ->get();
+        } else {
+            $outbounds = Outbound::with(['project', 'vendor', 'user'])
+            ->latest()
+            ->get();
+        }
 
         return view('outbounds.index', compact('outbounds'));
     }
@@ -99,11 +109,13 @@ class OutboundController extends Controller
 
     public function request()
     {
+        $generateCode = new GenerateCode();
         // $vendors = Vendor::all();
         $categories = Category::with(['goods.unit'])->get();
         $goods = Goods::all();
         $projects = Project::all();
-        $code_outbound = 'OUT' . date('Ymd') . Outbound::count() . rand(1000, 9999);
+        // $code_outbound = 'OUT' . date('Ymd') . Outbound::count() . rand(1000, 9999);
+        $code_outbound = $generateCode->make(Outbound::count(), 'OUT');
         return view('request.index', compact('goods', 'code_outbound', 'projects', 'categories'));
     }
 
@@ -206,7 +218,7 @@ class OutboundController extends Controller
         // dd($request->all());
         try {
             DB::transaction(function () use ($outbound, $request) {
-                $order_count = str_pad(Outbound::where('status', 'Approved')->count() + 1, 3, '0', STR_PAD_LEFT);
+                $order_count = str_pad(Outbound::count(), 3, '0', STR_PAD_LEFT);
                 $outbound_goods = 'DN';
                 $default = 'JSSZ1';
                 $area = Area::find($request->area_id)->code;
@@ -215,7 +227,7 @@ class OutboundController extends Controller
                 $monthNumber = Carbon::parse(now())->month;
                 $mounth = $romanNumerals[$monthNumber - 1];
                 $year = date('Y');
-                $number = $order_count .'/'. $outbound_goods .'-'. $default . $area .'-'. $mounth .'-'. $year ;
+                $number = $order_count .'/'. $outbound_goods .'-'. $default . $area .'-'. date('d') .'-'. $mounth .'-'. $year ;
 
                 $outbound->status = 'Approved to delivery';
                 $outbound->number = $number;

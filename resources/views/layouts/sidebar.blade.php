@@ -131,7 +131,7 @@
             </li><!-- End Register Page Nav -->
         @endhasrole
 
-        <li class="nav-heading">Report</li>
+        {{-- <li class="nav-heading">Report</li> --}}
         {{-- @role('Head Warehouse')
             <li class="nav-item">
                 <a class="nav-link"

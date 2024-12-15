@@ -15,7 +15,7 @@
                         <div class="d-flex justify-content-between align-items-center">
                             <h5 class="card-title">Project Detail</h5>
                             <div class="d-flex">
-                                <a href="" class="btn btn-primary btn-sm mx-2"><i class="bi bi-printer-fill"></i> PDF</a>
+                                <a target="_blank" href="{{ route('projects.print', $project) }}" class="btn btn-primary btn-sm mx-2"><i class="bi bi-printer-fill"></i> PDF</a>
                                 <a href="" class="btn btn-primary btn-sm"><i class="bi bi-printer-fill"></i> Excel</a>
                             </div>
                         </div>

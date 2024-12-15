@@ -31,7 +31,7 @@
                 <tbody>
                   @foreach ($inbounds as $inbound)
                     <tr>
-                        <th scope="row">{{ ($inbounds->currentPage() - 1) * $inbounds->perPage() + $loop->iteration }}</th>
+                        <th scope="row">{{ $loop->iteration }}</th>
                         <td>{{ $inbound->date }}</td>
                         <td>{{ $inbound->code }}</td>
                         <td>
@@ -58,7 +58,7 @@
                 </tbody>
               </table>
               <!-- End Default Table Example -->
-              {{ $inbounds->links('layouts.paginate') }}
+              {{-- {{ $inbounds->links('layouts.paginate') }} --}}
 
             </div>
           </div>

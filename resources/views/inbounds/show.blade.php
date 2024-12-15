@@ -68,7 +68,9 @@
                             <h5 class="card-title">Items</h5>
                             @if ($inbound->is_return)
                             @if ($inbound->status == 'Success' && !$inbound->outbound->where('is_resend', 1)->first())
+                            @hasrole('Super Admin|Admin Warehouse')
                             <a href="" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#resendModal">Resend</a>
+                            @endhasrole
                             @include('inbounds.modal.resend')
                         {{-- @endif --}}
                         @elseif ($inbound->outbound->where('is_resend', 1)->first())
@@ -170,7 +172,7 @@
                                         <a target="_blank" href="{{ route('inbounds.downloadInvoiceDelivery', $inbound) }}"
                                         class="btn btn-primary btn-sm  mb-3">Download Invoice Delivery</a>
                                         @endif
-                                        @hasrole('Super Admin|Admin Engineering')
+                                        @hasrole('Super Admin|Admin Engineer')
                                             @if ($inbound->status == 'Approved')
                                                 {{-- <a href="{{ route('inbounds.changeStatus', [$inbound, 'status' => 'Delivery']) }}" class="btn btn-warning btn-sm text-white  mb-3" >Submit</a> --}}
                                                 <form class="row g-3 mt-1" action="{{ route('inbounds.delivery', $inbound) }}"

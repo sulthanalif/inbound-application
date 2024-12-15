@@ -139,6 +139,8 @@ Route::middleware('auth', 'is_active')->group(function () {
         Route::get('/projects/{project}/return', [ProjectController::class, 'return'])->name('projects.return');
         Route::post('/projects/{project}/return', [ProjectController::class, 'storeReturn'])->name('projects.storeReturn');
         Route::get('/projects/{outbound}/show', [ProjectController::class, 'showOutbound'])->name('projects.showOutbound');
+        Route::get('/projectss/{project}/print', [ProjectController::class, 'print'])->name('projects.print');
+        Route::get('/projects/{outbound}/print-outbound', [ProjectController::class, 'printOutbound'])->name('projects.printOutbound');
 
         //request
         Route::get('/request-goods', [OutboundController::class, 'request'])->name('outbounds.request');
