@@ -6,11 +6,13 @@ use App\Models\Inbound;
 use App\Models\Project;
 use App\Models\Outbound;
 use App\Models\InboundItem;
-use App\Serverces\GenerateCode;
 use Illuminate\Http\Request;
+use App\Exports\ProjectExcel;
+use App\Serverces\GenerateCode;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
 use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Support\Facades\Validator;
 
@@ -42,6 +44,30 @@ class ProjectController extends Controller
 
         // dd($inboundItemsProblems);
         return view('projects.outbound.show', compact('outbound', 'inboundItemsProblems', 'outbounItemsdResend', 'inboundItems'));
+    }
+
+    public function export(Project $project)
+    {
+        $outboundGoods = [];
+
+        foreach ($project->outbounds as $outbound) {
+            foreach ($outbound->items as $item) {
+                $key = $item->goods->code;
+                if (array_key_exists($key, $outboundGoods)) {
+                    $outboundGoods[$key]['qty'] += $item->qty;
+                } else {
+                    $outboundGoods[$key] = [
+                        'code' => $item->goods->code,
+                        'name' => $item->goods->name,
+                        'qty' => $item->qty,
+                        'symbol' => $item->goods->unit->symbol,
+                        'type' => $item->goods->type
+                    ];
+                }
+            }
+        }
+
+        return Excel::download(new ProjectExcel($project, $outboundGoods), 'Project Detail '.$project->code.'.xlsx');
     }
 
     public function print(Project $project)
@@ -80,7 +106,7 @@ class ProjectController extends Controller
         $outbounItemsdResend = $inboundProblem ? Outbound::where('code_inbound', $inboundProblem->code)
             ->where('is_resend', 1)
             ->get()
-            ->flatMap->items : [];
+            ->flatMap->items : array();
 
         $pdf = Pdf::loadView('projects.print.pdf-outbound', ['outbound' => $outbound, 'inboundItemsProblems' => $inboundItemsProblems, 'outbounItemsdResend' => $outbounItemsdResend, 'inboundItems' => $inboundItems]);
 

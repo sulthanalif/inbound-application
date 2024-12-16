@@ -107,6 +107,7 @@ Route::middleware('auth', 'is_active')->group(function () {
         Route::get('/goods/{goods}/edit', [GoodsController::class, 'edit'])->name('goods.edit');
         Route::put('/goods/{goods}', [GoodsController::class, 'update'])->name('goods.update');
         Route::delete('/goods/{goods}', [GoodsController::class, 'destroy'])->name('goods.destroy');
+        Route::get('/report/goods', [GoodsController::class, 'reportGoods'])->name('goods.reportGoods');
 
         //vendors
         Route::get('/vendors', [VendorController::class, 'index'])->name('vendors.index');
@@ -140,6 +141,7 @@ Route::middleware('auth', 'is_active')->group(function () {
         Route::post('/projects/{project}/return', [ProjectController::class, 'storeReturn'])->name('projects.storeReturn');
         Route::get('/projects/{outbound}/show', [ProjectController::class, 'showOutbound'])->name('projects.showOutbound');
         Route::get('/projectss/{project}/print', [ProjectController::class, 'print'])->name('projects.print');
+        Route::get('/projectss/{project}/export', [ProjectController::class, 'export'])->name('projects.export');
         Route::get('/projects/{outbound}/print-outbound', [ProjectController::class, 'printOutbound'])->name('projects.printOutbound');
 
         //request

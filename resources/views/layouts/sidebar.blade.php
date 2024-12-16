@@ -15,12 +15,12 @@
         @hasrole('Super Admin|Admin Warehouse|Head Warehouse')
             <li class="nav-heading">Master</li>
             <li class="nav-item">
-                <a class="nav-link {{ request()->is('goods*', 'problem-items*') ? '' : 'collapsed' }}"
+                <a class="nav-link {{ request()->is('goods*', 'problem-items*', 'report/goods') ? '' : 'collapsed' }}"
                     data-bs-target="#components-nav" data-bs-toggle="collapse" href="#">
                     <i class="bi bi-box-seam"></i><span>Goods</span><i class="bi bi-chevron-down ms-auto"></i>
                 </a>
                 <ul id="components-nav"
-                    class="nav-content collapse {{ request()->is('goods*', 'problem-items*') ? 'show' : '' }}"
+                    class="nav-content collapse {{ request()->is('goods*', 'problem-items*', 'report/goods') ? 'show' : '' }}"
                     data-bs-parent="#sidebar-nav">
                     <li>
                         <a href="{{ route('goods.index') }}" class="{{ request()->is('goods*') ? 'active' : '' }}">
@@ -31,6 +31,12 @@
                         <a href="{{ route('problems.index') }}"
                             class="{{ request()->is('problem-items*') ? 'active' : '' }}">
                             <i class="bi bi-circle"></i><span>Problem Items</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{route('goods.reportGoods')}}"
+                            class="{{ request()->is('report/goods') ? 'active' : '' }}">
+                            <i class="bi bi-circle"></i><span>Report</span>
                         </a>
                     </li>
 

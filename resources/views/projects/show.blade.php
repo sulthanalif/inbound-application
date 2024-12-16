@@ -16,7 +16,7 @@
                             <h5 class="card-title">Project Detail</h5>
                             <div class="d-flex">
                                 <a target="_blank" href="{{ route('projects.print', $project) }}" class="btn btn-primary btn-sm mx-2"><i class="bi bi-printer-fill"></i> PDF</a>
-                                <a href="" class="btn btn-primary btn-sm"><i class="bi bi-printer-fill"></i> Excel</a>
+                                <a href="{{ route('projects.export', $project) }}" class="btn btn-primary btn-sm"><i class="bi bi-printer-fill"></i> Excel</a>
                             </div>
                         </div>
 
@@ -88,7 +88,7 @@
                                                         'Success' => 'success',
                                                         default => 'danger',
                                                     } }}">
-                                                    {{ $outbound->status }}</div>
+                                                    {{ \Illuminate\Support\Str::limit($outbound->status, 8) }}</div>
                                             </td>
                                             <td>
                                                 <div
@@ -103,6 +103,8 @@
                                             <td style="text-align: center">
                                                 <a href="{{ route('projects.showOutbound', $outbound) }}"
                                                     class="btn btn-primary btn-sm"><i class="bi bi-eye-fill"></i></a>
+                                                <a target="_blank" href="{{ route('projects.printOutbound', $outbound) }}"
+                                                    class="btn btn-primary btn-sm"><i class="bi bi-printer-fill"></i></a>
                                             </td>
                                         </tr>
                                     @endforeach

@@ -231,7 +231,7 @@
             </tr>
         </thead>
         <tbody>
-            @if ($outbounItemsdResend->count() > 0)
+            @if (count($outbounItemsdResend) > 0)
                 @foreach ($outbounItemsdResend as $item)
                     <tr style="font-size: 12px">
                         <th scope="row">{{ $loop->iteration }}</th>

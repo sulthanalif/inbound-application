@@ -24,6 +24,38 @@ class GoodsController extends Controller
         return view('goods.index', compact('goods'));
     }
 
+    public function reportGoods(Request $request)
+    {
+        $filter_month = $request->get('filter_month');
+        $filter_year = $request->get('filter_year', now()->year);
+
+        $query_goods = Goods::with('inboundItems', 'outboundItems')
+        ->whereYear('created_at', $filter_year);
+
+        if($filter_month) {
+            $query_goods->whereMonth('created_at', $filter_month);
+        }
+
+        $datas = [];
+        $goods = $query_goods->get();
+
+        foreach ($goods as $good) {
+            $goodsInboundCount = $good->inboundItems->sum('qty');
+            $goodsOutboundCount = $good->outboundItems->sum('qty');
+
+            $datas[] = [
+                'name' => $good->name,
+                'code' => $good->code,
+                'goodsInboundCount' => $goodsInboundCount,
+                'goodsOutboundCount' => $goodsOutboundCount,
+                'type' => $good->type
+            ];
+        }
+
+        // dd($datas);
+        return view('goods.report', compact('datas'));
+    }
+
     public function create()
     {
         $warehouses = Warehouse::with('areas')->get();

@@ -8,9 +8,9 @@
             <div class="card-body">
                 <h5 class="card-title">Role Data</h5>
 
-                <div class="flex">
+                {{-- <div class="flex">
                     <a href="{{ route('roles.create') }}" class="btn btn-primary btn-sm mb-3">Create</a>
-                </div>
+                </div> --}}
 
                 <!-- Default Table -->
                 <table class="table datatable">
