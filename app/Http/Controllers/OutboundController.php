@@ -12,6 +12,7 @@ use App\Models\Payment;
 use App\Models\Project;
 use App\Models\Category;
 use App\Models\Outbound;
+use App\Models\DeliveryArea;
 use App\Models\OutboundItem;
 use Illuminate\Http\Request;
 use App\Serverces\GenerateCode;
@@ -47,8 +48,9 @@ class OutboundController extends Controller
         // confirmDelete('Reject Data!', 'Are you sure you want to reject?');
         $goods = Goods::all();
         $areas = Area::all();
+        $deliveryAreas = DeliveryArea::all();
         $categories = Category::all();
-        return view('outbounds.show', compact('outbound', 'goods', 'areas', 'categories'));
+        return view('outbounds.show', compact('outbound', 'deliveryAreas', 'goods', 'areas', 'categories'));
     }
 
     public function delivery(Request $request, Outbound $outbound)
@@ -221,7 +223,7 @@ class OutboundController extends Controller
                 $order_count = str_pad(Outbound::count(), 3, '0', STR_PAD_LEFT);
                 $outbound_goods = 'DN';
                 $default = 'JSSZ1';
-                $area = Area::find($request->area_id)->code;
+                $area = DeliveryArea::find($request->deliveryArea)->code;
                 // $mounth = DateTime::createFromFormat('!m', date('m'))->format('F');
                 $romanNumerals = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
                 $monthNumber = Carbon::parse(now())->month;

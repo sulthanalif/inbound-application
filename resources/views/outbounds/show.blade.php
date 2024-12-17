@@ -391,17 +391,17 @@
                                                     @csrf
                                                     @method('PUT')
                                                     <div class="col-sm-12">
-                                                        <label for="area_id" class="form-label">Area<span
+                                                        <label for="deliveryArea" class="form-label">Area<span
                                                                 class="text-danger">*</span></label>
-                                                        <select name="area_id" id="area_id" class="form-select select1"
+                                                        <select name="deliveryArea" id="deliveryArea" class="form-select select1"
                                                             required>
                                                             <option value="" selected disabled>Choose...</option>
-                                                            @foreach ($areas as $area)
+                                                            @foreach ($deliveryAreas as $area)
                                                                 <option value="{{ $area->id }}">
                                                                     {{ $area->code }}|{{ $area->name }}</option>
                                                             @endforeach
                                                         </select>
-                                                        @error('area_id')
+                                                        @error('deliveryArea')
                                                             <p class="text-danger text-xs mt-2">
                                                                 {{ $message }}
                                                             </p>

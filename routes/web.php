@@ -20,6 +20,7 @@ use App\Http\Controllers\ContainerController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\WarehouseController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\DeliveryAreaController;
 use App\Http\Controllers\ProblemItemController;
 use App\Http\Controllers\RequestOrderController;
 use Symfony\Component\HttpKernel\Profiler\Profile;
@@ -124,6 +125,9 @@ Route::middleware('auth', 'is_active')->group(function () {
         Route::get('/areas/{area}/edit', [AreaController::class, 'edit'])->name('areas.edit');
         Route::put('/areas/{area}', [AreaController::class, 'update'])->name('areas.update');
         Route::delete('/areas/{area}', [AreaController::class, 'destroy'])->name('areas.destroy');
+
+        //delivery area
+        Route::resource('delivery-areas', DeliveryAreaController::class);
 
         //problems_item
         Route::get('/problem-items', [ProblemItemController::class, 'index'])->name('problems.index');
