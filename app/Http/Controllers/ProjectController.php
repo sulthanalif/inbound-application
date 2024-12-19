@@ -79,6 +79,24 @@ class ProjectController extends Controller
                 $key = $item->goods->code;
                 if (array_key_exists($key, $outboundGoods)) {
                     $outboundGoods[$key]['qty'] += $item->qty;
+                    $outboundGoods[$key]['req'] += $item->qty;
+                } else {
+                    $outboundGoods[$key] = [
+                        'code' => $item->goods->code,
+                        'name' => $item->goods->name,
+                        'req' => $item->qty,
+                        'qty' => $item->qty,
+                        'symbol' => $item->goods->unit->symbol,
+                        'type' => $item->goods->type
+                    ];
+                }
+            }
+        }
+        foreach ($project->inbounds as $inbound) {
+            foreach ($inbound->items as $item) {
+                $key = $item->goods->code;
+                if (array_key_exists($key, $outboundGoods)) {
+                    $outboundGoods[$key]['qty'] -= $item->qty;
                 } else {
                     $outboundGoods[$key] = [
                         'code' => $item->goods->code,
@@ -149,18 +167,31 @@ class ProjectController extends Controller
         $outboundGoods = [];
 
         foreach ($project->outbounds as $outbound) {
-            foreach ($outbound->items as $item) {
+            if ($outbound->is_resend == 0) {
+                foreach ($outbound->items as $item) {
+                    $key = $item->goods->code;
+                    if (array_key_exists($key, $outboundGoods)) {
+                        $outboundGoods[$key]['qty'] += $item->qty;
+                        $outboundGoods[$key]['req'] += $item->qty;
+                    } else {
+                        $outboundGoods[$key] = [
+                            'code' => $item->goods->code,
+                            'name' => $item->goods->name,
+                            'req' => $item->qty,
+                            'qty' => $item->qty,
+                            'symbol' => $item->goods->unit->symbol,
+                            'type' => $item->goods->type
+                        ];
+                    }
+                }
+            }
+        }
+
+        foreach ($project->inbounds as $inbound) {
+            foreach ($inbound->items as $item) {
                 $key = $item->goods->code;
                 if (array_key_exists($key, $outboundGoods)) {
-                    $outboundGoods[$key]['qty'] += $item->qty;
-                } else {
-                    $outboundGoods[$key] = [
-                        'code' => $item->goods->code,
-                        'name' => $item->goods->name,
-                        'qty' => $item->qty,
-                        'symbol' => $item->goods->unit->symbol,
-                        'type' => $item->goods->type
-                    ];
+                    $outboundGoods[$key]['qty'] -= $item->qty;
                 }
             }
         }

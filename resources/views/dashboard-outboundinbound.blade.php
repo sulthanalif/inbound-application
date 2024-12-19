@@ -10,7 +10,7 @@
                 <table class="table datatable">
                     <thead>
                         <tr style="font-size: 15px">
-                            <th scope="col">#</th>
+                            <th scope="col">No</th>
                             <th scope="col">Date/Code</th>
                             <th scope="col">Status</th>
                             {{-- <th scope="col">Payment</th> --}}
@@ -66,7 +66,7 @@
                 <table class="table datatable">
                     <thead>
                         <tr style="font-size: 15px">
-                            <th scope="col">#</th>
+                            <th scope="col">No</th>
                             <th scope="col">Date/Code</th>
                             <th scope="col">Status</th>
                             <th scope="col">Payment</th>

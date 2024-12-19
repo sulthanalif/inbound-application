@@ -31,7 +31,7 @@
                                     <td>{{ $project->address }}</td>
                                 </tr>
                                 <tr>
-                                    <th scope="row">PJ</th>
+                                    <th scope="row">Project Owner</th>
                                     <td>{{ $project->user->name }}</td>
                                 </tr>
                                 <tr>
@@ -61,10 +61,11 @@
                         <table class="table">
                             <thead>
                                 <tr style="font-size: 15px">
-                                    <th scope="col">#</th>
+                                    <th scope="col">No</th>
                                     <th scope="col">Date/Code</th>
                                     <th scope="col">Status</th>
                                     <th scope="col">Payment</th>
+                                    <th scope="col">Type</th>
                                     <th scope="col" style="text-align: center;">Action</th>
                                 </tr>
                             </thead>
@@ -75,7 +76,9 @@
                                             <th scope="row">{{ $loop->iteration }}</th>
                                             <td>
                                                 {{ Carbon\Carbon::parse($outbound->date)->format('d F Y') }} <br>
-                                                {{ $outbound->code }}
+                                                <a href="{{ route('projects.showOutbound', $outbound) }}"
+                                                    class="badge bg-primary">{{ $outbound->code }}</a>
+
                                             </td>
                                             <td>
                                                 <div
@@ -100,9 +103,13 @@
                                                     } }}">
                                                     {{ $outbound->status_payment }}</div>
                                             </td>
+                                            <td>
+                                                <div class="badge bg-{{ $outbound->is_resend ? 'warning' : 'primary' }}">
+                                                    {{ $outbound->is_resend ? 'Resend' : 'Request' }}
+                                                </div>
+                                            </td>
                                             <td style="text-align: center">
-                                                <a href="{{ route('projects.showOutbound', $outbound) }}"
-                                                    class="btn btn-primary btn-sm"><i class="bi bi-eye-fill"></i></a>
+
                                                 <a target="_blank" href="{{ route('projects.printOutbound', $outbound) }}"
                                                     class="btn btn-primary btn-sm"><i class="bi bi-printer-fill"></i></a>
                                             </td>
@@ -110,7 +117,7 @@
                                     @endforeach
                                 @else
                                     <tr>
-                                        <td colspan="5" align="center">No Data</td>
+                                        <td colspan="6" align="center">No Data</td>
                                     </tr>
                                 @endif
                             </tbody>
@@ -132,10 +139,11 @@
                         <table class="table">
                             <thead>
                                 <tr style="font-size: 15px">
-                                    <th scope="col">#</th>
+                                    <th scope="col">No</th>
                                     <th scope="col">Date</th>
                                     <th scope="col">Code</th>
                                     <th scope="col">Status</th>
+                                    <th scope="col">Type</th>
                                     <th scope="col" style="text-align: center;">Action</th>
                                 </tr>
                             </thead>
@@ -164,6 +172,11 @@
                                                 } }}">
                                                 {{ $inbound->status }}</div>
                                             </td>
+                                            <td>
+                                                <div class="badge bg-{{ $inbound->is_return ? 'danger' : 'primary' }}">
+                                                    {{ $inbound->is_return ? 'Problem' : 'Return' }}
+                                                </div>
+                                            </td>
                                             <td style="text-align: center">
                                                 <a href="{{ route('inbounds.show', $inbound) }}"
                                                     class="btn btn-primary btn-sm"><i class="bi bi-eye-fill"></i></a>
@@ -172,7 +185,7 @@
                                     @endforeach
                                 @else
                                     <tr>
-                                        <td colspan="5" align="center">No Data</td>
+                                        <td colspan="6" align="center">No Data</td>
                                     </tr>
                                 @endif
                             </tbody>
@@ -191,9 +204,10 @@
                         <table class="table">
                             <thead>
                                 <tr style="font-size: 15px">
-                                    <th scope="col">#</th>
+                                    <th scope="col">No</th>
                                     <th scope="col">Code</th>
                                     <th scope="col">Name</th>
+                                    <th scope="col">Req</th>
                                     <th scope="col">Qty</th>
                                     <th scope="col" >Type</th>
                                 </tr>
@@ -209,6 +223,9 @@
                                             </td>
                                             <td>
                                                 {{ $item['name'] }}
+                                            </td>
+                                            <td>
+                                                {{ $item['req'] }}{{ $item['symbol'] }}
                                             </td>
                                             <td>
                                                 {{ $item['qty'] }}{{ $item['symbol'] }}

@@ -24,7 +24,7 @@
                 <table id="projects-table" class="table">
                     <thead>
                         <tr>
-                            <th scope="col">#</th>
+                            <th scope="col">No</th>
                             <th scope="col">Code</th>
                             <th scope="col">Start Date</th>
                             <th scope="col">Name</th>

@@ -16,7 +16,7 @@
               <table class="table datatable">
                 <thead>
                   <tr align="center">
-                    <th scope="col">#</th>
+                    <th scope="col">No</th>
                     <th scope="col">Name</th>
                     <th scope="col">Email</th>
                     <th scope="col">Role</th>

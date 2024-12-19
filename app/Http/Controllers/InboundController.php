@@ -88,12 +88,12 @@ class InboundController extends Controller
                 $inbound_count = str_pad(Inbound::where('status', 'Approved')->count() + 1, 3, '0', STR_PAD_LEFT);
                 $inbound_goods = 'SJ';
                 $default = 'JSSZ1';
-                $area = $inbound->outbound()->first()->area->code;
+                $area = $inbound->outbound()->first()->deliveryArea->code;
                 $romanNumerals = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
                 $monthNumber = Carbon::parse(now())->month;
                 $mounth = $romanNumerals[$monthNumber - 1];
                 $year = date('Y');
-                $number = $inbound_count .'/'. $inbound_goods .'-'. $default . $area .'-'. $mounth .'-'. $year ;
+                $number = $inbound_count .'/'. $inbound_goods .'-'. $default . $area. '-' . date('d') .'-'. $mounth .'-'. $year ;
 
                 $inbound->number = $number;
                 $inbound->sender_name = $request->sender_name;

@@ -14,6 +14,7 @@ use App\Models\Category;
 use App\Models\Outbound;
 use App\Models\DeliveryArea;
 use App\Models\OutboundItem;
+use App\Models\Warehouse;
 use Illuminate\Http\Request;
 use App\Serverces\GenerateCode;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -30,13 +31,13 @@ class OutboundController extends Controller
         // $search = $request->query('search');
         if (Auth::user()->roles[0]->name == 'Admin Engineer') {
             $outbounds = Outbound::with(['project', 'vendor', 'user'])
-            ->where('user_id', Auth::user()->id)
-            ->latest()
-            ->get();
+                ->where('user_id', Auth::user()->id)
+                ->latest()
+                ->get();
         } else {
             $outbounds = Outbound::with(['project', 'vendor', 'user'])
-            ->latest()
-            ->get();
+                ->latest()
+                ->get();
         }
 
         return view('outbounds.index', compact('outbounds'));
@@ -47,10 +48,34 @@ class OutboundController extends Controller
         // dd($outbound);
         // confirmDelete('Reject Data!', 'Are you sure you want to reject?');
         $goods = Goods::all();
-        $areas = Area::all();
+        $warehouses = Warehouse::with('areas')->get();
         $deliveryAreas = DeliveryArea::all();
         $categories = Category::all();
-        return view('outbounds.show', compact('outbound', 'deliveryAreas', 'goods', 'areas', 'categories'));
+        return view('outbounds.show', compact('outbound', 'deliveryAreas', 'goods', 'warehouses', 'categories'));
+    }
+
+    public function pickup(Request $request, Outbound $outbound)
+    {
+        try {
+            DB::beginTransaction();
+            $outbound->pickup_area_id = $request->pickup_area_id;
+            $outbound->status = 'Pickup';
+            $outbound->save();
+
+            foreach ($outbound->items as $item) {
+                $goods = Goods::find($item->goods_id);
+                $goods->qty = $goods->qty - $item->qty;
+                $goods->save();
+            }
+
+            DB::commit();
+            Alert::success('Success', 'Data Picked Up');
+            return back();
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            Alert::error('Error', $th->getMessage());
+            return back();
+        }
     }
 
     public function delivery(Request $request, Outbound $outbound)
@@ -87,14 +112,6 @@ class OutboundController extends Controller
                         $note->save();
                     }
                 } else {
-                    if ($request->status == 'Pickup') {
-                        foreach ($outbound->items as $item) {
-                            $goods = Goods::find($item->goods_id);
-                            $goods->qty = $goods->qty - $item->qty;
-                            $goods->save();
-                        }
-                    }
-
                     $outbound->status = $request->status;
                     $outbound->save();
                 }
@@ -126,7 +143,7 @@ class OutboundController extends Controller
         // dd($request->all());
         $data = json_decode($request->input('data'), true);
 
-        if($data == null){
+        if ($data == null) {
             Alert::warning('Warning', 'Data cannot be empty');
             return redirect()->back();
         }
@@ -186,7 +203,7 @@ class OutboundController extends Controller
             DB::transaction(function () use ($request, $data, $outbound) {
                 //update outbound
                 $outbound->update([
-                   'total_price' => array_sum(array_column($data, 'subtotal'))
+                    'total_price' => array_sum(array_column($data, 'subtotal'))
                 ]);
 
                 //delete all outbound items
@@ -229,11 +246,11 @@ class OutboundController extends Controller
                 $monthNumber = Carbon::parse(now())->month;
                 $mounth = $romanNumerals[$monthNumber - 1];
                 $year = date('Y');
-                $number = $order_count .'/'. $outbound_goods .'-'. $default . $area .'-'. date('d') .'-'. $mounth .'-'. $year ;
+                $number = $order_count . '/' . $outbound_goods . '-' . $default . $area . '-' . date('d') . '-' . $mounth . '-' . $year;
 
                 $outbound->status = 'Approved to delivery';
                 $outbound->number = $number;
-                $outbound->area_id = $request->area_id;
+                $outbound->delivery_area_id = $request->deliveryArea;
                 $outbound->save();
             });
 
@@ -255,6 +272,6 @@ class OutboundController extends Controller
     {
         $pdf = Pdf::loadView('outbounds.pdf.outbound', ['outbound' => $outbound]);
 
-        return $pdf->stream('Surat Jalan - '.$outbound->code.'.pdf');
+        return $pdf->stream('Surat Jalan - ' . $outbound->code . '.pdf');
     }
 }

@@ -174,6 +174,7 @@ Route::middleware('auth', 'is_active')->group(function () {
        Route::get('/outbounds', [OutboundController::class, 'index'])->name('outbounds.index');
        Route::get('/outbounds/{outbound}/show', [OutboundController::class, 'show'])->name('outbounds.show');
        Route::get('/outbounds/{outbound}/{status}', [OutboundController::class, 'changeStatus'])->name('outbounds.changeStatus');
+       Route::put('/outbounds/{outbound}/pickup', [OutboundController::class, 'pickup'])->name('outbounds.pickup');
        Route::put('/outbounds/{outbound}/delivery', [OutboundController::class, 'delivery'])->name('outbounds.delivery');
        Route::put('/outbounds/{outbound}/approveDelivery', [OutboundController::class, 'approveDelivery'])->name('outbounds.approveDelivery');
        Route::get('/download-invoice-delivery/{outbound}', [OutboundController::class, 'downloadInvoiceDelivery'])->name('outbounds.downloadInvoiceDelivery');

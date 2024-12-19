@@ -28,7 +28,8 @@
             width: 100%;
         }
 
-        .table-outbound th, .table-outbound td {
+        .table-outbound th,
+        .table-outbound td {
             border: 1px solid black;
         }
     </style>
@@ -95,6 +96,12 @@
                 </td>
             </tr>
             <tr>
+                <th scope="row">Pickup Area</th>
+                <th>:</th>
+                <td>{{ $outbound->pickup_area_id == null ? '-' : $outbound->pickupArea->warehouse->name . ' - ' . $outbound->pickupArea->name . ' - ' . $outbound->pickupArea->container . ' - ' . $outbound->pickupArea->rack . ' - ' . $outbound->pickupArea->number }}
+                </td>
+            </tr>
+            <tr>
                 <th scope="row">Driver Name</th>
                 <th>:</th>
                 <td>{{ $outbound->sender_name ?? '-' }}</td>
@@ -105,9 +112,9 @@
                 <td>{{ $outbound->vehicle_number ?? '-' }}</td>
             </tr>
             <tr>
-                <th scope="row">Area</th>
+                <th scope="row">Delivery Area</th>
                 <th>:</th>
-                <td>{{ $outbound->area->name ?? '-' }}</td>
+                <td>{{ $outbound->deliveryArea->name ?? '-' }}</td>
             </tr>
         </tbody>
     </table>
@@ -116,7 +123,7 @@
     <table class="table-outbound">
         <thead>
             <tr style="font-size: 12px">
-                <th scope="col">#</th>
+                <th scope="col">No</th>
                 <th scope="col">Code</th>
                 <th scope="col">Name</th>
                 <th scope="col">Warehouse</th>
@@ -154,7 +161,7 @@
     <table class="table-outbound">
         <thead>
             <tr style="font-size: 12px">
-                <th scope="col">#</th>
+                <th scope="col">No</th>
                 <th scope="col">Code</th>
                 <th scope="col">Name</th>
                 <th scope="col">Warehouse</th>
@@ -188,7 +195,7 @@
     <table class="table-outbound">
         <thead>
             <tr style="font-size: 12px">
-                <th scope="col">#</th>
+                <th scope="col">No</th>
                 <th scope="col">Code</th>
                 <th scope="col">Name</th>
                 <th scope="col">Warehouse</th>
@@ -221,7 +228,7 @@
     <table class="table-outbound">
         <thead>
             <tr style="font-size: 12px">
-                <th scope="col">#</th>
+                <th scope="col">No</th>
                 <th scope="col">Code</th>
                 <th scope="col">Name</th>
                 <th scope="col">Warehouse</th>
@@ -254,4 +261,3 @@
 </body>
 
 </html>
-

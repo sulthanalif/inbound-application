@@ -14,5 +14,9 @@ class DeliveryArea extends Model
         'address',
     ];
 
+    public function outbounds()
+    {
+        return $this->hasMany(Outbound::class);
+    }
 
 }

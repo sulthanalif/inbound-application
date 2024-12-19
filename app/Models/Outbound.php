@@ -17,7 +17,8 @@ class Outbound extends Model
         'sender_name',
         'vehicle_number',
         'project_id',
-        'area_id',
+        'delivery_area_id',
+        'pickup_area_id',
         'status',
         'number',
         'payment',
@@ -37,14 +38,19 @@ class Outbound extends Model
         return $this->hasOne(Inbound::class);
     }
 
+    public function pickupArea()
+    {
+        return $this->belongsTo(Area::class);
+    }
+
     public function payments()
     {
         return $this->hasMany(Payment::class);
     }
 
-    public function area()
+    public function deliveryArea()
     {
-        return $this->belongsTo(Area::class);
+        return $this->belongsTo(DeliveryArea::class);
     }
 
     public function project()

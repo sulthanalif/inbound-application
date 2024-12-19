@@ -49,7 +49,7 @@
                 <td>{{ $project->address }}</td>
             </tr>
             <tr>
-                <th>PJ</th>
+                <th>Project Owner</th>
                 <th>:</th>
                 <td>{{ $project->user->name }}</td>
             </tr>
@@ -67,7 +67,7 @@
     <table class="table-outbound">
         <thead>
             <tr style="font-size: 15px">
-                <th scope="col">#</th>
+                <th scope="col">No</th>
                 <th scope="col">Date/Code</th>
                 <th scope="col">Status</th>
                 <th scope="col">Payment</th>
@@ -115,7 +115,7 @@
     <table class="table-outbound">
         <thead>
             <tr style="font-size: 15px">
-                <th scope="col">#</th>
+                <th scope="col">No</th>
                 <th scope="col">Date</th>
                 <th scope="col">Code</th>
                 <th scope="col">Status</th>
@@ -166,7 +166,7 @@
     <table class="table-outbound">
         <thead>
             <tr style="font-size: 15px">
-                <th scope="col">#</th>
+                <th scope="col">No</th>
                 <th scope="col">Code</th>
                 <th scope="col">Name</th>
                 <th scope="col">Qty</th>

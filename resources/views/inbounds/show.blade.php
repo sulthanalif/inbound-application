@@ -82,7 +82,7 @@
                         <table class="table">
                             <thead>
                                 <tr>
-                                    <th scope="col">#</th>
+                                    <th scope="col">No</th>
                                     <th scope="col">Item</th>
                                     <th scope="col">Quantity</th>
                                     <th scope="col">Warehouse</th>

@@ -83,7 +83,7 @@
             <li class="nav-item">
                 <a class="nav-link {{ request()->is('delivery-areas*') ? '' : 'collapsed' }}"
                     href="{{ route('delivery-areas.index') }}">
-                    <i class="bi bi-people"></i>
+                    <i class="bi bi-building"></i>
                     <span>Delivery Area</span>
                 </a>
             </li>

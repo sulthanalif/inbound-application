@@ -64,6 +64,10 @@
                                     </tr>
                                 @endif
                                 <tr>
+                                    <th scope="row">Pickup Area</th>
+                                    <td>{{ $outbound->pickup_area_id == null ? '-' : ($outbound->pickupArea->warehouse->name.' - '.$outbound->pickupArea->name. ' - '. $outbound->pickupArea->container. ' - '. $outbound->pickupArea->rack. ' - '. $outbound->pickupArea->number) }}</td>
+                                </tr>
+                                <tr>
                                     <th scope="row">Driver Name</th>
                                     <td>{{ $outbound->sender_name ?? '-' }}</td>
                                 </tr>
@@ -73,7 +77,7 @@
                                 </tr>
                                 <tr>
                                     <th scope="row">Area</th>
-                                    <td>{{ $outbound->area->name ?? '-' }}</td>
+                                    <td>{{ $outbound->deliveryArea->name ?? '-' }}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -97,7 +101,7 @@
                         <table class="table">
                             <thead>
                                 <tr>
-                                    <th scope="col">#</th>
+                                    <th scope="col">No</th>
                                     <th scope="col">Code</th>
                                     <th scope="col">Name</th>
                                     <th scope="col">Warehouse</th>
@@ -154,7 +158,7 @@
                             <table class="table">
                                 <thead>
                                     <tr style="font-size: 15px">
-                                        <th scope="col">#</th>
+                                        <th scope="col">No</th>
                                         <th scope="col">Date</th>
                                         {{-- <th scope="col">Code</th> --}}
                                         <th scope="col">Method</th>
@@ -287,8 +291,35 @@
                                         </p>
                                         @hasrole('Super Admin|Admin Warehouse')
                                             @if ($outbound->status == 'Approved')
-                                                <a href="{{ route('outbounds.changeStatus', [$outbound, 'status' => 'Pickup']) }}"
-                                                    class="btn btn-info btn-sm text-white  mb-3">Submit</a>
+                                                <form action="{{ route('outbounds.pickup', $outbound) }}" method="POST">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    <div class="mb-3">
+                                                        <div class="col-md-12">
+                                                            <label for="warehouse_id" class="form-label">Warehouse<span
+                                                                    class="text-danger">*</span></label>
+                                                            <select id="warehouse_id" name="warehouse_id"
+                                                                class="form-select select1 @error('warehouse_id') is-invalid @enderror"
+                                                                onchange="populateArea(this.value, {{ json_encode($warehouses) }})" required>
+                                                                <option value="" selected disabled>Choose...</option>
+                                                                @foreach ($warehouses as $warehouse)
+                                                                    <option value="{{ $warehouse->id }}">{{ $warehouse->code }} -
+                                                                        {{ $warehouse->name }}</option>
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-md-12">
+                                                            <label for="pickup_area_id" class="form-label">Area<span class="text-danger">*</span></label>
+                                                            <select id="pickup_area_id" name="pickup_area_id"
+                                                                class="form-select select1 @error('pickup_area_id') is-invalid @enderror" required>
+                                                                {{-- <option value="" sel   ected disabled>Choose...</option> --}}
+
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+                                                    <button type="submit" class="btn btn-sm btn-info text-white">Submit</button>
+                                                </form>
                                             @endif
                                         @endhasrole
                                     </div>
@@ -391,14 +422,14 @@
                                                     @csrf
                                                     @method('PUT')
                                                     <div class="col-sm-12">
-                                                        <label for="deliveryArea" class="form-label">Area<span
+                                                        <label for="deliveryArea" class="form-label">Delivery Area<span
                                                                 class="text-danger">*</span></label>
                                                         <select name="deliveryArea" id="deliveryArea" class="form-select select1"
                                                             required>
                                                             <option value="" selected disabled>Choose...</option>
                                                             @foreach ($deliveryAreas as $area)
                                                                 <option value="{{ $area->id }}">
-                                                                    {{ $area->code }}|{{ $area->name }}</option>
+                                                                    {{ $area->code }} - {{ $area->name }}</option>
                                                             @endforeach
                                                         </select>
                                                         @error('deliveryArea')
@@ -506,6 +537,26 @@
 
 @push('scripts')
     <script>
+        const selectWarehouse = document.getElementById('warehouse_id');
+        const selectArea = document.getElementById('pickup_area_id');
+
+        const populateArea = (warehouseId, warehouses) => {
+            const selectedWarehouse = warehouses.find(warehouse => warehouse.id == warehouseId);
+            if (selectedWarehouse != null) {
+                selectArea.innerHTML = '<option value="" selected disabled>Belum Ada...</option>';
+                // console.log(selectedWarehouse.areas);
+
+                selectedWarehouse.areas.forEach(area => {
+                    const option = document.createElement('option');
+                    option.value = area.id;
+                    option.text = `${area.code} - ${area.name} - ${area.container} - ${area.rack}`;
+                    selectArea.appendChild(option);
+                });
+            } else {
+                selectArea.innerHTML = '<option value="" selected disabled>Tidak Ada...</option>';
+            }
+        };
+
         $(document).ready(function() {
             $('.select1').each(function() {
                 $(this).select2({
