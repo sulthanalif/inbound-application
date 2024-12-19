@@ -18,6 +18,7 @@ return new class extends Migration
             $table->foreignId('vendor_id')->nullable()->constrained()->onDelete('cascade')->nullable();
             $table->foreignId('project_id')->nullable()->constrained()->onDelete('cascade')->nullable();
             $table->foreignId('outbound_id')->nullable()->constrained()->onDelete('cascade')->nullable();
+            $table->foreignId('area_id')->nullable()->constrained()->onDelete('cascade')->nullable();
             $table->date('date');
             $table->string('sender_name')->nullable();
             $table->string('vehicle_number')->nullable();

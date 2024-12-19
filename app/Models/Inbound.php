@@ -13,6 +13,7 @@ class Inbound extends Model
         'outbound_id',
         'vendor_id',
         'user_id',
+        'area_id',
         'date',
         'project_id',
         'sender_name',
@@ -23,6 +24,11 @@ class Inbound extends Model
         'code_outbound',
         'description',
     ];
+
+    public function area()
+    {
+        return $this->belongsTo(Area::class);
+    }
 
     public function user()
     {

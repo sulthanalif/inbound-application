@@ -184,6 +184,7 @@ Route::middleware('auth', 'is_active')->group(function () {
        Route::get('/inbounds/{inbound}/show', [InboundController::class, 'show'])->name('inbounds.show');
        Route::get('/inbounds/{inbound}/{status}', [InboundController::class, 'changeStatus'])->name('inbounds.changeStatus');
        Route::put('/inbounds/{inbound}/delivery', [InboundController::class, 'delivery'])->name('inbounds.delivery');
+       Route::put('/inbounds/{inbound}/success', [InboundController::class, 'success'])->name('inbounds.success');
 
        //print image payment
        Route::get('/download-image-payment/{payment}', [PaymentController::class, 'downloadImagePayment'])->name('payment.downloadImagePayment');

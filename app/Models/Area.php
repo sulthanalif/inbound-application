@@ -31,4 +31,9 @@ class Area extends Model
     {
         return $this->hasMany(Outbound::class);
     }
+
+    public function inbound()
+    {
+        return $this->hasMany(Inbound::class);
+    }
 }

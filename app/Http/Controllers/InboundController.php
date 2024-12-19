@@ -34,7 +34,8 @@ class InboundController extends Controller
 
     public function show(Inbound $inbound)
     {
-        return view('inbounds.show', compact('inbound'));
+        $warehouses = Warehouse::with('areas')->get();
+        return view('inbounds.show', compact('inbound', 'warehouses'));
     }
 
     public function changeStatus(Inbound $inbound, Request $request)
@@ -110,9 +111,36 @@ class InboundController extends Controller
         }
     }
 
+    public function success(Request $request, Inbound $inbound)
+    {
+        try {
+            DB::beginTransaction();
+            $inbound->status = 'Success';
+            $inbound->area_id = $request->area_id;
+            $inbound->save();
+
+
+            foreach ($inbound->items as $item) {
+                $problemItem = new ProblemItem();
+                $problemItem->outbound_id = $inbound->outbound_id;
+                $problemItem->goods_id = $item->goods_id;
+                $problemItem->qty = $item->qty;
+                $problemItem->save();
+            }
+
+            DB::commit();
+            Alert::success('Success', 'Data Success');
+            return back();
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            Alert::error('Error', $th->getMessage());
+            return back();
+        }
+    }
+
     public function order()
     {
-        // $vendors = Vendor::all();
+        // $vtrendors = Vendor::all();
         $goods = Goods::all();
         if (Auth::user()->roles[0]->name == 'Admin Engineer') {
             $outbounds = Outbound::where('user_id', Auth::user()->id)->latest()->get();

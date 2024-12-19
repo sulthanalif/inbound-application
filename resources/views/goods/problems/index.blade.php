@@ -20,6 +20,7 @@
                             <th scope="col">Code</th>
                             <th scope="col">Code Outbound</th>
                             <th scope="col">Name</th>
+                            <th scope="col">Area</th>
                             <th scope="col">Quantity</th>
                             <th scope="col">Worthy</th>
                             <th scope="col" style="text-align: center;">Action</th>
@@ -27,11 +28,12 @@
                     </thead>
                     <tbody>
                         @foreach ($problems as $item)
-                            <tr>
+                            <tr style="font-size: 15px">
                                 <th scope="row">{{ $loop->iteration }}</th>
                                 <td>{{ $item->goods->code }}</td>
                                 <td>{{ $item->outbound->code }}</td>
                                 <td>{{ $item->goods->name }}</td>
+                                <td>{{ $item->outbound->inbound->area->warehouse->name }} - {{ $item->outbound->inbound->area->name }} - {{ $item->outbound->inbound->area->container }} - {{ $item->outbound->inbound->area->rack }} - {{ $item->outbound->inbound->area->number }}</td>
                                 <td>{{ $item->qty }}{{ $item->goods->unit->symbol }}</td>
                                 <td>{{ $item->worthy }}{{ $item->goods->unit->symbol }}</td>
                                 <td align="center">

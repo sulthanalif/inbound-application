@@ -52,6 +52,12 @@
                                     <th scope="row">Vehicle Number</th>
                                     <td>{{ $inbound->vehicle_number ?? '-' }}</td>
                                 </tr>
+                                @if ($inbound->is_return)
+                                    <tr>
+                                        <th>Storage Area</th>
+                                        <td>{{ $inbound->area == null ? '-' : ($inbound->area->warehouse->name.' - '.$inbound->area->name. ' - '. $inbound->area->container. ' - '. $inbound->area->rack. ' - '. $inbound->area->number)  }}</td>
+                                    </tr>
+                                @endif
                                 <tr>
                                     <th scope="row">Description</th>
                                     <td>{{ $inbound->description }}</td>
@@ -85,7 +91,9 @@
                                     <th scope="col">No</th>
                                     <th scope="col">Item</th>
                                     <th scope="col">Quantity</th>
+                                    @if (!$inbound->is_return)
                                     <th scope="col">Warehouse</th>
+                                    @endif
                                 </tr>
                             </thead>
                             <tbody>
@@ -94,7 +102,9 @@
                                         <th scope="row">{{ $loop->iteration }}</th>
                                         <td>{{ $item->goods->name }}</td>
                                         <td>{{ $item->qty }}</td>
-                                        <td>{{ $item->goods->area->warehouse->name }}</td>
+                                        @if (!$inbound->is_return)
+                                        <td>{{ $item->goods->area->warehouse->name }} - {{ $item->goods->area->name }} - {{ $item->goods->area->container }} - {{ $item->goods->area->rack }} - {{ $item->goods->area->number }}</td>
+                                        @endif
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -241,8 +251,41 @@
                                         </p>
                                         @hasrole('Super Admin|Admin Warehouse')
                                             @if ($inbound->status == 'Delivery')
+                                                @if ($inbound->is_return == 1)
+                                                <form action="{{ route('inbounds.success', $inbound) }}" method="POST">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    <div class="mb-3">
+                                                        <div class="col-md-12">
+                                                            <label for="warehouse_id" class="form-label">Warehouse<span
+                                                                    class="text-danger">*</span></label>
+                                                            <select id="warehouse_id" name="warehouse_id"
+                                                                class="form-select select1 @error('warehouse_id') is-invalid @enderror"
+                                                                onchange="populateArea(this.value, {{ json_encode($warehouses) }})" required>
+                                                                <option value="" selected disabled>Choose...</option>
+                                                                @foreach ($warehouses as $warehouse)
+                                                                    <option value="{{ $warehouse->id }}">{{ $warehouse->code }} -
+                                                                        {{ $warehouse->name }}</option>
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-md-12">
+                                                            <label for="area_id" class="form-label">Area<span class="text-danger">*</span></label>
+                                                            <select id="area_id" name="area_id"
+                                                                class="form-select select1 @error('area_id') is-invalid @enderror" required>
+                                                                {{-- <option value="" sel   ected disabled>Choose...</option> --}}
+
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+                                                    <button type="submit" class="btn btn-sm btn-info text-white">Submit</button>
+                                                </form>
+
+                                                @else
                                                 <a href="{{ route('inbounds.changeStatus', [$inbound, 'status' => 'Success']) }}"
                                                     class="btn btn-success btn-sm  mb-3">Submit</a>
+                                                @endif
                                             @endif
                                         @endhasrole
                                     </div>
@@ -290,4 +333,37 @@
             box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
         }
     </style>
+@endpush
+
+@push('scripts')
+    <script>
+        const selectWarehouse = document.getElementById('warehouse_id');
+        const selectArea = document.getElementById('area_id');
+
+        const populateArea = (warehouseId, warehouses) => {
+            const selectedWarehouse = warehouses.find(warehouse => warehouse.id == warehouseId);
+            if (selectedWarehouse != null) {
+                selectArea.innerHTML = '<option value="" selected disabled>Belum Ada...</option>';
+                // console.log(selectedWarehouse.areas);
+
+                selectedWarehouse.areas.forEach(area => {
+                    const option = document.createElement('option');
+                    option.value = area.id;
+                    option.text = `${area.code} - ${area.name} - ${area.container} - ${area.rack}`;
+                    selectArea.appendChild(option);
+                });
+            } else {
+                selectArea.innerHTML = '<option value="" selected disabled>Tidak Ada...</option>';
+            }
+        };
+
+        $(document).ready(function() {
+            $('.select1').each(function() {
+                $(this).select2({
+                    placeholder: 'Choose..',
+                    theme: 'bootstrap4',
+                });
+            });
+        });
+    </script>
 @endpush

@@ -294,7 +294,7 @@
                 selectedWarehouse.areas.forEach(area => {
                     const option = document.createElement('option');
                     option.value = area.id;
-                    option.text = `${area.name}`;
+                    option.text = `${area.code} - ${area.name} - ${area.container} - ${area.rack}`;
                     selectArea.appendChild(option);
                 });
             } else {

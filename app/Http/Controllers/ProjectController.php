@@ -166,7 +166,7 @@ class ProjectController extends Controller
 
         $outboundGoods = [];
 
-        foreach ($project->outbounds as $outbound) {
+        foreach ($project->outbounds->where('status', 'Success') as $outbound) {
             if ($outbound->is_resend == 0) {
                 foreach ($outbound->items as $item) {
                     $key = $item->goods->code;
@@ -187,7 +187,7 @@ class ProjectController extends Controller
             }
         }
 
-        foreach ($project->inbounds as $inbound) {
+        foreach ($project->inbounds->where('status', 'Success') as $inbound) {
             foreach ($inbound->items as $item) {
                 $key = $item->goods->code;
                 if (array_key_exists($key, $outboundGoods)) {
