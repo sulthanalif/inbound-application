@@ -83,14 +83,16 @@
                     <b>Nama Pengendara</b><br>
                     <b>Penerima</b><br>
                     <b>Alamat</b><br>
-                    <b>Kontak</b>
+                    <b>Kontak</b><br>
+                    <b>Keterangan</b>
                 </td>
                 <td>
                     <b>: {{ $inbound->vehicle_number }}</b><br>
                     <b>: {{ $inbound->sender_name }}</b><br>
                     <b>: {{ $inbound->user->name }} ({{ $inbound->user->company ?? '-' }})</b><br>
                     <b>: {{ $inbound->project->address }}</b><br>
-                    <b>: {{ $inbound->user->phone ?? '-' }}</b>
+                    <b>: {{ $inbound->user->phone ?? '-' }}</b><br>
+                    <b>: {{ $inbound->description ?? '-' }}</b>
                 </td>
                 <td style="width: 30%">
                     <b>No</b><br>

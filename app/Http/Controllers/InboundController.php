@@ -214,9 +214,9 @@ class InboundController extends Controller
         $inbound = Inbound::find($request->inbound_id);
         $generateCode = new GenerateCode();
         try {
-            DB::transaction(function () use ($request, $inbound,$generateCode , &$outbound) {
+            DB::transaction(function () use ($request, $inbound, $generateCode , &$outbound) {
                 $outbound = Outbound::create([
-                    'user_id' => Auth::user()->id,
+                    'user_id' => $inbound->user->id,
                     'code' => $generateCode->make(Outbound::count(), 'OUT'),
                     'code_inbound' => $inbound->code,
                     'date' => $request->date,

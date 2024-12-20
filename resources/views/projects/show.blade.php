@@ -71,7 +71,7 @@
                             </thead>
                             <tbody>
                                 @if ($project->outbounds->count() > 0)
-                                    @foreach ($project->outbounds->where('is_resend', 0)->sortByDesc('date')->take(5) as $outbound)
+                                    @foreach ($project->outbounds()->latest()->get()->take(5) as $outbound)
                                         <tr style="font-size: 12px">
                                             <th scope="row">{{ $loop->iteration }}</th>
                                             <td>
@@ -149,7 +149,7 @@
                             </thead>
                             <tbody>
                                 @if ($project->inbounds->count() > 0)
-                                    @foreach ($project->inbounds as $inbound)
+                                    @foreach ($project->inbounds()->latest()->get()->take(5) as $inbound)
                                         <tr style="font-size: 12px">
                                             <th scope="row">{{ $loop->iteration }}</th>
                                             <td>

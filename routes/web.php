@@ -72,7 +72,7 @@ Route::middleware('auth', 'is_active')->group(function () {
 
     });
 
-    Route::middleware('role:Super Admin|Admin Warehouse')->group(function () {
+    Route::middleware('role:Super Admin|Admin Warehouse|Head Warehouse')->group(function () {
         //warehouse
         Route::get('/warehouses', [WarehouseController::class, 'index'])->name('warehouses.index');
         Route::get('/warehouses/{warehouse}', [WarehouseController::class, 'show'])->name('warehouses.show');

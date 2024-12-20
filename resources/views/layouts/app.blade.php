@@ -137,6 +137,50 @@
 
     <main id="main" class="main">
 
+        @if (request()->is('dashboard'))
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="pagetitle">
+                    <h1>@yield('title')</h1>
+                    <nav>
+                        <ol class="breadcrumb">
+                            @if (!request()->is('dashboard'))
+                            <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
+                            @endif
+                            @if (isset($breadcrumbs))
+                                @foreach ($breadcrumbs as $link)
+                                    <li class="breadcrumb-item"><a href="{{ $link['params'] ? route($link['route'], $link['params']) : route($link['route']) }}">{{ $link['name'] }}</a>
+                                    </li>
+                                @endforeach
+                            @endif
+                            <li class="breadcrumb-item active">@yield('title')</li>
+                        </ol>
+                    </nav>
+                </div><!-- End Page Title -->
+                <div class="">
+                    <div class="d-flex gap-2">
+                        <select name="filter_month" class="form-select" id="filter_month">
+                            <option value="" selected disabled></option>
+                            <option value="all">All</option>
+                            @for ($i = 1; $i <= 12; $i++)
+                                <option value="{{ $i }}"
+                                    {{ request()->filter_month == $i ? 'selected' : '' }}>
+                                    {{ \Carbon\Carbon::create(request()->filter_year, $i, 1)->locale('id_ID')->monthName }}
+                                </option>
+                            @endfor
+                        </select>
+                        <select name="filter_year" class="form-select" id="filter_year">
+                            <option value="" selected disabled></option>
+                            {{-- <option value="all">All</option> --}}
+                            @for ($i = 2023; $i <= date('Y'); $i++)
+                                <option value="{{ $i }}"
+                                    {{ request()->filter_year == $i ? 'selected' : '' }}>
+                                    {{ $i }}</option>
+                            @endfor
+                        </select>
+                    </div>
+                </div>
+            </div>
+        @else
         <div class="pagetitle">
             <h1>@yield('title')</h1>
             <nav>
@@ -154,6 +198,7 @@
                 </ol>
             </nav>
         </div><!-- End Page Title -->
+        @endif
 
         @yield('content')
 

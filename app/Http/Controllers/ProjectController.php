@@ -140,7 +140,7 @@ class ProjectController extends Controller
                 $new_outbound = Outbound::create([
                     'code' => 'OUT-R-' . date('Ymd') . str_pad($outbound->outbounds()->count() + 1, 4, '0', STR_PAD_LEFT),
                     'project_id' => $outbound->project_id,
-                    'user_id' => Auth::user()->id,
+                    'user_id' => $outbound->user_id,
                     'date' => now(),
 
                 ]);
@@ -166,7 +166,8 @@ class ProjectController extends Controller
 
         $outboundGoods = [];
 
-        foreach ($project->outbounds->where('status', 'Success') as $outbound) {
+        $outbounds = $project->outbounds()->where('status', 'Success')->get();
+        foreach ($outbounds as $outbound) {
             if ($outbound->is_resend == 0) {
                 foreach ($outbound->items as $item) {
                     $key = $item->goods->code;

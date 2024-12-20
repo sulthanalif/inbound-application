@@ -14,12 +14,32 @@ class DashboardController extends Controller
         $filter_month = $request->get('filter_month');
         $filter_year = $request->get('filter_year', now()->year);
 
-        if(Auth::user()->roles[0]->name == 'Admin Engineer') {
-            $outbounds_stas = Outbound::where('user_id', Auth::user()->id)->get();
-            $inbounds_stas = Inbound::where('user_id', Auth::user()->id)->get();
+        if (Auth::user()->roles[0]->name == 'Admin Engineer') {
+            $outbounds_stas = Outbound::where('user_id', Auth::user()->id)
+                ->whereYear('date', $filter_year);
+            if ($filter_month) {
+                $outbounds_stas->whereMonth('date', $filter_month);
+            }
+            $outbounds_stas = $outbounds_stas->get();
+
+            $inbounds_stas = Inbound::where('user_id', Auth::user()->id)
+                ->whereYear('date', $filter_year);
+            if ($filter_month) {
+                $inbounds_stas->whereMonth('date', $filter_month);
+            }
+            $inbounds_stas = $inbounds_stas->get();
         } else {
-            $outbounds_stas = Outbound::all();
-            $inbounds_stas = Inbound::all();
+            $outbounds_stas = Outbound::whereYear('date', $filter_year);
+            if ($filter_month) {
+                $outbounds_stas->whereMonth('date', $filter_month);
+            }
+            $outbounds_stas = $outbounds_stas->get();
+
+            $inbounds_stas = Inbound::whereYear('date', $filter_year);
+            if ($filter_month) {
+                $inbounds_stas->whereMonth('date', $filter_month);
+            }
+            $inbounds_stas = $inbounds_stas->get();
         }
 
 
@@ -42,23 +62,49 @@ class DashboardController extends Controller
             ]
         ];
 
-        $query = Outbound::with('items')
-            ->whereYear('date', $filter_year);
+        if (Auth::user()->roles[0]->name == 'Admin Engineer') {
+            $query = Outbound::with('items')
+                ->where('user_id', Auth::user()->id)
+                ->latest()
+                ->whereYear('date', $filter_year);
 
-        if ($filter_month) {
-            $query->whereMonth('date', $filter_month);
+            if ($filter_month) {
+                $query->whereMonth('date', $filter_month);
+            }
+
+            $outbounds = $query->get();
+
+            $query_in = Inbound::with('items')
+                ->where('user_id', Auth::user()->id)
+                ->latest()
+                ->whereYear('date', $filter_year);
+
+            if ($filter_month) {
+                $query_in->whereMonth('date', $filter_month);
+            }
+
+            $inbounds = $query_in->get();
+        } else {
+            $query = Outbound::with('items')
+                ->latest()
+                ->whereYear('date', $filter_year);
+
+            if ($filter_month) {
+                $query->whereMonth('date', $filter_month);
+            }
+
+            $outbounds = $query->get();
+
+            $query_in = Inbound::with('items')
+                ->latest()
+                ->whereYear('date', $filter_year);
+
+            if ($filter_month) {
+                $query_in->whereMonth('date', $filter_month);
+            }
+
+            $inbounds = $query_in->get();
         }
-
-        $outbounds = $query->get();
-
-        $query_in = Inbound::with('items')
-            ->whereYear('date', $filter_year);
-
-        if ($filter_month) {
-            $query_in->whereMonth('date', $filter_month);
-        }
-
-        $inbounds = $query_in->get();
 
 
         //chart_transaction_amount

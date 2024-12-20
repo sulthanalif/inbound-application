@@ -178,7 +178,7 @@
                                             default => 'This order is ready for delivery.',
                                         } }}
                                         </p>
-                                        @if ($inbound->status == 'Delivery')
+                                        @if ($inbound->status == 'Delivery' || $inbound->status == 'Success')
                                         <a target="_blank" href="{{ route('inbounds.downloadInvoiceDelivery', $inbound) }}"
                                         class="btn btn-primary btn-sm  mb-3">Download Invoice Delivery</a>
                                         @endif

@@ -88,12 +88,14 @@
                     <b>Alamat</b><br>
                     <b>No Kendaraan</b><br>
                     <b>Nama Pengendara</b><br>
+                    <b>Pickup Area</b><br>
                 </td>
                 <td>
                     <b>: {{ $outbound->user->name }} ({{ $outbound->user->company ?? '-' }})</b><br>
                     <b>: {{ $outbound->project->address }}</b><br>
                     <b>: {{ $outbound->vehicle_number }}</b><br>
                     <b>: {{ $outbound->sender_name }}</b><br>
+                    <b>: {{ $outbound->pickupArea->warehouse->name }} - {{ $outbound->pickupArea->name }} - {{ $outbound->pickupArea->container }} - {{ $outbound->pickupArea->rack }} - {{ $outbound->pickupArea->number }}</b><br>
                 </td>
             </tr>
         </table>
