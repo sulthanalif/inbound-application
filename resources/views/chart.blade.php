@@ -75,27 +75,6 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <h5 class="card-title">Comparison Type Items</h5>
-                            <div class="d-flex">
-                                <select name="filter_month" class="form-select" id="filter_month">
-                                    <option value="" selected disabled></option>
-                                    <option value="all">All</option>
-                                    @for ($i = 1; $i <= 12; $i++)
-                                        <option value="{{ $i }}"
-                                            {{ request()->filter_month == $i ? 'selected' : '' }}>
-                                            {{ \Carbon\Carbon::create(request()->filter_year, $i, 1)->locale('id_ID')->monthName }}
-                                        </option>
-                                    @endfor
-                                </select>
-                                <select name="filter_year" class="form-select" id="filter_year">
-                                    <option value="" selected disabled></option>
-                                    {{-- <option value="all">All</option> --}}
-                                    @for ($i = 2023; $i <= date('Y'); $i++)
-                                        <option value="{{ $i }}"
-                                            {{ request()->filter_year == $i ? 'selected' : '' }}>
-                                            {{ $i }}</option>
-                                    @endfor
-                                </select>
-                            </div>
                         </div>
                         <!-- Donut Chart -->
                         <div id="donutChart"></div>
