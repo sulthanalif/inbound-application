@@ -27,11 +27,11 @@ return new class extends Migration
             $table->string('unit_time')->nullable();
             $table->integer('minimum_order')->nullable();
             $table->decimal('capital', 10, 2);
-            $table->foreignId('unit_id')->constrained();
-            $table->foreignId('vendor_id')->constrained();
-            $table->foreignId('category_id')->constrained();
-            $table->foreignId('area_id')->constrained();
-            $table->foreignId('user_id')->constrained();
+            $table->foreignId('unit_id')->nullable()->constrained('units')->onDelete('cascade');
+            $table->foreignId('vendor_id')->nullable()->constrained('vendors')->onDelete('cascade');
+            $table->foreignId('category_id')->nullable()->constrained('categories')->onDelete('cascade');
+            $table->foreignId('area_id')->nullable()->constrained('areas')->onDelete('cascade');
+            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });
     }

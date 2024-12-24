@@ -9,7 +9,7 @@
 @section('content')
     <section class="section">
         <div class="row">
-            <div class="col-lg-6">
+            <div class="col-lg-12">
                 <div class="card">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
@@ -60,9 +60,10 @@
 
                         <table class="table">
                             <thead>
-                                <tr style="font-size: 15px">
+                                <tr>
                                     <th scope="col">No</th>
-                                    <th scope="col">Date/Code</th>
+                                    <th scope="col">Date</th>
+                                    <th scope="col">Code</th>
                                     <th scope="col">Status</th>
                                     <th scope="col">Payment</th>
                                     <th scope="col">Type</th>
@@ -72,13 +73,15 @@
                             <tbody>
                                 @if ($project->outbounds->count() > 0)
                                     @foreach ($project->outbounds()->latest()->get()->take(5) as $outbound)
-                                        <tr style="font-size: 12px">
+                                        <tr>
                                             <th scope="row">{{ $loop->iteration }}</th>
                                             <td>
-                                                {{ Carbon\Carbon::parse($outbound->date)->format('d F Y') }} <br>
-                                                <a href="{{ route('projects.showOutbound', $outbound) }}"
-                                                    class="badge bg-primary">{{ $outbound->code }}</a>
+                                                {{ Carbon\Carbon::parse($outbound->date)->format('d F Y') }}
 
+
+                                            </td>
+                                            <td>
+                                                {{ $outbound->code }}
                                             </td>
                                             <td>
                                                 <div
@@ -110,6 +113,8 @@
                                             </td>
                                             <td style="text-align: center">
 
+                                                <a target="_blank" href="{{ route('projects.showOutbound', $outbound) }}"
+                                                    class="btn btn-primary btn-sm"><i class="bi bi-eye-fill"></i></a>
                                                 <a target="_blank" href="{{ route('projects.printOutbound', $outbound) }}"
                                                     class="btn btn-primary btn-sm"><i class="bi bi-printer-fill"></i></a>
                                             </td>
@@ -127,18 +132,20 @@
 
 
             </div>
-            <div class="col-lg-6">
+            <div class="col-lg-12">
                 <div class="card">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <h5 class="card-title">Inbound</h5>
 
+                            @role('Admin Engineer')
                             <a href="{{ route('projects.return', $project) }}" class="btn btn-primary btn-sm">Return</a>
+                            @endrole
                         </div>
 
                         <table class="table">
                             <thead>
-                                <tr style="font-size: 15px">
+                                <tr>
                                     <th scope="col">No</th>
                                     <th scope="col">Date</th>
                                     <th scope="col">Code</th>
@@ -150,7 +157,7 @@
                             <tbody>
                                 @if ($project->inbounds->count() > 0)
                                     @foreach ($project->inbounds()->latest()->get()->take(5) as $inbound)
-                                        <tr style="font-size: 12px">
+                                        <tr>
                                             <th scope="row">{{ $loop->iteration }}</th>
                                             <td>
                                                 {{ Carbon\Carbon::parse($inbound->date)->format('d F Y') }} <br>
@@ -203,7 +210,7 @@
 
                         <table class="table">
                             <thead>
-                                <tr style="font-size: 15px">
+                                <tr>
                                     <th scope="col">No</th>
                                     <th scope="col">Code</th>
                                     <th scope="col">Name</th>
@@ -215,7 +222,7 @@
                             <tbody>
                                 @if ($project->outbounds->count() > 0)
                                     @foreach ($outboundGoods as $item)
-                                        <tr style="font-size: 12px">
+                                        <tr>
                                             <th scope="row">{{ $loop->iteration }}</th>
                                             <td>
                                                 {{ $item['code'] }} <br>

@@ -23,6 +23,7 @@ class Outbound extends Model
         'number',
         'payment',
         'status_payment',
+        'is_return',
         'is_resend',
         'code_inbound',
         'total_price',

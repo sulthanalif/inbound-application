@@ -44,9 +44,9 @@
                                     class="form-select select2" required onchange="getItems(this)">
                                     <option value="" selected disabled>Choose...</option>
                                     @foreach ($project->outbounds as $outbound)
-                                       @if ($outbound->items->pluck('goods.type')->contains('Rentable') && $outbound->status == 'Success')
+                                       @if ($outbound->items->pluck('goods.type')->contains('Rentable') && $outbound->status == 'Success' && $outbound->is_return == false)
                                        <option value="{{ $outbound->id }}" data-items="{{ json_encode($outbound->items->load('goods.area.warehouse')) }}">
-                                        {{ $outbound->code }}</option>
+                                        {{ Carbon\Carbon::parse($outbound->date)->format('d F Y') }} | {{ $outbound->code }}</option>
                                        @endif
                                     @endforeach
                                 </select>

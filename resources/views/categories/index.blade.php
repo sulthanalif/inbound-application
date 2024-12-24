@@ -30,7 +30,9 @@
                                     <td align="center">
                                         <a href="{{ route('categories.edit', $category) }}"
                                             class="btn btn-primary btn-sm"><i class="bi bi-pencil-fill"></i></a>
-                                        <a href="{{ route('categories.destroy', $category) }}" class="btn btn-danger btn-sm" data-confirm-delete="true"><i class="bi bi-trash-fill"></i></a>
+                                            @role('Super Admin')
+                                            <a href="{{ route('categories.destroy', $category) }}" class="btn btn-danger btn-sm" data-confirm-delete="true"><i class="bi bi-trash-fill"></i></a>
+                                            @endrole
                                     </td>
                                 </tr>
                             @endforeach

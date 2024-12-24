@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('inbound_items', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('inbound_id')->constrained()->onDelete('cascade');
-            $table->unsignedBigInteger('goods_id')->constrained()->onDelete('cascade');
+            $table->unsignedBigInteger('goods_id')->constrained('goods')->onDelete('cascade');
             $table->integer('qty');
             $table->timestamps();
         });

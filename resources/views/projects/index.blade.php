@@ -9,7 +9,11 @@
                 {{-- <h5 class="card-title">Projects Data</h5> --}}
 
                 <div class="d-flex justify-content-between mt-3">
+                   <div>
+                    @role('Admin Engineer')
                     <a href="{{ route('projects.create') }}" class="btn btn-primary btn-sm mb-3">Create</a>
+                    @endrole
+                   </div>
                     <div class="d-flex align-items-center">
                         {{-- <label for="min" class="me-2">Start Date:</label> --}}
                         <input type="text" class="form-control form-control-sm me-2" id="min" name="min"

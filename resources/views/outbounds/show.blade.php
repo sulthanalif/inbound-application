@@ -65,7 +65,8 @@
                                 @endif
                                 <tr>
                                     <th scope="row">Pickup Area</th>
-                                    <td>{{ $outbound->pickup_area_id == null ? '-' : ($outbound->pickupArea->warehouse->name.' - '.$outbound->pickupArea->name. ' - '. $outbound->pickupArea->container. ' - '. $outbound->pickupArea->rack. ' - '. $outbound->pickupArea->number) }}</td>
+                                    <td>{{ $outbound->pickup_area_id == null ? '-' : $outbound->pickupArea->warehouse->name . ' - ' . $outbound->pickupArea->name . ' - ' . $outbound->pickupArea->container . ' - ' . $outbound->pickupArea->rack . ' - ' . $outbound->pickupArea->number }}
+                                    </td>
                                 </tr>
                                 <tr>
                                     <th scope="row">Driver Name</th>
@@ -104,10 +105,14 @@
                                     <th scope="col">No</th>
                                     <th scope="col">Code</th>
                                     <th scope="col">Name</th>
-                                    <th scope="col">Warehouse</th>
+                                    @role('Admin Engineer')
+
+                                    @else
+                                        <th scope="col">Warehouse</th>
+                                    @endrole
                                     <th scope="col">Quantity</th>
                                     @if (!$outbound->is_resend)
-                                        <th scope="col">Sub Price</th>
+                                        <th scope="col" width="20%">Sub Price</th>
                                     @endif
                                 </tr>
                             </thead>
@@ -116,8 +121,12 @@
                                     <tr style="font-size: 12px">
                                         <th scope="row">{{ $loop->iteration }}</th>
                                         <td>{{ $item->goods->code }}</td>
-                                        <td>{{ Str::limit($item->goods->name, 12) }}</td>
-                                        <td>{{ $item->goods->area->warehouse->name }}</td>
+                                        <td>{{ Str::limit($item->goods->name, 20) }}</td>
+                                        @role('Admin Engineer')
+
+                                        @else
+                                        <td>{{ $item->goods->warehouseName() }}</td>
+                                        @endrole
                                         <td>{{ $item->qty }}</td>
                                         @if (!$outbound->is_resend)
                                             <td>{{ 'Rp. ' . number_format($item->sub_total, 0, ',', '.') }}</td>
@@ -129,7 +138,10 @@
                                 <tfoot>
                                     <tr style="font-size: 12px">
                                         <td></td>
-                                        <td></td>
+                                        @role('Admin Engineer')
+                                        @else
+                                            <td></td>
+                                        @endrole
                                         <td></td>
                                         <td colspan="2" style="font-weight: bold">Total</td>
                                         <td style="font-weight: bold">
@@ -300,25 +312,30 @@
                                                                     class="text-danger">*</span></label>
                                                             <select id="warehouse_id" name="warehouse_id"
                                                                 class="form-select select1 @error('warehouse_id') is-invalid @enderror"
-                                                                onchange="populateArea(this.value, {{ json_encode($warehouses) }})" required>
+                                                                onchange="populateArea(this.value, {{ json_encode($warehouses) }})"
+                                                                required>
                                                                 <option value="" selected disabled>Choose...</option>
                                                                 @foreach ($warehouses as $warehouse)
-                                                                    <option value="{{ $warehouse->id }}">{{ $warehouse->code }} -
+                                                                    <option value="{{ $warehouse->id }}">
+                                                                        {{ $warehouse->code }} -
                                                                         {{ $warehouse->name }}</option>
                                                                 @endforeach
                                                             </select>
                                                         </div>
                                                         <div class="col-md-12">
-                                                            <label for="pickup_area_id" class="form-label">Area<span class="text-danger">*</span></label>
+                                                            <label for="pickup_area_id" class="form-label">Area<span
+                                                                    class="text-danger">*</span></label>
                                                             <select id="pickup_area_id" name="pickup_area_id"
-                                                                class="form-select select1 @error('pickup_area_id') is-invalid @enderror" required>
+                                                                class="form-select select1 @error('pickup_area_id') is-invalid @enderror"
+                                                                required>
                                                                 {{-- <option value="" sel   ected disabled>Choose...</option> --}}
 
                                                             </select>
                                                         </div>
                                                     </div>
 
-                                                    <button type="submit" class="btn btn-sm btn-info text-white">Submit</button>
+                                                    <button type="submit"
+                                                        class="btn btn-sm btn-info text-white">Submit</button>
                                                 </form>
                                             @endif
                                         @endhasrole
@@ -424,8 +441,8 @@
                                                     <div class="col-sm-12">
                                                         <label for="deliveryArea" class="form-label">Delivery Area<span
                                                                 class="text-danger">*</span></label>
-                                                        <select name="deliveryArea" id="deliveryArea" class="form-select select1"
-                                                            required>
+                                                        <select name="deliveryArea" id="deliveryArea"
+                                                            class="form-select select1" required>
                                                             <option value="" selected disabled>Choose...</option>
                                                             @foreach ($deliveryAreas as $area)
                                                                 <option value="{{ $area->id }}">
@@ -448,7 +465,8 @@
                                         @endhasrole
 
                                         @if ($outbound->status == 'Approved to delivery' || $outbound->status == 'Success')
-                                            <a target="_blank" href="{{ route('outbounds.downloadInvoiceDelivery', $outbound) }}"
+                                            <a target="_blank"
+                                                href="{{ route('outbounds.downloadInvoiceDelivery', $outbound) }}"
                                                 class="btn btn-primary btn-sm  mb-3">Download Invoice Delivery</a>
                                         @endif
                                     </div>

@@ -34,7 +34,9 @@
                         <td align="center"><a href="{{ route('users.is_active', $user) }}" class="btn btn-sm {{ $user->is_active ? 'btn-success' : 'btn-danger' }}">{{ $user->is_active ? 'Yes' : 'No' }}</a></td>
                         <td align="center">
                             <a href="{{ route('users.edit', $user) }}" class="btn btn-primary btn-sm"><i class="bi bi-pencil-fill"></i></a>
+                            @role('Super Admin')
                             <a href="{{ route('users.destroy', $user) }}" class="btn btn-danger btn-sm" data-confirm-delete="true"><i class="bi bi-trash-fill"></i></a>
+                                            @endrole
                         </td>
                     </tr>
                   @endforeach

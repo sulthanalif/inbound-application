@@ -136,17 +136,7 @@ Route::middleware('auth', 'is_active')->group(function () {
     });
 
     Route::middleware('role:Super Admin|Admin Engineer')->group(function () {
-        //projects
-        Route::get('/projects', [ProjectController::class, 'index'])->name('projects.index');
-        Route::get('/projects/create', [ProjectController::class, 'create'])->name('projects.create');
-        Route::post('/projects', [ProjectController::class, 'store'])->name('projects.store');
-        Route::get('/projects/{project}/detail', [ProjectController::class, 'show'])->name('projects.show');
-        Route::get('/projects/{project}/return', [ProjectController::class, 'return'])->name('projects.return');
-        Route::post('/projects/{project}/return', [ProjectController::class, 'storeReturn'])->name('projects.storeReturn');
-        Route::get('/projects/{outbound}/show', [ProjectController::class, 'showOutbound'])->name('projects.showOutbound');
-        Route::get('/projectss/{project}/print', [ProjectController::class, 'print'])->name('projects.print');
-        Route::get('/projectss/{project}/export', [ProjectController::class, 'export'])->name('projects.export');
-        Route::get('/projects/{outbound}/print-outbound', [ProjectController::class, 'printOutbound'])->name('projects.printOutbound');
+
 
         //request
         Route::get('/request-goods', [OutboundController::class, 'request'])->name('outbounds.request');
@@ -170,6 +160,18 @@ Route::middleware('auth', 'is_active')->group(function () {
     });
 
     Route::middleware('role:Super Admin|Admin Warehouse|Head Warehouse|Admin Engineer')->group(function () {
+        //projects
+        Route::get('/projects', [ProjectController::class, 'index'])->name('projects.index');
+        Route::get('/projects/create', [ProjectController::class, 'create'])->name('projects.create');
+        Route::post('/projects', [ProjectController::class, 'store'])->name('projects.store');
+        Route::get('/projects/{project}/detail', [ProjectController::class, 'show'])->name('projects.show');
+        Route::get('/projects/{project}/return', [ProjectController::class, 'return'])->name('projects.return');
+        Route::post('/projects/{project}/return', [ProjectController::class, 'storeReturn'])->name('projects.storeReturn');
+        Route::get('/projects/{outbound}/show', [ProjectController::class, 'showOutbound'])->name('projects.showOutbound');
+        Route::get('/projectss/{project}/print', [ProjectController::class, 'print'])->name('projects.print');
+        Route::get('/projectss/{project}/export', [ProjectController::class, 'export'])->name('projects.export');
+        Route::get('/projects/{outbound}/print-outbound', [ProjectController::class, 'printOutbound'])->name('projects.printOutbound');
+
        //outbounds
        Route::get('/outbounds', [OutboundController::class, 'index'])->name('outbounds.index');
        Route::get('/outbounds/{outbound}/show', [OutboundController::class, 'show'])->name('outbounds.show');

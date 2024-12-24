@@ -77,7 +77,7 @@
         </div>
         <table>
 
-            <tr id="keterangan-kiri">
+            <tr id="keterangan-kiri" style="font-size: 14px">
                 <td style="width: 30%">
                     <b>No Kendaraan</b><br>
                     <b>Nama Pengendara</b><br>
@@ -94,7 +94,7 @@
                     <b>: {{ $inbound->user->phone ?? '-' }}</b><br>
                     <b>: {{ $inbound->description ?? '-' }}</b>
                 </td>
-                <td style="width: 30%">
+                <td style="width: 20%">
                     <b>No</b><br>
                     <b>Tanggal</b><br>
                 </td>

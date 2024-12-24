@@ -1,8 +1,5 @@
 @extends('layouts.app', [
-    'breadcrumbs' => [
-        ['route' => 'projects.index', 'name' => 'Projects', 'params' => null],
-        ['route' => 'projects.show', 'params' => $outbound->project, 'name' => 'Project Detail'],
-    ]
+    'breadcrumbs' => [['route' => 'projects.index', 'name' => 'Projects', 'params' => null], ['route' => 'projects.show', 'params' => $outbound->project, 'name' => 'Project Detail']],
 ])
 
 @section('title', 'Outbounds Detail')
@@ -10,12 +7,13 @@
 @section('content')
     <section class="section">
         <div class="row">
-            <div class="col-lg-6">
+            <div class="col-lg-12">
                 <div class="card">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <h5 class="card-title">Outbound Detail</h5>
-                            <a target="_blank" href="{{ route('projects.printOutbound', $outbound) }}" class="btn btn-primary btn-sm"><i class="bi bi-printer-fill"></i> Pdf</a>
+                            <a target="_blank" href="{{ route('projects.printOutbound', $outbound) }}"
+                                class="btn btn-primary btn-sm"><i class="bi bi-printer-fill"></i> Pdf</a>
                         </div>
 
                         <table class="table">
@@ -56,22 +54,25 @@
                                             {{ $outbound->status }}</div>
                                     </td>
                                 </tr>
-                                <tr>
-                                    <th scope="row">Status Payment</th>
-                                    <td>
-                                        <div
-                                            class="badge bg-{{ match ($outbound->status_payment) {
-                                                'Unpaid' => 'danger',
-                                                'Paid' => 'success',
-                                                'Partially Paid' => 'warning',
-                                                default => 'danger',
-                                            } }}">
-                                            {{ $outbound->status_payment }} ({{ $outbound->payment }})</div>
-                                    </td>
-                                </tr>
+                               @if (!$outbound->is_resend)
+                               <tr>
+                                <th scope="row">Status Payment</th>
+                                <td>
+                                    <div
+                                        class="badge bg-{{ match ($outbound->status_payment) {
+                                            'Unpaid' => 'danger',
+                                            'Paid' => 'success',
+                                            'Partially Paid' => 'warning',
+                                            default => 'danger',
+                                        } }}">
+                                        {{ $outbound->status_payment }} ({{ $outbound->payment }})</div>
+                                </td>
+                            </tr>
+                               @endif
                                 <tr>
                                     <th scope="row">Pickup Area</th>
-                                    <td>{{ $outbound->pickup_area_id == null ? '-' : ($outbound->pickupArea->warehouse->name.' - '.$outbound->pickupArea->name. ' - '. $outbound->pickupArea->container. ' - '. $outbound->pickupArea->rack. ' - '. $outbound->pickupArea->number) }}</td>
+                                    <td>{{ $outbound->pickup_area_id == null ? '-' : $outbound->pickupArea->warehouse->name . ' - ' . $outbound->pickupArea->name . ' - ' . $outbound->pickupArea->container . ' - ' . $outbound->pickupArea->rack . ' - ' . $outbound->pickupArea->number }}
+                                    </td>
                                 </tr>
                                 <tr>
                                     <th scope="row">Driver Name</th>
@@ -106,85 +107,80 @@
                         {{-- @include('outbounds.modals.edit-item') --}}
                         <table class="table">
                             <thead>
-                                <tr style="font-size: 12px">
+                                <tr style="font-size: 15px">
                                     <th scope="col">No</th>
                                     <th scope="col">Code</th>
                                     <th scope="col">Name</th>
-                                    <th scope="col">Warehouse</th>
+                                    @role('Admin Engineer')
+                                    @else
+                                        <th scope="col">Warehouse</th>
+                                    @endrole
                                     <th scope="col">Quantity</th>
                                     <th scope="col">Type</th>
-                                    {{-- <th scope="col">Sub Price</th> --}}
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach ($outbound->items as $item)
-                                    <tr style="font-size: 12px">
+                                    <tr style="font-size: 15px">
                                         <th scope="row">{{ $loop->iteration }}</th>
                                         <td>{{ $item->goods->code }}</td>
                                         <td>{{ Str::limit($item->goods->name, 12) }}</td>
-                                        <td>{{ $item->goods->area->warehouse->name }}</td>
+                                        @role('Admin Engineer')
+                                        @else
+                                            <td>{{ $item->goods->warehouseName() }}
+                                            </td>
+                                        @endrole
                                         <td>{{ $item->qty }}{{ $item->goods->unit->symbol }}</td>
                                         <td>{{ $item->goods->type }}</td>
-                                        {{-- <td>{{ 'Rp. ' . number_format($item->sub_total, 0, ',', '.') }}</td> --}}
                                     </tr>
                                 @endforeach
                             </tbody>
-                            {{-- <tfoot></tfoot>
-                            <tr style="font-size: 12px">
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td colspan="2" style="font-weight: bold">Total</td>
-                                <td style="font-weight: bold">
-                                    {{ 'Rp. ' . number_format($outbound->total_price, 0, ',', '.') }}</td>
-                            </tr>
-                            </tfoot> --}}
                         </table>
                     </div>
                 </div>
 
             </div>
-            <div class="col-lg-6">
+            @if (!$outbound->is_resend)
+            <div class="col-lg-12">
 
                 <div class="card">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <h5 class="card-title">Inbound Items</h5>
-                            {{-- @if ($outbound->status == 'Pending')
-                                <a href="{{ route('outbounds.editItems', $outbound) }}" class="btn btn-primary">
-                                    Edit
-                                </a>
-                            @endif --}}
                         </div>
-                        {{-- @include('outbounds.modals.edit-item') --}}
                         <table class="table">
                             <thead>
-                                <tr style="font-size: 12px">
+                                <tr style="font-size: 15px">
                                     <th scope="col">No</th>
                                     <th scope="col">Code</th>
                                     <th scope="col">Name</th>
-                                    <th scope="col">Warehouse</th>
+                                    @role('Admin Engineer')
+                                    @else
+                                        <th scope="col">Warehouse</th>
+                                    @endrole
                                     <th scope="col">Quantity</th>
                                     <th scope="col">Type</th>
-                                    {{-- <th scope="col">Sub Price</th> --}}
                                 </tr>
                             </thead>
                             <tbody>
                                 @if ($inboundItems->count() > 0)
                                     @foreach ($inboundItems as $item)
-                                        <tr style="font-size: 12px">
+                                        <tr style="font-size: 15px">
                                             <th scope="row">{{ $loop->iteration }}</th>
                                             <td>{{ $item->goods->code }}</td>
                                             <td>{{ Str::limit($item->goods->name, 12) }}</td>
-                                            <td>{{ $item->goods->area->warehouse->name }}</td>
+                                            @role('Admin Engineer')
+                                            @else
+                                                <td>{{ $item->goods->warehouseName() }}
+                                                </td>
+                                            @endrole
                                             <td>{{ $item->qty }}{{ $item->goods->unit->symbol }}</td>
                                             <td>{{ $item->goods->type }}</td>
-                                            {{-- <td>{{ 'Rp. ' . number_format($item->sub_total, 0, ',', '.') }}</td> --}}
                                         </tr>
                                     @endforeach
                                 @else
                                     <tr>
-                                        <td colspan="6" style="font-size: 12px; text-align: center">No Data</td>
+                                        <td colspan="6" style="font-size: 15px; text-align: center">No Data</td>
                                     </tr>
                                 @endif
                             </tbody>
@@ -195,45 +191,43 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <h5 class="card-title">Inbound Problem Items</h5>
-                            {{-- @if ($outbound->status == 'Success')
-                                <a href="
-                                {{ route('inbounds.resend', $outbound) }}
-                                 " class="btn btn-sm btn-primary">
-                                    Resend
-                                </a>
-                            @endif --}}
                         </div>
-                        {{-- @include('outbounds.modals.edit-item') --}}
                         <table class="table">
                             <thead>
-                                <tr style="font-size: 12px">
+                                <tr style="font-size: 15px">
                                     <th scope="col">No</th>
                                     <th scope="col">Code</th>
                                     <th scope="col">Name</th>
-                                    <th scope="col">Warehouse</th>
+                                    @role('Admin Engineer')
+                                    @else
+                                        <th scope="col">Warehouse</th>
+                                    @endrole
                                     <th scope="col">Quantity</th>
                                     <th>Type</th>
-                                    {{-- <th scope="col">Sub Price</th> --}}
                                 </tr>
                             </thead>
                             <tbody>
                                 @if ($inboundItemsProblems->count() > 0)
                                     @foreach ($inboundItemsProblems as $item)
-                                        <tr style="font-size: 12px">
+                                        <tr style="font-size: 15px">
                                             <th scope="row">{{ $loop->iteration }}</th>
                                             <td>{{ $item->goods->code }}</td>
                                             <td>{{ Str::limit($item->goods->name, 12) }}</td>
-                                            <td>{{ $item->goods->area->warehouse->name }}</td>
+                                            @role('Admin Engineer')
+                                            @else
+                                                <td>{{ $item->goods->warehouseName() }}
+                                                </td>
+                                            @endrole
                                             <td>{{ $item->qty }}{{ $item->goods->unit->symbol }}</td>
                                             <td>{{ $item->goods->type }}</td>
-                                            {{-- <td>{{ 'Rp. ' . number_format($item->sub_total, 0, ',', '.') }}</td> --}}
                                         </tr>
                                     @endforeach
                                 @else
                                     <tr>
-                                        <td colspan="6" style="font-size: 12px; text-align: center">No Data</td>
+                                        <td colspan="6" style="font-size: 15px; text-align: center">No Data</td>
                                     </tr>
                                 @endif
+                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -241,41 +235,40 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <h5 class="card-title">Outbound Resend</h5>
-                            {{-- @if ($outbound->status == 'Pending')
-                                <a href="{{ route('outbounds.editItems', $outbound) }}" class="btn btn-primary">
-                                    Edit
-                                </a>
-                            @endif --}}
                         </div>
-                        {{-- @include('outbounds.modals.edit-item') --}}
                         <table class="table">
                             <thead>
-                                <tr style="font-size: 12px">
+                                <tr style="font-size: 15px">
                                     <th scope="col">No</th>
                                     <th scope="col">Code</th>
                                     <th scope="col">Name</th>
-                                    <th scope="col">Warehouse</th>
+                                    @role('Admin Engineer')
+                                    @else
+                                        <th scope="col">Warehouse</th>
+                                    @endrole
                                     <th scope="col">Quantity</th>
                                     <th>Type</th>
-                                    {{-- <th scope="col">Sub Price</th> --}}
                                 </tr>
                             </thead>
                             <tbody>
                                 @if (!empty($outbounItemsdResend))
                                     @foreach ($outbounItemsdResend as $item)
-                                        <tr style="font-size: 12px">
+                                        <tr style="font-size: 15px">
                                             <th scope="row">{{ $loop->iteration }}</th>
                                             <td>{{ $item->goods->code }}</td>
                                             <td>{{ Str::limit($item->goods->name, 12) }}</td>
-                                            <td>{{ $item->goods->area->warehouse->name }}</td>
+                                            @role('Admin Engineer')
+                                            @else
+                                                <td>{{ $item->goods->warehouseName() }}
+                                                </td>
+                                            @endrole
                                             <td>{{ $item->qty }}{{ $item->goods->unit->symbol }}</td>
                                             <td>{{ $item->goods->type }}</td>
-                                            {{-- <td>{{ 'Rp. ' . number_format($item->sub_total, 0, ',', '.') }}</td> --}}
                                         </tr>
                                     @endforeach
                                 @else
                                     <tr>
-                                        <td colspan="6" style="font-size: 12px; text-align: center">No Data</td>
+                                        <td colspan="6" style="font-size: 15px; text-align: center">No Data</td>
                                     </tr>
                                 @endif
                             </tbody>
@@ -283,6 +276,7 @@
                     </div>
                 </div>
             </div>
+            @endif
         </div>
     </section>
 @endsection

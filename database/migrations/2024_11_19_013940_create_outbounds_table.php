@@ -27,6 +27,7 @@ return new class extends Migration
             $table->string('status')->default('Pending');
             $table->string('status_payment')->default('Unpaid');
             $table->string('payment')->nullable();
+            $table->boolean('is_return')->default(false);
             $table->boolean('is_resend')->default(false);
             $table->string('code_inbound')->nullable();
             // $table->string('payment_method')->nullable();

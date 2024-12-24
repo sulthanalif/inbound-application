@@ -101,6 +101,7 @@
                                                 <th width="15%">Price</th>
                                                 <th width="10%">Unit</th>
                                                 <th width="15%">Subtotal</th>
+                                                <th width="10%">Type</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
@@ -222,7 +223,8 @@
                     option.setAttribute('data-name', good.name);
                     option.setAttribute('data-price', good.price);
                     option.setAttribute('data-unit-symbol', good.unit?.symbol || '');
-                    option.text = `${good.code} | ${good.name}`;
+                    option.setAttribute('data-type', good.type);
+                    option.text = `${good.code} | ${good.name} | ${good.price} | ${good.type}`;
                     selectGoods.appendChild(option);
                 });
             } else {
@@ -237,6 +239,7 @@
             const itemName = selectedItem.getAttribute('data-name');
             const itemPrice = parseFloat(selectedItem.getAttribute('data-price'));
             const itemUnit = selectedItem.getAttribute('data-unit-symbol');
+            const itemType = selectedItem.getAttribute('data-type');
             const itemQty = 1;
             const subTotal = itemPrice * itemQty;
 
@@ -257,6 +260,7 @@
                         <td><input type="number" name="request_item_price[]" class="form-control" value="${itemPrice}" disabled readonly></td>
                         <td>${itemUnit}</td>
                         <td><input type="number" name="request_item_subtotal[]" class="form-control" value="${subTotal.toFixed(2)}" disabled readonly></td>
+                        <td>${itemType}</td>
                         <td><button type="button" class="btn btn-danger" onclick="removeRow(this)">Remove</button></td>
                     </tr>
                 `;

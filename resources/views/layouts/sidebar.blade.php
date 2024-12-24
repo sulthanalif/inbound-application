@@ -87,6 +87,13 @@
                     <span>Delivery Area</span>
                 </a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link {{ request()->is('projects*') ? '' : 'collapsed' }}"
+                    href="{{ route('projects.index') }}">
+                    <i class="bi bi-people"></i>
+                    <span>Projects</span>
+                </a>
+            </li>
         @endhasrole
 
         @hasrole('Admin Engineer')

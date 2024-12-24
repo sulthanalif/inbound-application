@@ -30,6 +30,11 @@ class Goods extends Model
         'user_id',
     ];
 
+    public function warehouseName(): string
+    {
+        return $this->area->warehouse->name.' - '.$this->area->name. ' - '. $this->area->container. ' - '. $this->area->rack. ' - '. $this->area->number;
+    }
+
     public function problemItems()
     {
         return $this->hasMany(ProblemItem::class);

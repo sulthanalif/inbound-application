@@ -41,8 +41,9 @@
                             </div>
 
                             <div class="col-sm-4">
-                                <label for="container" class="form-label">Container</label>
-                               <input type="text" name="container" class="form-control @error('container') is-invalid @enderror" id="container">
+                                <label for="container" class="form-label">Container<span
+                                    class="text-danger">*</span></label>
+                               <input type="text" name="container" class="form-control @error('container') is-invalid @enderror" id="container" required>
                                 @error('container')
                                     <p class="text-danger text-xs mt-2">
                                         {{ $message }}
@@ -50,8 +51,9 @@
                                 @enderror
                             </div>
                             <div class="col-sm-4">
-                                <label for="rack" class="form-label">Rack</label>
-                               <input type="text" name="rack" class="form-control @error('rack') is-invalid @enderror" id="rack">
+                                <label for="rack" class="form-label">Rack<span
+                                    class="text-danger">*</span></label>
+                               <input type="text" name="rack" class="form-control @error('rack') is-invalid @enderror" id="rack" required>
                                 @error('rack')
                                     <p class="text-danger text-xs mt-2">
                                         {{ $message }}
@@ -59,8 +61,9 @@
                                 @enderror
                             </div>
                             <div class="col-sm-4">
-                                <label for="number" class="form-label">Number</label>
-                               <input type="text" name="number" class="form-control @error('number') is-invalid @enderror" id="number">
+                                <label for="number" class="form-label">Number<span
+                                    class="text-danger">*</span></label>
+                               <input type="text" name="number" class="form-control @error('number') is-invalid @enderror" id="number" required>
                                 @error('number')
                                     <p class="text-danger text-xs mt-2">
                                         {{ $message }}

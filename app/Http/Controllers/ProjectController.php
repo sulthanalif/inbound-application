@@ -185,6 +185,14 @@ class ProjectController extends Controller
                         ];
                     }
                 }
+            } else {
+                foreach ($outbound->items as $item) {
+                    $key = $item->goods->code;
+                    if (array_key_exists($key, $outboundGoods)) {
+                        $outboundGoods[$key]['qty'] += $item->qty;
+                        // $outboundGoods[$key]['req'] += $item->qty;
+                    }
+                }
             }
         }
 
@@ -262,6 +270,8 @@ class ProjectController extends Controller
                 $inbound->save();
 
                 $outbound = Outbound::where('id',$request->outbound_id)->with('items')->first();
+                $outbound->is_return = true;
+                $outbound->save();
 
                 // dd($outbound);
 

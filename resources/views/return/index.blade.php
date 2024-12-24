@@ -29,7 +29,9 @@
                                 <select id="outbound_id" name="outbound_id" class="form-select @error('outbound_id') is-invalid @enderror" required onchange="getItems(this)">
                                     <option value="" selected disabled>Choose...</option>
                                     @foreach ($outbounds as $outbound)
-                                        <option value="{{ $outbound->id }}" data-outbound_id="{{ $outbound->id }}" data-items="{{ json_encode($outbound->items) }}">{{ $outbound->code }} | {{ $outbound->project->name }}</option>
+                                        @if ($outbound->status == 'Success' && $outbound->is_return == false)
+
+                                        @endif
                                     @endforeach
                                 </select>
                                 @error('outbound_id')

@@ -43,7 +43,8 @@
                                     @foreach ($outbounds as $outbound)
                                         @if ($outbound->status == 'Success')
                                             <option value="{{ $outbound->id }}"
-                                                data-items="{{ json_encode($outbound->items->load(['goods.area.warehouse', 'goods.unit'])) }}">
+                                                data-items="{{ json_encode($outbound->items->load(['goods.area.warehouse', 'goods.unit'])) }}"
+                                                data-outbound = "{{ json_encode($outbound) }}">
                                                 {{ $outbound->code }}</option>
                                         @endif
                                     @endforeach
@@ -111,10 +112,13 @@
 
         function getItems(el) {
             var items = JSON.parse(el.options[el.selectedIndex].getAttribute('data-items'));
+            var outbound = JSON.parse(el.options[el.selectedIndex].getAttribute('data-outbound'));
             // console.log(items[0]);
             var html = '';
-            items.forEach(item => {
-                html += `<tr>
+            if (outbound.is_return) {
+                items.forEach(item => {
+                    if (item.goods.type == 'Consumable') {
+                        html += `<tr>
                             <td data-id="${item.goods.id}">${item.goods.code}</td>
                             <td>${item.goods.name}</td>
                             <td><input class="form-control" type="number" name="qty" min="0" max="${item.qty}" ></input></td>
@@ -122,7 +126,20 @@
                             <td>${item.goods.area.warehouse.name}</td>
                             <td>${item.goods.type}</td>
                         </tr>`;
-            });
+                    }
+                });
+            } else {
+                items.forEach(item => {
+                    html += `<tr>
+                            <td data-id="${item.goods.id}">${item.goods.code}</td>
+                            <td>${item.goods.name}</td>
+                            <td><input class="form-control" type="number" name="qty" min="0" max="${item.qty}" ></input></td>
+                            <td>${item.goods.unit.symbol}</td>
+                            <td>${item.goods.area.warehouse.name}</td>
+                            <td>${item.goods.type}</td>
+                        </tr>`;
+                });
+            }
 
             document.getElementById('return-table-body').innerHTML = html;
             document.getElementById('return-table-body').style.display = 'table-row-group';
@@ -157,4 +174,3 @@
         });
     </script>
 @endpush
-

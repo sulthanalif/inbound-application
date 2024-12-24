@@ -21,7 +21,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-
         //Role
         $super_admin = Role::create(['name' => 'Super Admin']);
         $admin_engineer = Role::create(['name' => 'Admin Engineer']);
@@ -32,23 +31,59 @@ class DatabaseSeeder extends Seeder
         $this->call(UserSeeder::class);
 
 
-        Warehouse::create([
+        $warehouse1 = Warehouse::create([
             'code' => 'WH01',
             'name' => 'Warehouse 1',
             'address' => 'Jl. Jenderal Sudirman No. 1',
         ]);
 
-        Warehouse::create([
+        $warehouse2 = Warehouse::create([
             'code' => 'WH02',
             'name' => 'Warehouse 2',
             'address' => 'Jl. Kenangan No. 2',
         ]);
 
-        Category::create([
+        Area::create([
+            'code' => 'A01',
+            'name' => 'Area 1',
+            'container' => 'Container 1',
+            'rack' => 'Rack 1',
+            'number' => 'Number 1',
+            'warehouse_id' => $warehouse1->id,
+        ]);
+
+        Area::create([
+            'code' => 'A02',
+            'name' => 'Area 2',
+            'container' => 'Container 2',
+            'rack' => 'Rack 2',
+            'number' => 'Number 2',
+            'warehouse_id' => $warehouse1->id,
+        ]);
+
+        Area::create([
+            'code' => 'B01',
+            'name' => 'Area 1',
+            'container' => 'Container 1',
+            'rack' => 'Rack 1',
+            'number' => 'Number 1',
+            'warehouse_id' => $warehouse2->id,
+        ]);
+
+        Area::create([
+            'code' => 'B02',
+            'name' => 'Area 2',
+            'container' => 'Container 2',
+            'rack' => 'Rack 2',
+            'number' => 'Number 2',
+            'warehouse_id' => $warehouse2->id,
+        ]);
+
+        $category1 = Category::create([
             'name' => 'Category 1',
         ]);
 
-        Category::create([
+        $category2 = Category::create([
             'name' => 'Category 2',
         ]);
 
@@ -94,17 +129,32 @@ class DatabaseSeeder extends Seeder
             'user_id' => User::where('name', 'Admin Engineer')->first()->id
         ]);
 
-        // Area::create([
-        //     'code' => 'AR01',
-        //     'name' => 'Area 1',
-        //     'address' => 'Jl. Kenangan No. 1',
-        // ]);
+        for ($i=1 ; $i <= 10 ; $i++) {
+            Goods::create([
+                'name' => "Goods $i",
+                'code' => "GD$i",
+                'length' => rand(10, 100),
+                'width' => rand(10, 100),
+                'height' => rand(10, 100),
+                'weight' => rand(1, 50),
+                'description' => 'Description ' . $i,
+                'condition' => 100,
+                'price' => rand(1, 10) * 1000,
+                'qty' => rand(1, 100),
+                'type' => rand(0, 1) ? 'Rentable' : 'Consumable',
+                'minimum_order' => rand(1, 10),
+                'unit_time' => rand(1, 12) . ' months',
+                'capital' => rand(500, 5000),
+                'unit_id' => Unit::inRandomOrder()->first()->id,
+                'vendor_id' => Vendor::inRandomOrder()->first()->id,
+                'category_id' => Category::inRandomOrder()->first()->id,
+                'area_id' => Area::inRandomOrder()->first()->id,
+                'user_id' => User::whereHas('roles', function($query) {
+                    $query->where('name', 'Admin Warehouse');
+                })->inRandomOrder()->first()->id,
+            ]);
+        }
 
-        // Area::create([
-        //     'code' => 'AR02',
-        //     'name' => 'Area 2',
-        //     'address' => 'Jl. Kenangan No. 2',
-        // ]);
     }
 }
 

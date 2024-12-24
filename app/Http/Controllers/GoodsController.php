@@ -17,11 +17,26 @@ class GoodsController extends Controller
 {
     public function index(Request $request)
     {
-        $goods = Goods::latest()->paginate(10);
+        $goods = Goods::with('area')
+        ->when($request->get('warehouse_id') && !$request->get('area_id'), function ($query) use ($request) {
+            $query->whereHas('area', function ($q) use ($request) {
+                $q->where('warehouse_id', $request->get('warehouse_id'));
+            });
+        })
+        ->when($request->get('area_id'), function ($query) use ($request) {
+            $query->where('area_id', $request->get('area_id'));
+        })
+        ->when($request->get('category_id'), function ($query) use ($request) {
+            $query->where('category_id', $request->get('category_id'));
+        })
+        ->latest()->paginate(10);
+
+        $warehouses = Warehouse::with('areas')->get();
+        $categories = Category::all();
 
         confirmDelete('Delete Data!', 'Are you sure you want to delete?');
 
-        return view('goods.index', compact('goods'));
+        return view('goods.index', compact('goods', 'warehouses', 'categories'));
     }
 
     public function reportGoods(Request $request)
