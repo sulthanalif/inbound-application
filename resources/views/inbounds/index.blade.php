@@ -16,14 +16,14 @@
               @endhasrole
 
               <!-- Default Table -->
-              <table class="table datatable">
+              <table class="table" id="inbound-table">
                 <thead>
                   <tr>
                     <th scope="col">No</th>
                     <th scope="col">Date</th>
                     <th scope="col">Code</th>
                     <th scope="col">Status</th>
-                    <th scope="col">Inbound</th>
+                    <th scope="col">Type</th>
                     {{-- <th scope="col">Active</th> --}}
                     <th scope="col" style="text-align: center;">Action</th>
                   </tr>
@@ -64,3 +64,47 @@
           </div>
     </section>
 @endsection
+
+@push('scripts')
+    <script>
+        // DataTables initialisation
+        var table = $('#inbound-table').DataTable({
+            layout: {
+                top1Start: {
+                    buttons: [
+                        'copy',
+                        {
+                            extend: 'csv',
+                            title: 'Inbound Data',
+                            exportOptions: {
+                                columns: [0, 1, 2, 3, 4]
+                            }
+                        },
+                        {
+                            extend: 'excel',
+                            title: 'Inbound Data',
+                            exportOptions: {
+                                columns: [0, 1, 2, 3, 4]
+                            }
+                        },
+                        {
+                            extend: 'pdf',
+                            title: 'Inbound Data',
+                            exportOptions: {
+                                columns: [0, 1, 2, 3, 4]
+                            }
+                        },
+                        {
+                            extend: 'print',
+                            title: 'Inbound Data',
+                            exportOptions: {
+                                columns: [0, 1, 2, 3, 4]
+                            }
+                        },
+
+                    ]
+                }
+            },
+        });
+    </script>
+@endpush
