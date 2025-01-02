@@ -29,6 +29,7 @@
                     <th scope="col">No</th>
                     <th scope="col">Date</th>
                     <th scope="col">Code</th>
+                    <th scope="col">DN</th>
                     <th scope="col">Project</th>
                     <th scope="col">PT</th>
                     <th scope="col">Status</th>
@@ -42,6 +43,7 @@
                         <th scope="row">{{ $loop->iteration }}</th>
                         <td>{{ Carbon\Carbon::parse($outbound->date)->format('d F Y') }}</td>
                         <td>{{ $outbound->code }}</td>
+                        <td>{{ $outbound->number }}</td>
                         <td>{{ $outbound->project->name }}</td>
                         <td>{{ $outbound->user->company }}</td>
                         <td>
@@ -87,28 +89,28 @@
                             extend: 'csv',
                             title: 'Outbound Data',
                             exportOptions: {
-                                columns: [0, 1, 2, 3, 4, 5, 6]
+                                columns: [0, 1, 2, 3, 4, 5, 6, 7]
                             }
                         },
                         {
                             extend: 'excel',
                             title: 'Outbound Data',
                             exportOptions: {
-                                columns: [0, 1, 2, 3, 4, 5, 6]
+                                columns: [0, 1, 2, 3, 4, 5, 6, 7]
                             }
                         },
                         {
                             extend: 'pdf',
                             title: 'Outbound Data',
                             exportOptions: {
-                                columns: [0, 1, 2, 3, 4, 5, 6]
+                                columns: [0, 1, 2, 3, 4, 5, 6, 7]
                             }
                         },
                         {
                             extend: 'print',
                             title: 'Outbound Data',
                             exportOptions: {
-                                columns: [0, 1, 2, 3, 4, 5, 6]
+                                columns: [0, 1, 2, 3, 4, 5, 6, 7]
                             }
                         },
 

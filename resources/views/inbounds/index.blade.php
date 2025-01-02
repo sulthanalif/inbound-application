@@ -22,6 +22,7 @@
                     <th scope="col">No</th>
                     <th scope="col">Date</th>
                     <th scope="col">Code</th>
+                    <th scope="col">DN</th>
                     <th scope="col">Status</th>
                     <th scope="col">Type</th>
                     {{-- <th scope="col">Active</th> --}}
@@ -34,6 +35,7 @@
                         <th scope="row">{{ $loop->iteration }}</th>
                         <td>{{ $inbound->date }}</td>
                         <td>{{ $inbound->code }}</td>
+                        <td>{{ $inbound->number ?? '-' }}</td>
                         <td>
                             <div class="badge bg-{{ match ($inbound->status) {
                                                 'Pending' => 'primary',
@@ -77,28 +79,28 @@
                             extend: 'csv',
                             title: 'Inbound Data',
                             exportOptions: {
-                                columns: [0, 1, 2, 3, 4]
+                                columns: [0, 1, 2, 3, 4, 5]
                             }
                         },
                         {
                             extend: 'excel',
                             title: 'Inbound Data',
                             exportOptions: {
-                                columns: [0, 1, 2, 3, 4]
+                                columns: [0, 1, 2, 3, 4, 5]
                             }
                         },
                         {
                             extend: 'pdf',
                             title: 'Inbound Data',
                             exportOptions: {
-                                columns: [0, 1, 2, 3, 4]
+                                columns: [0, 1, 2, 3, 4, 5]
                             }
                         },
                         {
                             extend: 'print',
                             title: 'Inbound Data',
                             exportOptions: {
-                                columns: [0, 1, 2, 3, 4]
+                                columns: [0, 1, 2, 3, 4, 5]
                             }
                         },
 
