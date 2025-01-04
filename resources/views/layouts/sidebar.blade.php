@@ -109,13 +109,13 @@
         @endhasrole
 
         @hasrole('Super Admin')
-            <li class="nav-item">
+            {{-- <li class="nav-item">
                 <a class="nav-link {{ request()->is('projects*') ? '' : 'collapsed' }}"
                     href="{{ route('projects.index') }}">
                     <i class="bi bi-cone-striped"></i>
                     <span>Projects</span>
                 </a>
-            </li>
+            </li> --}}
             <li class="nav-item">
                 <a class="nav-link {{ request()->is('users*') ? '' : 'collapsed' }}" href="{{ route('users.index') }}">
                     <i class="bi bi-person"></i>
