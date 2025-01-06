@@ -10,7 +10,7 @@
 
                 <div class="d-flex justify-content-between mt-3">
                    <div>
-                    @role('Admin Engineer')
+                    @role('Admin Engineer|Super Admin')
                     <a href="{{ route('projects.create') }}" class="btn btn-primary btn-sm mb-3">Create</a>
                     @endrole
                    </div>

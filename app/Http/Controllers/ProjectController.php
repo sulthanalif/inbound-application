@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Models\Inbound;
 use App\Models\Project;
 use App\Models\Outbound;
@@ -211,6 +212,12 @@ class ProjectController extends Controller
 
     public function create()
     {
+        if (Auth::user()->roles[0]->name == 'Super Admin') {
+            $users = User::with('roles')->whereHas('roles', function ($query) {
+                $query->where('name', 'Admin Engineer');
+            })->get();
+            return view('projects.create', compact('users'));
+        }
         return view('projects.create');
     }
 
@@ -222,6 +229,12 @@ class ProjectController extends Controller
             'address' => 'required|string',
         ]);
 
+        if (Auth::user()->roles[0]->name == 'Super Admin') {
+            $validator = Validator::make($request->all(), [
+                'user_id' => 'required|integer|exists:users,id',
+            ]);
+        }
+
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
@@ -232,7 +245,7 @@ class ProjectController extends Controller
                 $project->code = $request->code;
                 $project->name = $request->name;
                 $project->address = $request->address;
-                $project->user_id = Auth::user()->id;
+                $project->user_id = $request->user_id ?? Auth::user()->id;
                 $project->save();
             });
 
