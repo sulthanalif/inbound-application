@@ -18,7 +18,7 @@
                                 </tr>
                                 <tr>
                                     <th scope="row">Date</th>
-                                    <td>{{ $inbound->date }}</td>
+                                    <td>{{ Carbon\Carbon::parse($inbound->date)->format('d F Y') }}</td>
                                 </tr>
                                 <tr>
                                     <th scope="row">Project</th>
@@ -73,15 +73,14 @@
                         <div class="d-flex justify-content-between align-items-center">
                             <h5 class="card-title">Items</h5>
                             @if ($inbound->is_return)
-                            @if ($inbound->status == 'Success' && !$inbound->outbound->where('is_resend', 1)->first())
-                            @hasrole('Super Admin|Admin Warehouse')
-                            <a href="" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#resendModal">Resend</a>
-                            @endhasrole
-                            @include('inbounds.modal.resend')
-                        {{-- @endif --}}
-                        @elseif ($inbound->outbound->where('is_resend', 1)->first())
-                            <a href="{{ route('outbounds.show', $inbound->outbound->where('is_resend', 1)->first()) }}" class="btn btn-sm btn-primary">Outbound</a>
-                        @endif
+                                @if ($inbound->status == 'Success' && !$inbound->outbound->order == 0)
+                                    @hasrole('Super Admin|Admin Warehouse')
+                                    <a href="" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#resendModal">Resend</a>
+                                    @endhasrole
+                                    @include('inbounds.modal.resend')
+                                @elseif ($inbound->outbound->order == 0)
+                                    <a href="{{ route('outbounds.show', $inbound->outbound->order == 0) }}" class="btn btn-sm btn-primary">Outbound</a>
+                                @endif
                             @endif
                         </div>
 

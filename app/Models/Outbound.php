@@ -25,6 +25,7 @@ class Outbound extends Model
         'status_payment',
         'is_return',
         'is_resend',
+        'order',
         'code_inbound',
         'total_price',
     ];

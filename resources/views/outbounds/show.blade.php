@@ -30,7 +30,7 @@
                                 </tr>
                                 <tr>
                                     <th scope="row">Company</th>
-                                    <td>{{ $outbound->company_name ?? '-' }}</td>
+                                    <td>{{ $outbound->user->company ?? '-' }}</td>
                                 </tr>
                                 <tr>
                                     <th scope="row">Status</th>

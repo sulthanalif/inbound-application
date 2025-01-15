@@ -29,6 +29,7 @@ return new class extends Migration
             $table->string('payment')->nullable();
             $table->boolean('is_return')->default(false);
             $table->boolean('is_resend')->default(false);
+            $table->boolean('order')->default(false);
             $table->string('code_inbound')->nullable();
             // $table->string('payment_method')->nullable();
             // $table->string('bank')->nullable();

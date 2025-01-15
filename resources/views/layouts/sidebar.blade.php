@@ -148,7 +148,21 @@
                     <i class="bi bi-box-arrow-in-right"></i>
                     <span>Inbound</span>
                 </a>
+            </li>
+            {{-- <li class="nav-item">
+                <a class="nav-link {{ request()->is('inbounds*') ? '' : 'collapsed' }}"
+                    href="{{ route('inbounds.index') }}">
+                    <i class="bi bi-box-arrow-left"></i>
+                    <span>Resend</span>
+                </a>
             </li><!-- End Register Page Nav -->
+            <li class="nav-item">
+                <a class="nav-link {{ request()->is('inbounds*') ? '' : 'collapsed' }}"
+                    href="{{ route('inbounds.index') }}">
+                    <i class="bi bi-exclamation-diamond"></i>
+                    <span>Problem</span>
+                </a>
+            </li><!-- End Register Page Nav --> --}}
         @endhasrole
 
         {{-- <li class="nav-heading">Report</li> --}}

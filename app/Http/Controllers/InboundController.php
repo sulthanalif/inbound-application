@@ -35,6 +35,7 @@ class InboundController extends Controller
     public function show(Inbound $inbound)
     {
         $warehouses = Warehouse::with('areas')->get();
+        // dd($inbound->outbound->code);
         return view('inbounds.show', compact('inbound', 'warehouses'));
     }
 
@@ -186,6 +187,10 @@ class InboundController extends Controller
                     $inboundItem->qty = $item['qty'];
                     $inboundItem->save();
                 }
+
+                $outbound = Outbound::find($request->outbound_id);
+                $outbound->order = 1;
+                $outbound->save();
 
 
 

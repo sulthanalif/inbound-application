@@ -41,10 +41,10 @@
                                     onchange="getItems(this)">
                                     <option value="" selected disabled>Choose...</option>
                                     @foreach ($outbounds as $outbound)
-                                        @if ($outbound->status == 'Success')
+                                        @if ($outbound->status == 'Success' && $outbound->order == null)
                                             <option value="{{ $outbound->id }}"
                                                 data-items="{{ json_encode($outbound->items->load(['goods.area.warehouse', 'goods.unit'])) }}"
-                                                data-outbound = "{{ json_encode($outbound) }}">
+                                                data-outbound = "{{ json_encode($outbound) }}">{{ Carbon\Carbon::parse($outbound->date)->format('d F Y') }} |
                                                 {{ $outbound->code }}</option>
                                         @endif
                                     @endforeach
@@ -121,7 +121,7 @@
                         html += `<tr>
                             <td data-id="${item.goods.id}">${item.goods.code}</td>
                             <td>${item.goods.name}</td>
-                            <td><input class="form-control" type="number" name="qty" min="0" max="${item.qty}" ></input></td>
+                            <td><input class="form-control" type="number" name="qty" value="${item.qty}" min="0" max="${item.qty}" ></input></td>
                             <td>${item.goods.unit.symbol}</td>
                             <td>${item.goods.area.warehouse.name}</td>
                             <td>${item.goods.type}</td>
@@ -133,7 +133,7 @@
                     html += `<tr>
                             <td data-id="${item.goods.id}">${item.goods.code}</td>
                             <td>${item.goods.name}</td>
-                            <td><input class="form-control" type="number" name="qty" min="0" max="${item.qty}" ></input></td>
+                            <td><input class="form-control" type="number" name="qty" value="${item.qty}" min="0" max="${item.qty}" ></input></td>
                             <td>${item.goods.unit.symbol}</td>
                             <td>${item.goods.area.warehouse.name}</td>
                             <td>${item.goods.type}</td>
