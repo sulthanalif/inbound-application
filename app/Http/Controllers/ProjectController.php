@@ -68,7 +68,7 @@ class ProjectController extends Controller
             }
         }
 
-        return Excel::download(new ProjectExcel($project, $outboundGoods), 'Project Detail '.$project->code.'.xlsx');
+        return Excel::download(new ProjectExcel($project, $outboundGoods), 'Project Detail '.str_replace(['/', '\\'], '-', $project->code).'.xlsx');
     }
 
     public function print(Project $project)
@@ -111,7 +111,9 @@ class ProjectController extends Controller
         }
         $pdf = Pdf::loadView('projects.print.pdf', ['project' => $project, 'outboundGoods' => $outboundGoods]);
 
-        return $pdf->stream('Project Detail '.$project->code.'.pdf');
+        $filename = 'Project Detail ' . str_replace(['/', '\\'], '-', $project->code) . '.pdf';
+
+        return $pdf->stream($filename);
     }
 
     public function printOutbound(Outbound $outbound)
