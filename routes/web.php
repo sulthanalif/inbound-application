@@ -76,7 +76,7 @@ Route::middleware('auth', 'is_active')->group(function () {
         //warehouse
         Route::get('/warehouses', [WarehouseController::class, 'index'])->name('warehouses.index');
         Route::get('/warehouses/{warehouse}', [WarehouseController::class, 'show'])->name('warehouses.show');
-        Route::get('/warehouses/create', [WarehouseController::class, 'create'])->name('warehouses.create');
+        Route::get('/warehouses/create/cek', [WarehouseController::class, 'create'])->name('warehouses.create');
         Route::post('/warehouses', [WarehouseController::class, 'store'])->name('warehouses.store');
         Route::get('/warehouses/{warehouse}/edit', [WarehouseController::class, 'edit'])->name('warehouses.edit');
         Route::put('/warehouses/{warehouse}', [WarehouseController::class, 'update'])->name('warehouses.update');

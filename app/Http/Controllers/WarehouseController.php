@@ -24,8 +24,9 @@ class WarehouseController extends Controller
         return view('werehouse.show', compact('warehouse'));
     }
 
-    public function create(Request $request)
+    public function create()
     {
+        // dd('masuk');
         return view('werehouse.create');
     }
 
