@@ -3,15 +3,22 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Notifications\Notifiable;
+use Creagia\LaravelSignPad\Concerns\RequiresSignature;
+use Creagia\LaravelSignPad\Contracts\CanBeSigned;
+use Creagia\LaravelSignPad\Contracts\ShouldGenerateSignatureDocument;
+use Creagia\LaravelSignPad\Templates\BladeDocumentTemplate;
+use Creagia\LaravelSignPad\Templates\PdfDocumentTemplate;
+use Creagia\LaravelSignPad\SignatureDocumentTemplate;
+use Creagia\LaravelSignPad\SignaturePosition;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasRoles;
+    use HasFactory, Notifiable, HasRoles, RequiresSignature;
 
     /**
      * The attributes that are mass assignable.
@@ -61,5 +68,25 @@ class User extends Authenticatable
     public function outbounds()
     {
         return $this->hasMany(Outbound::class);
+    }
+
+    public function getSignatureDocumentTemplate(): SignatureDocumentTemplate
+    {
+        return new SignatureDocumentTemplate(
+            outputPdfPrefix: 'document', // optional
+            template: new BladeDocumentTemplate('pdf/my-pdf-blade-template'),
+            signaturePositions: [
+                 new SignaturePosition(
+                     signaturePage: 1,
+                     signatureX: 20,
+                     signatureY: 25,
+                 ),
+                 new SignaturePosition(
+                     signaturePage: 2,
+                     signatureX: 25,
+                     signatureY: 50,
+                 ),
+            ]
+        );
     }
 }

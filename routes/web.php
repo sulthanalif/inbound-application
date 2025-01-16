@@ -23,6 +23,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\DeliveryAreaController;
 use App\Http\Controllers\ProblemItemController;
 use App\Http\Controllers\RequestOrderController;
+use App\Http\Controllers\SignatureController;
 use Symfony\Component\HttpKernel\Profiler\Profile;
 
 // Route::get('/', function () {
@@ -44,6 +45,8 @@ Route::middleware('auth', 'is_active')->group(function () {
     Route::get('/profile', [ProfileController::class, 'index'])->name('users.showProfile');
     Route::put('/profile/{user}', [ProfileController::class, 'update'])->name('users.updateProfile');
     Route::put('/profile/{user}/password', [ProfileController::class, 'updatePassword'])->name('users.updatePassword');
+    Route::post('/signature', [SignatureController::class, 'upload'])->name('signature.upload');
+    Route::get('/signature/delete', [SignatureController::class, 'delete'])->name('signature.delete');
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
