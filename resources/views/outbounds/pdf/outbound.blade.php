@@ -38,6 +38,10 @@
             height: 100px;
         }
 
+        #signature {
+            width: 200px;
+        }
+
     </style>
 </head>
 
@@ -139,7 +143,7 @@
             <tr>
                 <td style="vertical-align: top; text-align: center;">{{ $outbound->user->name }}</td>
                 <td style="vertical-align: top; text-align: center;">{{ $outbound->sender_name }}</td>
-                <td style="vertical-align: top; text-align: center;">{{ $outbound->project->name }}</td>
+                <td style="vertical-align: top; text-align: center;"><img src="{{ $outbound->project->user->signature->getSignatureImageAbsolutePath() ?? '-' }}" alt="" id="signature">{{ $outbound->project->name }}</td>
             </tr>
         </table>
     </div>
