@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Support\Facades\Validator;
@@ -13,6 +14,9 @@ class ProfileController extends Controller
 {
     public function index()
     {
+        if (!Auth::user()->hasBeenSigned() && Auth::user()->roles[0]->name != 'Super Admin') {
+            Alert::warning('Signature Required', 'Please sign to continue.');
+        }
         return view('profile.index');
     }
 

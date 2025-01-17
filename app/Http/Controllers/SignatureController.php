@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class SignatureController extends Controller
 {
@@ -26,9 +27,17 @@ class SignatureController extends Controller
         return back()->with('success', 'success Full upload signature');
     }
 
+    public function getSignature()
+    {
+        Auth::user()->getSignatureRoute();
+        Alert::success('Success', 'Success Full Upload Signature');
+        return back();
+    }
+
     public function delete()
     {
         Auth::user()->deleteSignature();
-        return back()->with('success', 'success delete signature');
+        Alert::success('Success', 'Success Full Delete Signature');
+        return back();
     }
 }

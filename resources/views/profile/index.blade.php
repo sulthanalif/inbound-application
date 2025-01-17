@@ -53,7 +53,7 @@
                             </li>
 
                             <li class="nav-item">
-                                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#signature">Signature</button>
+                                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#signature">Signature @if(!Auth::user()->hasBeenSigned())<span class="badge bg-danger badge-number">!</span>@endif</button>
                             </li>
 
                         </ul>
@@ -294,16 +294,23 @@
                             <div class="tab-pane fade pt-3" id="signature">
 
                                 @if (!Auth::user()->hasBeenSigned())
+                                    <h2 class="text-danger"></h2>
                                     <form action="{{ Auth::user()->getSignatureRoute() }}" method="POST">
                                         @csrf
                                         <div style="text-align: center">
-                                            <x-creagia-signature-pad />
+                                            <x-creagia-signature-pad
+                                            border-color="#eaeaea"
+                                            pad-classes="rounded-xl border-2"
+                                            button-classes="btn btn-primary px-4 py-2 rounded-xl mt-4"
+                                            clear-name="Clear"
+                                            submit-name="Submit"
+                                            :disabled-without-signature="true"
+                                            />
                                         </div>
                                     </form>
                                     <script src="{{ asset('vendor/sign-pad/sign-pad.min.js') }}"></script>
-
                                 @else
-                                <img src="{{ asset('storage/' . Auth::user()->signature->getSignatureImagePath()) }}" alt="kenapa ga muncul?">
+                                <img src="{{ asset('storage/' . Auth::user()->signature->getSignatureImagePath()) }}" alt="Signature">
 
 
                                     <a href="{{ route('signature.delete') }}" class="btn btn-danger"> delete</a>
@@ -324,3 +331,40 @@
 
 
 @endsection
+
+<!-- @push('scripts')
+<script>
+    $(document).ready(function() {
+        // Menangani pengiriman form
+        $('#signatureForm').on('submit', function(event) {
+            event.preventDefault(); // Mencegah submit form langsung
+
+            var form = $(this);
+
+            // Mengecek apakah sudah ada tanda tangan sebelum submit
+            if ($('#signature-pad').signaturePad('isEmpty')) {
+                alert('Please provide your signature.');
+                return;
+            }
+
+            // Kirim form menggunakan AJAX
+            $.ajax({
+                url: form.attr('action'),  // Ambil URL dari action form
+                method: 'POST',
+                data: form.serialize(),  // Kirim data form
+                success: function(response) {
+                    // Menampilkan alert setelah berhasil
+                    alert('Signature     been successfully saved!');
+
+                    // Bisa juga melakukan redirect atau tindakan lain setelah sukses
+                    window.location.href = response.redirect_url; // Sesuaikan dengan response yang dikirim oleh server
+                },
+                error: function(xhr, status, error) {
+                    // Menangani error jika terjadi
+                    alert('An error occurred. Please try again.');
+                }
+            });
+        });
+    });
+</script>
+@endpush -->

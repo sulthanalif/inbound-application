@@ -17,6 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
             'is_active' => \App\Http\Middleware\IsActive::class,
             'Excel' => Maatwebsite\Excel\Facades\Excel::class,
+            'signed' => \App\Http\Middleware\Signature::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
