@@ -9,18 +9,18 @@
                 {{-- <h5 class="card-title">Projects Data</h5> --}}
 
                 <div class="d-flex justify-content-between mt-3">
-                   <div>
-                    @role('Admin Engineer|Super Admin')
-                    <a href="{{ route('projects.create') }}" class="btn btn-primary btn-sm mb-3">Create</a>
-                    @endrole
-                   </div>
+                    <div>
+                        @role('Admin Engineer|Super Admin')
+                            <a href="{{ route('projects.create') }}" class="btn btn-primary btn-sm mb-3">Create</a>
+                        @endrole
+                    </div>
                     <div class="d-flex align-items-center">
                         {{-- <label for="min" class="me-2">Start Date:</label> --}}
                         <input type="text" class="form-control form-control-sm me-2" id="min" name="min"
-                               placeholder="Min Date">
+                            placeholder="Min Date">
                         {{-- <label for="max" class="me-2">End Date:</label> --}}
                         <input type="text" class="form-control form-control-sm" id="max" name="max"
-                               placeholder="Max Date">
+                            placeholder="Max Date">
                     </div>
                 </div>
 
@@ -35,6 +35,7 @@
                             <th scope="col">PT</th>
                             <th scope="col">Address</th>
                             <th scope="col">Status</th>
+                            <th style="display: none;">Item</th>
                             <th scope="col" style="text-align: center;">Action</th>
                         </tr>
                     </thead>
@@ -51,6 +52,21 @@
                                     <td>{{ $project->address }}</td>
                                     <td><span
                                             class="badge bg-{{ $project->status == 'On Progress' ? 'primary' : 'success' }}">{{ $project->status }}</span>
+                                    </td>
+                                    <td style="display: none;">
+                                        @php
+                                            $items = $project->outbounds->flatMap(function ($outbound) {
+                                                return $outbound->items;
+                                            });
+                                        @endphp
+
+                                        <ul>
+                                            @foreach ($items as $item)
+                                                @if (!empty($item->goods->name))
+                                                    <li>{{ $item->goods->name }} ({{ $item->qty }} {{ $item->goods->unit->symbol }})</li>
+                                                @endif
+                                            @endforeach
+                                        </ul>
                                     </td>
                                     <td align="center">
                                         <a href="{{ route('projects.show', $project) }}" class="btn btn-sm btn-primary"><i
@@ -125,8 +141,30 @@
                         {
                             extend: 'pdf',
                             title: 'Projects Data',
+                            orientation: 'potrait',
+                            pageSize: 'A4',
                             exportOptions: {
-                                columns: [0, 1, 2, 3, 4, 5, 6]
+                                columns: [0, 1, 2, 3, 4, 5, 6, 7],
+                                format: {
+                                    body: function(data, row, column, node) {
+                                        if (column === 7 && typeof data === 'string') {
+                                            const cleanedData = data
+                                                .replace(/<\/?[^>]+(>|$)/g, '')
+                                                .split(/\s*\n\s*/)
+                                                .filter(item => item.trim() !== '')
+                                                .map(item => `- ${item.trim()}`)
+                                                .join('\n');
+
+                                            return cleanedData;
+                                        }
+
+                                        if (typeof data === 'string' || data instanceof String) {
+                                            return data.replace(/<\/?[^>]+(>|$)/g, '').trim();
+                                        }
+
+                                        return data;
+                                    }
+                                }
                             }
                         },
                         {

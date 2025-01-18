@@ -27,6 +27,10 @@
                                     <td>{{ $project->code }}</td>
                                 </tr>
                                 <tr>
+                                    <th scope="row">Project Date</th>
+                                    <td>{{ \Carbon\Carbon::parse($project->start_date)->format('d M Y') }} - {{ $project->end_date ? \Carbon\Carbon::parse($project->end_date)->format('d M Y') : 'Not Yet Over' }}</td>
+                                </tr>
+                                <tr>
                                     <th scope="row">Adress</th>
                                     <td>{{ $project->address }}</td>
                                 </tr>
