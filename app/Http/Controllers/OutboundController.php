@@ -31,7 +31,9 @@ class OutboundController extends Controller
         // $search = $request->query('search');
         if (Auth::user()->roles[0]->name == 'Admin Engineer') {
             $outbounds = Outbound::with(['project', 'vendor', 'user'])
-                ->where('user_id', Auth::user()->id)
+                ->whereHas('project', function ($query) {
+                    $query->where('user_id', Auth::user()->id);
+                })
                 ->latest()
                 ->get();
         } else {

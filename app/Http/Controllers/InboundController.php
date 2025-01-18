@@ -24,7 +24,12 @@ class InboundController extends Controller
     public function index()
     {
         if (Auth::user()->roles[0]->name == 'Admin Engineer') {
-            $inbounds = Inbound::where('user_id', Auth::user()->id)->latest()->get();
+            $inbounds = Inbound::with('project')
+                ->whereHas('project', function ($query) {
+                    $query->where('user_id', Auth::user()->id);
+                })
+                ->latest()
+                ->get();
         } else {
             $inbounds = Inbound::latest()->get();
         }
