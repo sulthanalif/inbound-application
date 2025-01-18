@@ -313,7 +313,9 @@
                                 <img src="{{ asset('storage/' . Auth::user()->signature->getSignatureImagePath()) }}" alt="Signature">
 
 
-                                    <a href="{{ route('signature.delete') }}" class="btn btn-danger"> delete</a>
+                                    <div class="d-flex justify-content-center items-center">
+                                        <a href="{{ route('signature.delete') }}" class="btn btn-danger"> Delete</a>
+                                    </div>
                                 @endif
 
 
@@ -332,7 +334,7 @@
 
 @endsection
 
-<!-- @push('scripts')
+{{-- <!-- @push('scripts')
 <script>
     $(document).ready(function() {
         // Menangani pengiriman form
@@ -367,4 +369,4 @@
         });
     });
 </script>
-@endpush -->
+@endpush --> --}}

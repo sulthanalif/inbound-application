@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use Creagia\LaravelSignPad\Concerns\RequiresSignature;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use RealRashid\SweetAlert\Facades\Alert;
 
 class SignatureController extends Controller
 {
+    use RequiresSignature;
     public function upload(Request $request)
     {
         $folderPath = public_path('uploadSignature/');
@@ -29,7 +31,8 @@ class SignatureController extends Controller
 
     public function getSignature()
     {
-        Auth::user()->getSignatureRoute();
+        $this->getSignatureRoute();
+
         Alert::success('Success', 'Success Full Upload Signature');
         return back();
     }
