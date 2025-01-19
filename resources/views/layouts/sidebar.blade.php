@@ -9,6 +9,14 @@
                 <span>Dashboard</span>
             </a>
         </li><!-- End Dashboard Nav -->
+        @role('Super Admin')
+        <li class="nav-item">
+            <a class="nav-link {{ request()->is('logs-activity') ? '' : 'collapsed' }}" href="{{ route('logs.index') }}">
+                <i class="bi bi-clock-history"></i>
+                <span>Logs Activity</span>
+            </a>
+        </li><!-- End Dashboard Nav -->
+        @endrole
 
 
 

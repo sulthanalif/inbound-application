@@ -2,10 +2,41 @@
 
 namespace App\Models;
 
+use App\LogActivity;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\Traits\CausesActivity;
 
 class Goods extends Model
 {
+    use LogActivity, CausesActivity;
+
+    // Opsi log
+    protected $logName = 'master_goods';
+
+    // Atribut tambahan untuk di-ignore jika dibutuhkan
+    // protected array $logAttributesToIgnore = ['password'];
+    protected array $logAttributes = [
+        'name',
+        'code',
+        'length',
+        'width',
+        'height',
+        'weight',
+        'description',
+        'condition',
+        'price',
+        'qty',
+        'type',
+        'minimum_order',
+        'unit_time',
+        'capital',
+        'unit_id',
+        'vendor_id',
+        'category_id',
+        'area_id',
+        'user_id',
+    ];
+
     protected $table = 'goods';
 
     protected $fillable = [

@@ -3,22 +3,45 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\LogActivity;
+use Spatie\Activitylog\LogOptions;
 use Spatie\Permission\Traits\HasRoles;
+// use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Notifications\Notifiable;
-use Creagia\LaravelSignPad\Concerns\RequiresSignature;
-use Creagia\LaravelSignPad\Contracts\CanBeSigned;
-use Creagia\LaravelSignPad\Contracts\ShouldGenerateSignatureDocument;
-use Creagia\LaravelSignPad\Templates\BladeDocumentTemplate;
-use Creagia\LaravelSignPad\Templates\PdfDocumentTemplate;
-use Creagia\LaravelSignPad\SignatureDocumentTemplate;
 use Creagia\LaravelSignPad\SignaturePosition;
+use Spatie\Activitylog\Traits\CausesActivity;
+use Creagia\LaravelSignPad\Contracts\CanBeSigned;
+use Creagia\LaravelSignPad\SignatureDocumentTemplate;
+use Creagia\LaravelSignPad\Concerns\RequiresSignature;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Creagia\LaravelSignPad\Templates\PdfDocumentTemplate;
+use Creagia\LaravelSignPad\Templates\BladeDocumentTemplate;
+use Creagia\LaravelSignPad\Contracts\ShouldGenerateSignatureDocument;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, HasRoles, RequiresSignature;
+
+    use LogActivity, CausesActivity;
+
+    // Opsi log
+    protected $logName = 'master_user';
+
+    // Atribut tambahan untuk di-ignore jika dibutuhkan
+    protected array $logAttributesToIgnore = ['password'];
+    protected array $logAttributes = [
+        'name',
+        'nip',
+        'position',
+        'address',
+        'company',
+        'phone',
+        'email',
+        'password',
+    ];
+
 
     /**
      * The attributes that are mass assignable.
@@ -59,6 +82,8 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+
 
     public function goods()
     {

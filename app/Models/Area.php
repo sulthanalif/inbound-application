@@ -2,10 +2,27 @@
 
 namespace App\Models;
 
+use App\LogActivity;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\Traits\CausesActivity;
 
 class Area extends Model
 {
+    use LogActivity, CausesActivity;
+
+    // Opsi log
+    protected $logName = 'master_areas';
+
+    // Atribut tambahan untuk di-ignore jika dibutuhkan
+    // protected array $logAttributesToIgnore = ['password'];
+    protected array $logAttributes = [
+        'code',
+        'name',
+        'container',
+        'rack',
+        'number',
+    ];
+
     protected $table = 'areas';
 
     protected $fillable = [
@@ -16,6 +33,7 @@ class Area extends Model
         'number',
         'warehouse_id',
     ];
+
 
     public function warehouse()
     {

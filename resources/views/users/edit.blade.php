@@ -38,7 +38,7 @@
                             <div class="col-md-6">
                                 <label for="inputPassword5" class="form-label">Update Password</label>
                                 <input type="password" name="password" class="form-control @error('password') is-invalid @enderror" id="inputPassword5"
-                                    required>
+                                    >
                                 @error('password')
                                     <p class="text-danger text-xs mt-2">
                                         {{ $message }}

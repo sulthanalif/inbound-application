@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Spatie\Activitylog\Models\Activity;
 use App\Http\Controllers\AreaController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UnitController;
@@ -18,22 +19,22 @@ use App\Http\Controllers\OutboundController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\ContainerController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\SignatureController;
 use App\Http\Controllers\WarehouseController;
 use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\DeliveryAreaController;
 use App\Http\Controllers\ProblemItemController;
+use App\Http\Controllers\DeliveryAreaController;
+use App\Http\Controllers\LogsActivityController;
 use App\Http\Controllers\RequestOrderController;
-use App\Http\Controllers\SignatureController;
 use Symfony\Component\HttpKernel\Profiler\Profile;
 
 // Route::get('/', function () {
 //     return view('welcome');
 // });
 
-Route::get('/coba', function () {
-    $outbound = \App\Models\Outbound::find(1);
-   return view('outbounds.pdf.outbound', compact('outbound'));
-});
+// Route::get('/coba', function () {
+//    return response()->json(Activity::all()->last());
+// });
 
 //auth
 Route::get('/', LoginController::class)->name('login');
@@ -75,6 +76,10 @@ Route::middleware('auth', 'is_active')->group(function () {
             Route::get('/roles/{role}/edit', [RoleController::class, 'edit'])->name('roles.edit');
             Route::put('/roles/{role}', [RoleController::class, 'update'])->name('roles.update');
             Route::delete('/roles/{role}', [RoleController::class, 'destroy'])->name('roles.destroy');
+
+            //log
+            Route::get('/logs-activity', [LogsActivityController::class, 'index'])->name('logs.index');
+            Route::delete('/logs-activity', [LogsActivityController::class, 'delete'])->name('logs.delete');
 
         });
 

@@ -2,10 +2,36 @@
 
 namespace App\Models;
 
+use App\LogActivity;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\Traits\CausesActivity;
 
 class Inbound extends Model
 {
+    use LogActivity, CausesActivity;
+
+    // Opsi log
+    protected $logName = 'inbounds';
+
+    // Atribut tambahan untuk di-ignore jika dibutuhkan
+    // protected array $logAttributesToIgnore = ['password'];
+    protected array $logAttributes = [
+        'code',
+        'outbound_id',
+        'vendor_id',
+        'user_id',
+        'area_id',
+        'date',
+        'project_id',
+        'sender_name',
+        'vehicle_number',
+        'status',
+        'is_return',
+        'number',
+        'code_outbound',
+        'description',
+    ];
+
     protected $table = 'inbounds';
 
     protected $fillable = [
