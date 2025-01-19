@@ -31,13 +31,15 @@ class UserSeeder extends Seeder
         ]);
         $admin_engineer->assignRole('Admin Engineer');
 
-        $admin_warehouse = User::create([
-            'name' => 'Admin Warehouse',
-            'email' => 'adminwarehouse@gmail.com',
-            'password' => Hash::make('password'),
-            'is_active' => true
-        ]);
-        $admin_warehouse->assignRole('Admin Warehouse');
+        for ($i = 1; $i <= 5; $i++) {
+            $admin_warehouse = User::create([
+                'name' => "Admin Warehouse $i",
+                'email' => "adminwarehouse$i@gmail.com",
+                'password' => Hash::make('password'),
+                'is_active' => true
+            ]);
+            $admin_warehouse->assignRole('Admin Warehouse');
+        }
 
         $head_warehouse = User::create([
             'name' => 'Head Warehouse',

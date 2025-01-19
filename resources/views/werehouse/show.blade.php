@@ -29,6 +29,26 @@
                                 <th scope="row">Address</th>
                                 <td>{{ $warehouse->address }}</td>
                             </tr>
+                            <tr>
+                                <th scope="row">Admin</th>
+                                <td>
+                                    @if ($warehouse->users->isNotEmpty())
+                                        @if ($warehouse->users->count() > 1)
+                                            <ul>
+                                                @foreach ($warehouse->users as $admin)
+                                                    <li>
+                                                        {{ $admin->user->name }} ({{ $admin->user->email }})
+                                                    </li>
+                                                @endforeach
+                                            </ul>
+                                        @else
+                                            {{ $warehouse->users->first()->user->name }} ({{ $warehouse->users->first()->user->email }})
+                                        @endif
+                                    @else
+                                        Empty
+                                    @endif
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>

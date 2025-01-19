@@ -29,6 +29,11 @@ class Warehouse extends Model
         'address',
     ];
 
+    public function users()
+    {
+        return $this->hasMany(UserWarehouse::class);
+    }
+
 
     public function areas()
     {

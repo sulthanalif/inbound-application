@@ -27,7 +27,7 @@
                                 <td>{{ $log->log_name }}</td>
                                 <td>{{ json_decode($log->causer)->name ?? 'System' }}</td>
                                 <td>{{ $log->description }}</td>
-                                <td>{{ $log->subject->name ?? $log->subject->code ?? '-'  }}</td>
+                                <td>{{ $log->subject->name ?? $log->subject->code ?? $log->subject->user->name ?? '-'  }}</td>
                                 <td>{{ \Carbon\Carbon::parse($log->created_at)->format('d-m-Y H:i:s') }}</td>
                                 <td align="center">
                                     <button type="button" class="btn btn-primary" data-bs-toggle="modal"
@@ -62,6 +62,47 @@
                                                                    <td>{{ $properties['ip_address'] ?? 'Unknown' }}</td>
                                                                    <td>{{ $properties['user_agent'] ?? 'Unknown' }}</td>
                                                                    <td>{{ \Carbon\Carbon::parse($properties['time'] ?? 'Unknown')->format('d-m-Y H:i:s') }}</td>
+                                                               </tr>
+                                                        </tbody>
+
+                                                    </table>
+                                                    @elseif ($log->log_name == 'user_warehouse')
+                                                    <table class="table">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Warehouse</th>
+                                                                <th>Admin ID</th>
+                                                                <th>Admin Remove</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @php
+                                                                $properties = $log->properties->toArray();
+                                                            @endphp
+                                                               <tr>
+                                                                   <td>{{ $properties['warehouse'] ?? 'Unknown' }}</td>
+                                                                   <td>
+                                                                    @if (array_key_exists('admin_id', $properties))
+                                                                        @foreach ($properties['admin_id'] as $adminId)
+                                                                            {{ $adminId }}{{ !$loop->last ? ',' : '' }}
+                                                                        @endforeach
+                                                                    @else
+                                                                        Unknown
+                                                                    @endif
+                                                                   </td>
+                                                                   <td>
+                                                                    @if (array_key_exists('admin_id_remove', $properties))
+                                                                        @if (!empty($properties['admin_id_remove']))
+                                                                            @foreach ($properties['admin_id_remove'] as $adminIdRemove)
+                                                                                {{ $adminIdRemove }}{{ !$loop->last ? ',' : '' }}
+                                                                            @endforeach
+                                                                        @else
+                                                                            -
+                                                                        @endif
+                                                                    @else
+                                                                        Unknown
+                                                                    @endif
+                                                                   </td>
                                                                </tr>
                                                         </tbody>
 

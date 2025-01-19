@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Models\Warehouse;
 use Illuminate\Http\Request;
+use App\Models\UserWarehouse;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
 use RealRashid\SweetAlert\Facades\Alert;
+use Illuminate\Support\Facades\Validator;
 
 class WarehouseController extends Controller
 {
@@ -26,12 +29,15 @@ class WarehouseController extends Controller
 
     public function create()
     {
-        // dd('masuk');
-        return view('werehouse.create');
+        $admins = User::role('Admin Warehouse')->get();
+
+        return view('werehouse.create', compact('admins'));
     }
 
     public function store(Request $request)
     {
+        $data = json_decode($request->input('data'), true);
+
         $validator = Validator::make($request->all(), [
             'code' => 'required|unique:warehouses,code',
             'name' => 'required|string',
@@ -43,12 +49,29 @@ class WarehouseController extends Controller
         }
 
         try {
-            DB::transaction(function () use ($request) {
+            DB::transaction(function () use ($request, $data) {
                 $warehouse = new Warehouse();
                 $warehouse->code = $request->code;
                 $warehouse->name = $request->name;
                 $warehouse->address = $request->address;
                 $warehouse->save();
+
+                if ($data) {
+                    foreach ($data as $admin) {
+                        $addAdmin = new UserWarehouse();
+                        $addAdmin->user_id = $admin['admin_id'];
+                        $addAdmin->warehouse_id = $warehouse->id;
+                        $addAdmin->save();
+                    }
+
+                    activity('user_warehouse')
+                        ->causedBy(Auth::user())
+                        ->withProperties([
+                            'warehouse' => $warehouse->name,
+                            'admin_id' => UserWarehouse::where('warehouse_id', $warehouse->id)->pluck('user_id')->toArray(),
+                        ])
+                        ->log('created');
+                }
             });
 
             Alert::success('Hore!', 'Warehouse created successfully');
@@ -61,11 +84,14 @@ class WarehouseController extends Controller
 
     public function edit(Warehouse $warehouse)
     {
-        return view('werehouse.edit', compact('warehouse'));
+        $admins = User::role('Admin Warehouse')->get();
+        return view('werehouse.edit', compact('warehouse', 'admins'));
     }
 
     public function update(Request $request, Warehouse $warehouse)
     {
+        $data = json_decode($request->input('data'), true);
+        // dd($request->all());
         $validator = Validator::make($request->all(), [
             'code' => 'required|unique:warehouses,code,' . $warehouse->id,
             'name' => 'required|string',
@@ -77,11 +103,43 @@ class WarehouseController extends Controller
         }
 
         try {
-            DB::transaction(function () use ($request, $warehouse) {
+            DB::transaction(function () use ($request, $warehouse, $data) {
                 $warehouse->code = $request->code;
                 $warehouse->name = $request->name;
                 $warehouse->address = $request->address;
                 $warehouse->save();
+
+
+                if ($data) {
+                    foreach ($data as $admin) {
+                        $userWarehouse = UserWarehouse::where('warehouse_id', $warehouse->id)->where('user_id', $admin['admin_id'])->first();
+                        if (!$userWarehouse) {
+                            $addAdmin = new UserWarehouse();
+                            $addAdmin->user_id = $admin['admin_id'];
+                            $addAdmin->warehouse_id = $warehouse->id;
+                            $addAdmin->save();
+                        }
+                    }
+
+                    $existingAdmins = UserWarehouse::where('warehouse_id', $warehouse->id)->pluck('user_id')->toArray();
+                    $incomingAdmins = array_column($data, 'admin_id');
+
+                    if (array_diff($existingAdmins, $incomingAdmins) || array_diff($incomingAdmins, $existingAdmins)) {
+                        activity('user_warehouse')
+                            ->causedBy(Auth::user())
+                            ->withProperties([
+                                'warehouse' => $warehouse->name,
+                                'admin_id' => UserWarehouse::where('warehouse_id', $warehouse->id)->pluck('user_id')->toArray(),
+                                'admin_id_remove' => UserWarehouse::where('warehouse_id', $warehouse->id)->whereNotIn('user_id', $data)->pluck('user_id')->toArray(),
+                                ])
+                            ->log('updated');
+                    }
+
+                    $deleteAdmin = UserWarehouse::where('warehouse_id', $warehouse->id)->whereNotIn('user_id', $data);
+                    if ($deleteAdmin) {
+                        $deleteAdmin->delete();
+                    }
+                }
             });
             Alert::success('Hore!', 'Warehouse updated successfully!');
             return redirect()->route('warehouses.index');

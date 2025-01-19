@@ -83,6 +83,11 @@ class User extends Authenticatable
         ];
     }
 
+    public function warehouses()
+    {
+        return $this->hasMany(UserWarehouse::class);
+    }
+
 
 
     public function goods()
