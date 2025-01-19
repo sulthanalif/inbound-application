@@ -124,12 +124,12 @@ class WarehouseController extends Controller
                     $existingAdmins = UserWarehouse::where('warehouse_id', $warehouse->id)->pluck('user_id')->toArray();
                     $incomingAdmins = array_column($data, 'admin_id');
 
-                    if (array_diff($existingAdmins, $incomingAdmins) || array_diff($incomingAdmins, $existingAdmins)) {
+                    if (array_diff_assoc($existingAdmins, $incomingAdmins) || array_diff_assoc($incomingAdmins, $existingAdmins)) {
                         activity('user_warehouse')
                             ->causedBy(Auth::user())
                             ->withProperties([
                                 'warehouse' => $warehouse->name,
-                                'admin_id' => UserWarehouse::where('warehouse_id', $warehouse->id)->pluck('user_id')->toArray(),
+                                'admin_id' => UserWarehouse::where('warehouse_id', $warehouse->id)->whereIn('user_id', $data)->pluck('user_id')->toArray(),
                                 'admin_id_remove' => UserWarehouse::where('warehouse_id', $warehouse->id)->whereNotIn('user_id', $data)->pluck('user_id')->toArray(),
                                 ])
                             ->log('updated');
