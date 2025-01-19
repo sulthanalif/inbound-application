@@ -32,9 +32,9 @@ use Symfony\Component\HttpKernel\Profiler\Profile;
 //     return view('welcome');
 // });
 
-// Route::get('/coba', function () {
-//    return response()->json(Activity::all()->last());
-// });
+Route::get('/coba', function () {
+   return response()->json(Activity::all()->last());
+});
 
 //auth
 Route::get('/', LoginController::class)->name('login');

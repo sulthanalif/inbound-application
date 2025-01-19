@@ -28,7 +28,7 @@
                                 <td>{{ json_decode($log->causer)->name ?? 'System' }}</td>
                                 <td>{{ $log->description }}</td>
                                 <td>{{ $log->subject->name ?? $log->subject->code ?? '-'  }}</td>
-                                <td>{{ $log->created_at }}</td>
+                                <td>{{ \Carbon\Carbon::parse($log->created_at)->format('d-m-Y H:i:s') }}</td>
                                 <td align="center">
                                     <button type="button" class="btn btn-primary" data-bs-toggle="modal"
                                         data-bs-target="#exampleModal{{ $log->id }}">
@@ -45,6 +45,28 @@
                                                         aria-label="Close"></button>
                                                 </div>
                                                 <div class="modal-body">
+                                                    @if ($log->description == 'User logged in' || $log->description == 'User logged out')
+                                                    <table class="table">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>IP Address</th>
+                                                                <th>User Agent</th>
+                                                                <th>Time</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @php
+                                                                $properties = $log->properties->toArray();
+                                                            @endphp
+                                                               <tr>
+                                                                   <td>{{ $properties['ip_address'] ?? 'Unknown' }}</td>
+                                                                   <td>{{ $properties['user_agent'] ?? 'Unknown' }}</td>
+                                                                   <td>{{ \Carbon\Carbon::parse($properties['time'] ?? 'Unknown')->format('d-m-Y H:i:s') }}</td>
+                                                               </tr>
+                                                        </tbody>
+
+                                                    </table>
+                                                    @else
                                                     <table class="table">
                                                         <thead>
                                                             <tr>
@@ -70,6 +92,7 @@
                                                         </tbody>
 
                                                     </table>
+                                                    @endif
                                                 </div>
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-secondary"
