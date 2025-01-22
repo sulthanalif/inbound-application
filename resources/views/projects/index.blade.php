@@ -68,9 +68,10 @@
                                             @endforeach
                                         </ul>
                                     </td>
-                                    <td align="center">
+                                    <td  class="text-nowrap">
                                         <a href="{{ route('projects.show', $project) }}" class="btn btn-sm btn-primary"><i
                                                 class="bi bi-eye-fill"></i></a>
+                                                <a target="_blank" href="{{ route('projects.print', $project) }}" class="btn btn-primary btn-sm mx-2"><i class="bi bi-printer-fill"></i></a>
                                     </td>
                                 </tr>
                             @endforeach

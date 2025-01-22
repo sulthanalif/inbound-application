@@ -27,6 +27,8 @@ class ProjectController extends Controller
             $projects = Project::latest()->get();
         }
 
+        // confirmDelete('End Project?', 'Are you sure you want to end this project?');
+
         return view('projects.index', compact('projects'));
     }
 
@@ -68,7 +70,7 @@ class ProjectController extends Controller
             }
         }
 
-        return Excel::download(new ProjectExcel($project, $outboundGoods), 'Project Detail '.str_replace(['/', '\\'], '-', $project->code).'.xlsx');
+        return Excel::download(new ProjectExcel($project, $outboundGoods), 'Project Detail ' . str_replace(['/', '\\'], '-', $project->code) . '.xlsx');
     }
 
     public function print(Project $project)
@@ -131,7 +133,7 @@ class ProjectController extends Controller
 
         $pdf = Pdf::loadView('projects.print.pdf-outbound', ['outbound' => $outbound, 'inboundItemsProblems' => $inboundItemsProblems, 'outbounItemsdResend' => $outbounItemsdResend, 'inboundItems' => $inboundItems]);
 
-        return $pdf->stream('Outbound Detail'.$outbound->code.'.pdf');
+        return $pdf->stream('Outbound Detail' . $outbound->code . '.pdf');
     }
 
     public function resend(Outbound $outbound)
@@ -208,8 +210,14 @@ class ProjectController extends Controller
             }
         }
 
+        $isReturnable = $project->outbounds->flatMap->items->pluck('goods.type')->contains('Rentable')
+            && $project->outbounds()->where('is_return', false)->get()->isEmpty()
+            && $project->outbounds()->where('is_return', true)->get()->every(function ($outbound) {
+                return $outbound->inbound->status === 'Success';
+            });
+
         // return response()->json($outboundGoods);
-        return view('projects.show', compact('project', 'outboundGoods'));
+        return view('projects.show', compact('project', 'outboundGoods', 'isReturnable'));
     }
 
     public function create()
@@ -284,7 +292,7 @@ class ProjectController extends Controller
                 $inbound->status = 'Pending';
                 $inbound->save();
 
-                $outbound = Outbound::where('id',$request->outbound_id)->with('items')->first();
+                $outbound = Outbound::where('id', $request->outbound_id)->with('items')->first();
                 $outbound->is_return = true;
                 $outbound->save();
 
@@ -305,6 +313,35 @@ class ProjectController extends Controller
             return redirect()->route('projects.show', $project);
         } catch (\Throwable $th) {
             Alert::error('Oops!', $th->getMessage());
+            return redirect()->route('projects.show', $project);
+        }
+    }
+
+    public function endProject(Project $project)
+    {
+        $isReturnable = $project->outbounds->flatMap->items->pluck('goods.type')->contains('Rentable')
+            && $project->outbounds()->where('is_return', false)->get()->isEmpty()
+            && $project->outbounds()->where('is_return', true)->get()->every(function ($outbound) {
+                return $outbound->inbound->status === 'Success';
+            });
+
+        if ($isReturnable) {
+            try {
+                DB::beginTransaction();
+                $project->status = 'Finished';
+                $project->end_date = now();
+                $project->save();
+                DB::commit();
+
+                Alert::success('Hore!', 'Project Finished Successfully');
+                return redirect()->route('projects.show', $project);
+            } catch (\Throwable $th) {
+                DB::rollBack();
+                Alert::error('Oops!', $th->getMessage());
+                return redirect()->route('projects.show', $project);
+            }
+        } else {
+            Alert::error('Oops!', 'There are items that have not been returned');
             return redirect()->route('projects.show', $project);
         }
     }

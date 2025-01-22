@@ -14,9 +14,13 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <h5 class="card-title">Project Detail</h5>
-                            <div class="d-flex">
+                            <div class="d-flex justify-content-end items-center">
                                 <a target="_blank" href="{{ route('projects.print', $project) }}" class="btn btn-primary btn-sm mx-2"><i class="bi bi-printer-fill"></i> PDF</a>
                                 <a href="{{ route('projects.export', $project) }}" class="btn btn-primary btn-sm"><i class="bi bi-printer-fill"></i> Excel</a>
+                                @if ($project->status != 'Finished')
+                                <a href="{{ route('projects.endProject', $project) }}" class="btn btn-danger btn-sm ms-2 {{ $isReturnable ? '' : 'disabled' }}">End Project</a>
+                                <a href="" class="btn btn-success btn-sm mx-2">Next Project</a>
+                                @endif
                             </div>
                         </div>
 
@@ -44,7 +48,7 @@
                                         <div
                                             class="badge bg-{{ match ($project->status) {
                                                 'On Progress' => 'primary',
-                                                'Done' => 'success',
+                                                'Finished' => 'success',
                                                 default => 'danger',
                                             } }}">
                                             {{ $project->status }}</div>
@@ -117,7 +121,7 @@
                                             </td>
                                             <td style="text-align: center">
 
-                                                <a target="_blank" href="{{ route('projects.showOutbound', $outbound) }}"
+                                                <a href="{{ route('projects.showOutbound', $outbound) }}"
                                                     class="btn btn-primary btn-sm"><i class="bi bi-eye-fill"></i></a>
                                                 <a target="_blank" href="{{ route('projects.printOutbound', $outbound) }}"
                                                     class="btn btn-primary btn-sm"><i class="bi bi-printer-fill"></i></a>

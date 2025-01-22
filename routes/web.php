@@ -168,6 +168,9 @@ Route::middleware('auth', 'is_active')->group(function () {
             //resend
             Route::get('/projects/{outbound}/resend', [ProjectController::class, 'resend'])->name('inbounds.resend');
 
+            //end project
+            Route::get('/projects/{project}/end', [ProjectController::class, 'endProject'])->name('projects.endProject');
+
         });
 
         Route::middleware('role:Super Admin|Admin Warehouse|Head Warehouse|Admin Engineer')->group(function () {
