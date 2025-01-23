@@ -22,7 +22,7 @@
         }
         .footer td {
             border: none;
-            padding-top: 40px;
+
         }
         .footer tr:first-child {
             height: 100px;
@@ -54,6 +54,11 @@
         }
         #table th {
             background-color: #f2f2f2;
+        }
+
+        #signature {
+            width: 200px;
+            height: auto;
         }
     </style>
 </head>
@@ -144,14 +149,21 @@
                 </td>
             </tr>
             <tr>
-                <td style="vertical-align: top; text-align: center; width: 33.33%"><b>Pengirim</b></td>
-                <td style="vertical-align: top; text-align: center; width: 33.33%"><b>Pembawa</b></td>
-                <td style="vertical-align: top; text-align: center; width: 33.33%"><b>Penerima</b></td>
+                <td style="text-align: center; width: 33.33%"><b>Pengirim</b></td>
+                <td style="text-align: center; width: 33.33%"><b>Pembawa</b></td>
+                <td style="text-align: center; width: 33.33%"><b>Penerima</b></td>
             </tr>
             <tr>
-                <td style="vertical-align: top; text-align: center;">{{ $inbound->user->name }}</td>
-                <td style="vertical-align: top; text-align: center;">{{ $inbound->sender_name }}</td>
-                <td style="vertical-align: top; text-align: center;">{{ $inbound->project->name }}</td>
+                <td style="text-align: center;">@if ($inbound->status == 'Success')
+                    <img src="{{ $inbound->project->user->signature->getSignatureImageAbsolutePath() ?? '-' }}" alt="" id="signature">
+                    @endif</td>
+                <td style="text-align: center;"></td>
+                <td style="text-align: center;"></td>
+            </tr>
+            <tr>
+                <td style="text-align: center;">{{ $inbound->user->name }}</td>
+                <td style="text-align: center;">{{ $inbound->sender_name }}</td>
+                <td style="text-align: center;">{{ $inbound->project->name }}</td>
             </tr>
         </table>
     </div>

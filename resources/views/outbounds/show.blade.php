@@ -464,7 +464,7 @@
                                             @endif
                                         @endhasrole
 
-                                        @if ($outbound->status == 'Approved to delivery' || $outbound->status == 'Success')
+                                        @if ($outbound->status == 'Approved to delivery')
                                             <a target="_blank"
                                                 href="{{ route('outbounds.downloadInvoiceDelivery', $outbound) }}"
                                                 class="btn btn-primary btn-sm  mb-3">Download Invoice Delivery</a>
@@ -502,6 +502,11 @@
                                                     class="btn btn-success btn-sm  mb-3">Submit</a>
                                             @endif
                                         @endhasrole
+                                        @if ($outbound->status == 'Success')
+                                            <a target="_blank"
+                                                href="{{ route('outbounds.downloadInvoiceDelivery', $outbound) }}"
+                                                class="btn btn-primary btn-sm  mb-3">Download Invoice Delivery</a>
+                                        @endif
                                     </div>
                                 </div>
                             @endif

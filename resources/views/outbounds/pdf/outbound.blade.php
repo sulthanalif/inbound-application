@@ -32,7 +32,7 @@
         }
         .footer td {
             border: none;
-            padding-top: 40px;
+
         }
         .footer tr:first-child {
             height: 100px;
@@ -40,6 +40,7 @@
 
         #signature {
             width: 200px;
+            height: auto;
         }
 
     </style>
@@ -50,7 +51,7 @@
         <table class="header">
             <tr>
                 <th style="width: 50%">
-                    <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('images/logo.jpg'))) }}" width="150" height="50" alt="logo">
+                    <img src="{{ public_path('images/logo.jpg') }}" width="150" height="50" alt="logo">
                 </th>
                 <th style="width: 50%; text-align: ">
                     <h1>Delivery Note</h1>
@@ -136,14 +137,23 @@
         </table>
         <table class="footer">
             <tr>
-                <td style="vertical-align: top; text-align: center; width: 33.33%"><b>Pengirim</b></td>
-                <td style="vertical-align: top; text-align: center; width: 33.33%"><b>Pembawa</b></td>
-                <td style="vertical-align: top; text-align: center; width: 33.33%"><b>Penerima</b></td>
+                <td style=" text-align: center; width: 33.33%"><b>Pengirim</b></td>
+                <td style=" text-align: center; width: 33.33%"><b>Pembawa</b></td>
+                <td style=" text-align: center; width: 33.33%"><b>Penerima</b></td>
             </tr>
             <tr>
-                <td style="vertical-align: top; text-align: center;">{{ $outbound->user->name }}</td>
-                <td style="vertical-align: top; text-align: center;">{{ $outbound->sender_name }}</td>
-                <td style="vertical-align: top; text-align: center;"><img src="{{ $outbound->project->user->signature->getSignatureImageAbsolutePath() ?? '-' }}" alt="" id="signature">{{ $outbound->project->name }}</td>
+                <td style=" text-align: center;"></td>
+                <td style=" text-align: center;"></td>
+                <td style=" text-align: center;">
+                    @if ($outbound->status == 'Success')
+                    <img src="{{ $outbound->project->user->signature->getSignatureImageAbsolutePath() ?? '-' }}" alt="" id="signature">
+                    @endif
+                </td>
+            </tr>
+            <tr>
+                <td style=" text-align: center;">{{ $outbound->user->name }}</td>
+                <td style=" text-align: center;">{{ $outbound->sender_name }}</td>
+                <td style=" text-align: center;">{{ $outbound->project->name }}</td>
             </tr>
         </table>
     </div>

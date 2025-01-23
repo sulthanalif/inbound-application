@@ -177,7 +177,7 @@
                                             default => 'This order is ready for delivery.',
                                         } }}
                                         </p>
-                                        @if ($inbound->status == 'Delivery' || $inbound->status == 'Success')
+                                        @if ($inbound->status == 'Delivery')
                                         <a target="_blank" href="{{ route('inbounds.downloadInvoiceDelivery', $inbound) }}"
                                         class="btn btn-primary btn-sm  mb-3">Download Invoice Delivery</a>
                                         @endif
@@ -248,6 +248,10 @@
                                             default => 'This order is successfully delivered.',
                                         } }}
                                         </p>
+                                        @if ($inbound->status == 'Success')
+                                        <a target="_blank" href="{{ route('inbounds.downloadInvoiceDelivery', $inbound) }}"
+                                        class="btn btn-primary btn-sm  mb-3">Download Invoice Delivery</a>
+                                        @endif
                                         @hasrole('Super Admin|Admin Warehouse')
                                             @if ($inbound->status == 'Delivery')
                                                 @if ($inbound->is_return == 1)
