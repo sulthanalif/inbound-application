@@ -35,6 +35,8 @@ class Outbound extends Model
         'order',
         'code_inbound',
         'total_price',
+        'move_to',
+        'move_from',
     ];
 
     protected $table = 'outbounds';
@@ -58,6 +60,8 @@ class Outbound extends Model
         'order',
         'code_inbound',
         'total_price',
+        'move_to',
+        'move_from',
     ];
 
     public function problemItems()

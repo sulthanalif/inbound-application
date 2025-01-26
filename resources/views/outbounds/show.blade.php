@@ -48,7 +48,7 @@
                                             {{ $outbound->status }}</div>
                                     </td>
                                 </tr>
-                                @if (!$outbound->is_resend)
+                                @if (!$outbound->is_resend && !$outbound->move_from)
                                     <tr>
                                         <th scope="row">Status Payment</th>
                                         <td>
@@ -63,6 +63,10 @@
                                         </td>
                                     </tr>
                                 @endif
+                                @if ($outbound->move_from || $outbound->move_to)
+                                    <th scope="row">Move From</th>
+                                    <td>{{ $outbound->move_from ?? '-' }}</td>
+                                @else
                                 <tr>
                                     <th scope="row">Pickup Area</th>
                                     <td>{{ $outbound->pickup_area_id == null ? '-' : $outbound->pickupArea->warehouse->name . ' - ' . $outbound->pickupArea->name . ' - ' . $outbound->pickupArea->container . ' - ' . $outbound->pickupArea->rack . ' - ' . $outbound->pickupArea->number }}
@@ -80,6 +84,7 @@
                                     <th scope="row">Area</th>
                                     <td>{{ $outbound->deliveryArea->name ?? '-' }}</td>
                                 </tr>
+                                @endif
                             </tbody>
                         </table>
 
@@ -90,7 +95,7 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <h5 class="card-title">Items</h5>
-                            @if (!$outbound->is_resend)
+                            @if (!$outbound->is_resend && !$outbound->move_from)
                                 @if ($outbound->status == 'Pending')
                                     <a href="{{ route('outbounds.editItems', $outbound) }}" class="btn btn-primary">
                                         Edit
@@ -111,7 +116,7 @@
                                         <th scope="col">Warehouse</th>
                                     @endrole
                                     <th scope="col">Quantity</th>
-                                    @if (!$outbound->is_resend)
+                                    @if (!$outbound->is_resend && !$outbound->move_from)
                                         <th scope="col" width="20%">Sub Price</th>
                                     @endif
                                 </tr>
@@ -128,13 +133,13 @@
                                         <td>{{ $item->goods->warehouseName() }}</td>
                                         @endrole
                                         <td>{{ $item->qty }}</td>
-                                        @if (!$outbound->is_resend)
+                                        @if (!$outbound->is_resend && !$outbound->move_from)
                                             <td>{{ 'Rp. ' . number_format($item->sub_total, 0, ',', '.') }}</td>
                                         @endif
                                     </tr>
                                 @endforeach
                             </tbody>
-                            @if (!$outbound->is_resend)
+                            @if (!$outbound->is_resend && !$outbound->move_from)
                                 <tfoot>
                                     <tr style="font-size: 12px">
                                         <td></td>
@@ -153,7 +158,7 @@
                     </div>
                 </div>
 
-                @if (!$outbound->is_resend)
+                @if (!$outbound->is_resend && !$outbound->move_from)
                     <div class="card">
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center">
@@ -281,196 +286,198 @@
                                     @endhasrole
                                 </div>
                             </div>
+                            @if (!$outbound->move_from && !$outbound->move_to)
                             @if ($outbound->status !== 'Rejected')
-                                <div class="timeline-item">
-                                    <div
-                                        class="timeline-icon {{ match ($outbound->status) {
-                                            'Pending' => 'bg-secondary',
-                                            'Approved' => 'bg-secondary',
-                                            'Pickup' => 'bg-info',
-                                            default => 'bg-info',
-                                        } }}">
-                                        <i class="bi bi-truck text-white"></i>
-                                    </div>
-                                    <div class="timeline-content">
-                                        <h6>Pickup</h6>
-                                        <p>{{ match ($outbound->status) {
-                                            'Pending' => 'Waiting...',
-                                            'Approved' => 'Waiting...',
-                                            'Pickup' => 'This order is ready for pickup.',
-                                            default => 'This order is ready for pickup.',
-                                        } }}
-                                        </p>
-                                        @hasrole('Super Admin|Admin Warehouse')
-                                            @if ($outbound->status == 'Approved')
-                                                <form action="{{ route('outbounds.pickup', $outbound) }}" method="POST">
-                                                    @csrf
-                                                    @method('PUT')
-                                                    <div class="mb-3">
-                                                        <div class="col-md-12">
-                                                            <label for="warehouse_id" class="form-label">Warehouse<span
-                                                                    class="text-danger">*</span></label>
-                                                            <select id="warehouse_id" name="warehouse_id"
-                                                                class="form-select select1 @error('warehouse_id') is-invalid @enderror"
-                                                                onchange="populateArea(this.value, {{ json_encode($warehouses) }})"
-                                                                required>
-                                                                <option value="" selected disabled>Choose...</option>
-                                                                @foreach ($warehouses as $warehouse)
-                                                                    <option value="{{ $warehouse->id }}">
-                                                                        {{ $warehouse->code }} -
-                                                                        {{ $warehouse->name }}</option>
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
-                                                        <div class="col-md-12">
-                                                            <label for="pickup_area_id" class="form-label">Area<span
-                                                                    class="text-danger">*</span></label>
-                                                            <select id="pickup_area_id" name="pickup_area_id"
-                                                                class="form-select select1 @error('pickup_area_id') is-invalid @enderror"
-                                                                required>
-                                                                {{-- <option value="" sel   ected disabled>Choose...</option> --}}
-
-                                                            </select>
-                                                        </div>
-                                                    </div>
-
-                                                    <button type="submit"
-                                                        class="btn btn-sm btn-info text-white">Submit</button>
-                                                </form>
-                                            @endif
-                                        @endhasrole
-                                    </div>
+                            <div class="timeline-item">
+                                <div
+                                    class="timeline-icon {{ match ($outbound->status) {
+                                        'Pending' => 'bg-secondary',
+                                        'Approved' => 'bg-secondary',
+                                        'Pickup' => 'bg-info',
+                                        default => 'bg-info',
+                                    } }}">
+                                    <i class="bi bi-truck text-white"></i>
                                 </div>
-                                <div class="timeline-item">
-                                    <div
-                                        class="timeline-icon {{ match ($outbound->status) {
-                                            'Pending' => 'bg-secondary',
-                                            'Approved' => 'bg-secondary',
-                                            'Pickup' => 'bg-secondary',
-                                            'Delivery' => 'bg-warning',
-                                            default => 'bg-warning',
-                                        } }}">
-                                        <i class="bi bi-box-seam text-white"></i>
-                                    </div>
-                                    <div class="timeline-content">
-                                        <h6>Delivery</h6>
-                                        <p>{{ match ($outbound->status) {
-                                            'Pending' => 'Waiting...',
-                                            'Approved' => 'Waiting...',
-                                            'Pickup' => 'Waiting...',
-                                            'Delivery' => 'This order is ready for delivery.',
-                                            default => 'This order is ready for delivery.',
-                                        } }}
-                                        </p>
-                                        @if ($outbound->status == 'Delivery')
-                                            <p>Sender Name: {{ $outbound->sender_name }} <br>
-                                                Vahicle Number: {{ $outbound->vehicle_number }}
-                                            </p>
-                                        @endif
-                                        @hasrole('Super Admin|Admin Warehouse')
-                                            @if ($outbound->status == 'Pickup')
-                                                <form class="row g-3 mt-1"
-                                                    action="{{ route('outbounds.delivery', $outbound) }}" method="POST">
-                                                    @csrf
-                                                    @method('PUT')
-                                                    <div class="col-sm-6">
-                                                        <label for="sender_name" class="form-label">Sender Name<span
+                                <div class="timeline-content">
+                                    <h6>Pickup</h6>
+                                    <p>{{ match ($outbound->status) {
+                                        'Pending' => 'Waiting...',
+                                        'Approved' => 'Waiting...',
+                                        'Pickup' => 'This order is ready for pickup.',
+                                        default => 'This order is ready for pickup.',
+                                    } }}
+                                    </p>
+                                    @hasrole('Super Admin|Admin Warehouse')
+                                        @if ($outbound->status == 'Approved')
+                                            <form action="{{ route('outbounds.pickup', $outbound) }}" method="POST">
+                                                @csrf
+                                                @method('PUT')
+                                                <div class="mb-3">
+                                                    <div class="col-md-12">
+                                                        <label for="warehouse_id" class="form-label">Warehouse<span
                                                                 class="text-danger">*</span></label>
-                                                        <input type="text" name="sender_name"
-                                                            class="form-control @error('sender_name') is-invalid @enderror"
-                                                            id="sender_name" required>
-                                                        @error('sender_name')
-                                                            <p class="text-danger text-xs mt-2">
-                                                                {{ $message }}
-                                                            </p>
-                                                        @enderror
-                                                    </div>
-
-                                                    <div class="col-sm-6">
-                                                        <label for="vehicle_number" class="form-label">Vehicle Number<span
-                                                                class="text-danger">*</span></label>
-                                                        <input type="text" name="vehicle_number"
-                                                            class="form-control @error('vehicle_number') is-invalid @enderror"
-                                                            id="vehicle_number" required>
-                                                        @error('vehicle_number')
-                                                            <p class="text-danger text-xs mt-2">
-                                                                {{ $message }}
-                                                            </p>
-                                                        @enderror
-                                                    </div>
-                                                    <div class="text-center">
-                                                        <button type="submit"
-                                                            class="btn btn-warning btn-sm text-white mb-3">Submit</button>
-                                                    </div>
-                                                </form>
-                                                {{-- <a href="{{ route('outbounds.changeStatus', [$outbound, 'status' => 'Delivery']) }}" class="btn btn-warning btn-sm text-white  mb-3" >Submit</a> --}}
-                                            @endif
-                                        @endhasrole
-                                    </div>
-                                </div>
-                                <div class="timeline-item">
-                                    <div
-                                        class="timeline-icon {{ match ($outbound->status) {
-                                            'Pending' => 'bg-secondary',
-                                            'Approved' => 'bg-secondary',
-                                            'Pickup' => 'bg-secondary',
-                                            'Delivery' => 'bg-secondary',
-                                            default => 'bg-primary',
-                                        } }}">
-                                        <i class="bi bi-check-circle text-white"></i>
-                                    </div>
-                                    <div class="timeline-content">
-                                        <h6>Approved to delivery</h6>
-                                        <p>{{ match ($outbound->status) {
-                                            'Pending' => 'Waiting...',
-                                            'Approved' => 'Waiting...',
-                                            'Pickup' => 'Waiting..',
-                                            'Delivery' => 'Waiting...',
-                                            'Approved to delivery' => 'This order has been approved',
-                                            default => 'This order has been approved.',
-                                        } }}
-                                        </p>
-
-                                        @hasrole('Super Admin|Head Warehouse')
-                                            @if ($outbound->status == 'Delivery')
-                                                <form class="row g-3 mt-1"
-                                                    action="{{ route('outbounds.approveDelivery', $outbound) }}"
-                                                    method="POST">
-                                                    @csrf
-                                                    @method('PUT')
-                                                    <div class="col-sm-12">
-                                                        <label for="deliveryArea" class="form-label">Delivery Area<span
-                                                                class="text-danger">*</span></label>
-                                                        <select name="deliveryArea" id="deliveryArea"
-                                                            class="form-select select1" required>
+                                                        <select id="warehouse_id" name="warehouse_id"
+                                                            class="form-select select1 @error('warehouse_id') is-invalid @enderror"
+                                                            onchange="populateArea(this.value, {{ json_encode($warehouses) }})"
+                                                            required>
                                                             <option value="" selected disabled>Choose...</option>
-                                                            @foreach ($deliveryAreas as $area)
-                                                                <option value="{{ $area->id }}">
-                                                                    {{ $area->code }} - {{ $area->name }}</option>
+                                                            @foreach ($warehouses as $warehouse)
+                                                                <option value="{{ $warehouse->id }}">
+                                                                    {{ $warehouse->code }} -
+                                                                    {{ $warehouse->name }}</option>
                                                             @endforeach
                                                         </select>
-                                                        @error('deliveryArea')
-                                                            <p class="text-danger text-xs mt-2">
-                                                                {{ $message }}
-                                                            </p>
-                                                        @enderror
                                                     </div>
-                                                    <div class="">
-                                                        <button type="submit"
-                                                            class="btn btn-primary btn-sm  mb-3">Submit</button>
-                                                    </div>
-                                                </form>
-                                                {{-- <a href="{{ route('outbounds.changeStatus', [$outbound, 'status' => 'Approved to delivery']) }}" class="btn btn-primary btn-sm  mb-3" >Approve</a> --}}
-                                            @endif
-                                        @endhasrole
+                                                    <div class="col-md-12">
+                                                        <label for="pickup_area_id" class="form-label">Area<span
+                                                                class="text-danger">*</span></label>
+                                                        <select id="pickup_area_id" name="pickup_area_id"
+                                                            class="form-select select1 @error('pickup_area_id') is-invalid @enderror"
+                                                            required>
+                                                            {{-- <option value="" sel   ected disabled>Choose...</option> --}}
 
-                                        @if ($outbound->status == 'Approved to delivery')
-                                            <a target="_blank"
-                                                href="{{ route('outbounds.downloadInvoiceDelivery', $outbound) }}"
-                                                class="btn btn-primary btn-sm  mb-3">Download Invoice Delivery</a>
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                                <button type="submit"
+                                                    class="btn btn-sm btn-info text-white">Submit</button>
+                                            </form>
                                         @endif
-                                    </div>
+                                    @endhasrole
                                 </div>
+                            </div>
+                            <div class="timeline-item">
+                                <div
+                                    class="timeline-icon {{ match ($outbound->status) {
+                                        'Pending' => 'bg-secondary',
+                                        'Approved' => 'bg-secondary',
+                                        'Pickup' => 'bg-secondary',
+                                        'Delivery' => 'bg-warning',
+                                        default => 'bg-warning',
+                                    } }}">
+                                    <i class="bi bi-box-seam text-white"></i>
+                                </div>
+                                <div class="timeline-content">
+                                    <h6>Delivery</h6>
+                                    <p>{{ match ($outbound->status) {
+                                        'Pending' => 'Waiting...',
+                                        'Approved' => 'Waiting...',
+                                        'Pickup' => 'Waiting...',
+                                        'Delivery' => 'This order is ready for delivery.',
+                                        default => 'This order is ready for delivery.',
+                                    } }}
+                                    </p>
+                                    @if ($outbound->status == 'Delivery')
+                                        <p>Sender Name: {{ $outbound->sender_name }} <br>
+                                            Vahicle Number: {{ $outbound->vehicle_number }}
+                                        </p>
+                                    @endif
+                                    @hasrole('Super Admin|Admin Warehouse')
+                                        @if ($outbound->status == 'Pickup')
+                                            <form class="row g-3 mt-1"
+                                                action="{{ route('outbounds.delivery', $outbound) }}" method="POST">
+                                                @csrf
+                                                @method('PUT')
+                                                <div class="col-sm-6">
+                                                    <label for="sender_name" class="form-label">Sender Name<span
+                                                            class="text-danger">*</span></label>
+                                                    <input type="text" name="sender_name"
+                                                        class="form-control @error('sender_name') is-invalid @enderror"
+                                                        id="sender_name" required>
+                                                    @error('sender_name')
+                                                        <p class="text-danger text-xs mt-2">
+                                                            {{ $message }}
+                                                        </p>
+                                                    @enderror
+                                                </div>
+
+                                                <div class="col-sm-6">
+                                                    <label for="vehicle_number" class="form-label">Vehicle Number<span
+                                                            class="text-danger">*</span></label>
+                                                    <input type="text" name="vehicle_number"
+                                                        class="form-control @error('vehicle_number') is-invalid @enderror"
+                                                        id="vehicle_number" required>
+                                                    @error('vehicle_number')
+                                                        <p class="text-danger text-xs mt-2">
+                                                            {{ $message }}
+                                                        </p>
+                                                    @enderror
+                                                </div>
+                                                <div class="text-center">
+                                                    <button type="submit"
+                                                        class="btn btn-warning btn-sm text-white mb-3">Submit</button>
+                                                </div>
+                                            </form>
+                                            {{-- <a href="{{ route('outbounds.changeStatus', [$outbound, 'status' => 'Delivery']) }}" class="btn btn-warning btn-sm text-white  mb-3" >Submit</a> --}}
+                                        @endif
+                                    @endhasrole
+                                </div>
+                            </div>
+                            <div class="timeline-item">
+                                <div
+                                    class="timeline-icon {{ match ($outbound->status) {
+                                        'Pending' => 'bg-secondary',
+                                        'Approved' => 'bg-secondary',
+                                        'Pickup' => 'bg-secondary',
+                                        'Delivery' => 'bg-secondary',
+                                        default => 'bg-primary',
+                                    } }}">
+                                    <i class="bi bi-check-circle text-white"></i>
+                                </div>
+                                <div class="timeline-content">
+                                    <h6>Approved to delivery</h6>
+                                    <p>{{ match ($outbound->status) {
+                                        'Pending' => 'Waiting...',
+                                        'Approved' => 'Waiting...',
+                                        'Pickup' => 'Waiting..',
+                                        'Delivery' => 'Waiting...',
+                                        'Approved to delivery' => 'This order has been approved',
+                                        default => 'This order has been approved.',
+                                    } }}
+                                    </p>
+
+                                    @hasrole('Super Admin|Head Warehouse')
+                                        @if ($outbound->status == 'Delivery')
+                                            <form class="row g-3 mt-1"
+                                                action="{{ route('outbounds.approveDelivery', $outbound) }}"
+                                                method="POST">
+                                                @csrf
+                                                @method('PUT')
+                                                <div class="col-sm-12">
+                                                    <label for="deliveryArea" class="form-label">Delivery Area<span
+                                                            class="text-danger">*</span></label>
+                                                    <select name="deliveryArea" id="deliveryArea"
+                                                        class="form-select select1" required>
+                                                        <option value="" selected disabled>Choose...</option>
+                                                        @foreach ($deliveryAreas as $area)
+                                                            <option value="{{ $area->id }}">
+                                                                {{ $area->code }} - {{ $area->name }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                    @error('deliveryArea')
+                                                        <p class="text-danger text-xs mt-2">
+                                                            {{ $message }}
+                                                        </p>
+                                                    @enderror
+                                                </div>
+                                                <div class="">
+                                                    <button type="submit"
+                                                        class="btn btn-primary btn-sm  mb-3">Submit</button>
+                                                </div>
+                                            </form>
+                                            {{-- <a href="{{ route('outbounds.changeStatus', [$outbound, 'status' => 'Approved to delivery']) }}" class="btn btn-primary btn-sm  mb-3" >Approve</a> --}}
+                                        @endif
+                                    @endhasrole
+
+                                    @if ($outbound->status == 'Approved to delivery')
+                                        <a target="_blank"
+                                            href="{{ route('outbounds.downloadInvoiceDelivery', $outbound) }}"
+                                            class="btn btn-primary btn-sm  mb-3">Download Invoice Delivery</a>
+                                    @endif
+                                </div>
+                            </div>
+                            @endif
                                 <div class="timeline-item">
                                     <div
                                         class="timeline-icon {{ match ($outbound->status) {
@@ -509,6 +516,38 @@
                                         @endif
                                     </div>
                                 </div>
+                            @endif
+                            @if ($outbound->move_from || $outbound->move_to)
+                            <div class="timeline-item">
+                                <div
+                                    class="timeline-icon {{ match ($outbound->status) {
+                                        'Pending' => 'bg-secondary',
+                                        'Approved' => 'bg-secondary',
+                                        'Pickup' => 'bg-secondary',
+                                        'Delivery' => 'bg-secondary',
+                                        'Approved to delivery' => 'bg-secondary',
+                                        'Success' => 'bg-success',
+                                        default => 'bg-success',
+                                    } }}">
+                                    <i class="bi bi-flag text-white"></i>
+                                </div>
+                                <div class="timeline-content">
+                                    <h6>Success</h6>
+                                    <p>{{ match ($outbound->status) {
+                                        'Pending' => 'Waiting...',
+                                        'Approved' => 'Waiting...',
+                                        'Success' => 'This order is successfully delivered.',
+                                        default => 'This order is successfully delivered.',
+                                    } }}
+                                    </p>
+                                    @hasrole('Super Admin|Admin Engineer')
+                                        @if ($outbound->status == 'Approved')
+                                            <a href="{{ route('outbounds.changeStatus', [$outbound, 'status' => 'Success']) }}"
+                                                class="btn btn-success btn-sm  mb-3">Submit</a>
+                                        @endif
+                                    @endhasrole
+                                </div>
+                            </div>
                             @endif
                         </div>
                     </div>

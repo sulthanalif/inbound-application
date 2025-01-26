@@ -31,6 +31,8 @@ return new class extends Migration
             $table->boolean('is_resend')->default(false);
             $table->boolean('order')->default(false);
             $table->string('code_inbound')->nullable();
+            $table->string('move_to')->nullable();
+            $table->string('move_from')->nullable();
             // $table->string('payment_method')->nullable();
             // $table->string('bank')->nullable();
             $table->timestamps();

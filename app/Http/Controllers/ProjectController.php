@@ -9,9 +9,11 @@ use App\Models\Outbound;
 use App\Models\InboundItem;
 use Illuminate\Http\Request;
 use App\Exports\ProjectExcel;
+use App\Models\Goods;
 use App\Serverces\GenerateCode;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 use RealRashid\SweetAlert\Facades\Alert;
@@ -210,14 +212,35 @@ class ProjectController extends Controller
             }
         }
 
+        $end = true;
+        $next = false;
+
+
         $isReturnable = $project->outbounds->flatMap->items->pluck('goods.type')->contains('Rentable')
-            && $project->outbounds()->where('is_return', false)->get()->isEmpty()
             && $project->outbounds()->where('is_return', true)->get()->every(function ($outbound) {
                 return $outbound->inbound->status === 'Success';
             });
 
-        // return response()->json($outboundGoods);
-        return view('projects.show', compact('project', 'outboundGoods', 'isReturnable'));
+        if ($project->outbounds->flatMap->items->pluck('goods.type')->contains('Rentable')) {
+            if ($project->outbounds()->where('is_return', false)->exists()) {
+                $next = true;
+            } else if (!$isReturnable) {
+                $end = false;
+            }
+        }
+
+        if (Auth::user()->roles[0]->name == 'Admin Engineer') {
+            $projects = Project::where('user_id', Auth::user()->id)
+                ->where('status', '!=', 'Finished')
+                ->where('id', '!=', $project->id)->latest()->get();
+        } else {
+            $projects = Project::where('status', '!=', 'Finished')
+                ->where('id', '!=', $project->id)->latest()->get();
+        }
+
+        // return response()->json($projects);
+
+        return view('projects.show', compact('project', 'outboundGoods', 'end', 'next', 'projects'));
     }
 
     public function create()
@@ -319,13 +342,20 @@ class ProjectController extends Controller
 
     public function endProject(Project $project)
     {
+        $end = true;
+
         $isReturnable = $project->outbounds->flatMap->items->pluck('goods.type')->contains('Rentable')
-            && $project->outbounds()->where('is_return', false)->get()->isEmpty()
             && $project->outbounds()->where('is_return', true)->get()->every(function ($outbound) {
                 return $outbound->inbound->status === 'Success';
             });
 
-        if ($isReturnable) {
+        if ($project->outbounds->flatMap->items->pluck('goods.type')->contains('Rentable')) {
+            if(!$isReturnable){
+                $end = false;
+            }
+        }
+
+        if ($end) {
             try {
                 DB::beginTransaction();
                 $project->status = 'Finished';
@@ -344,5 +374,113 @@ class ProjectController extends Controller
             Alert::error('Oops!', 'There are items that have not been returned');
             return redirect()->route('projects.show', $project);
         }
+    }
+
+    public function nextProject(Project $project, Request $request)
+    {
+
+        $outboundGoods = [];
+
+        $outbounds = $project->outbounds()->where('status', 'Success')->get();
+        foreach ($outbounds as $outbound) {
+            if ($outbound->is_resend == 0) {
+                foreach ($outbound->items as $item) {
+                    $key = $item->goods->code;
+                    if (array_key_exists($key, $outboundGoods)) {
+                        $outboundGoods[$key]['qty'] += $item->qty;
+                        $outboundGoods[$key]['req'] += $item->qty;
+                    } else {
+                        $outboundGoods[$key] = [
+                            'code' => $item->goods->code,
+                            'name' => $item->goods->name,
+                            'req' => $item->qty,
+                            'qty' => $item->qty,
+                            'symbol' => $item->goods->unit->symbol,
+                            'type' => $item->goods->type
+                        ];
+                    }
+                }
+            } else {
+                foreach ($outbound->items as $item) {
+                    $key = $item->goods->code;
+                    if (array_key_exists($key, $outboundGoods)) {
+                        $outboundGoods[$key]['qty'] += $item->qty;
+                        // $outboundGoods[$key]['req'] += $item->qty;
+                    }
+                }
+            }
+        }
+
+        foreach ($project->inbounds->where('status', 'Success') as $inbound) {
+            foreach ($inbound->items as $item) {
+                $key = $item->goods->code;
+                if (array_key_exists($key, $outboundGoods)) {
+                    $outboundGoods[$key]['qty'] -= $item->qty;
+                }
+            }
+        }
+
+        $items = [];
+
+        foreach ($outboundGoods as $key => $value) {
+            if ($value['type'] == 'Rentable' && $value['qty'] > 0) {
+                $items[] = [
+                    'code' => $value['code'],
+                    'name' => $value['name'],
+                    'qty' => $value['qty'],
+                    'symbol' => $value['symbol'],
+                    'type' => $value['type']
+                ];
+            }
+        }
+
+        try{
+            DB::beginTransaction();
+
+            $project->status = 'Finished';
+            $project->end_date = $request->date;
+            $project->save();
+
+            $project_new = new Project();
+            $project_new->user_id = $project->user_id;
+            $project_new->name = $request->name_new;
+            $project_new->code = $request->code_new;
+            $project_new->start_date = now();
+            $project_new->address = $request->address_new;
+            $project_new->save();
+
+            $generateCode = new GenerateCode();
+            // $code_outbound = 'OUT' . date('Ymd') . Outbound::count() . rand(1000, 9999);
+            $code_outbound = $generateCode->make(Outbound::count(), 'OUT');
+
+            $outbound = $project_new->outbounds()->create([
+                'project_id' => $project_new->id,
+                'user_id' => Auth::user()->id,
+                'date' => $request->date,
+                'code' => $code_outbound,
+                'description' => $request->description_new,
+                'move_from' => $project->code,
+                'status' => 'Pending',
+            ]);
+
+            foreach ($items as $item) {
+                $i = Goods::where('code', $item['code'])->first();
+                $outbound->items()->create([
+                    'goods_id' => $i->id,
+                    'qty' => $item['qty'],
+                ]);
+            }
+
+            DB::commit();
+
+            Alert::success('Hore!', 'Project Finished Successfully');
+            return redirect()->route('projects.show', $project_new);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            Log::error('Oops!', ['exception' => $th]);
+            return redirect()->route('projects.show', $project);
+
+        }
+
     }
 }

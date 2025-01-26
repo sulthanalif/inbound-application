@@ -18,8 +18,9 @@
                                 <a target="_blank" href="{{ route('projects.print', $project) }}" class="btn btn-primary btn-sm mx-2"><i class="bi bi-printer-fill"></i> PDF</a>
                                 <a href="{{ route('projects.export', $project) }}" class="btn btn-primary btn-sm"><i class="bi bi-printer-fill"></i> Excel</a>
                                 @if ($project->status != 'Finished')
-                                <a href="{{ route('projects.endProject', $project) }}" class="btn btn-danger btn-sm ms-2 {{ $isReturnable ? '' : 'disabled' }}">End Project</a>
-                                <a href="" class="btn btn-success btn-sm mx-2">Next Project</a>
+                                <a href="{{ route('projects.endProject', $project) }}" class="btn btn-danger btn-sm ms-2 {{ $end ? '' : 'disabled' }}">End Project</a>
+                                <a href="" class="btn btn-success btn-sm mx-2 {{ $next ? '' : 'disabled' }}" data-bs-toggle="modal"
+                                data-bs-target="#nextModal">Next Project</a>
                                 @endif
                             </div>
                         </div>
@@ -29,6 +30,10 @@
                                 <tr>
                                     <th scope="row">Project Code</th>
                                     <td>{{ $project->code }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Project Name</th>
+                                    <td>{{ $project->name }}</td>
                                 </tr>
                                 <tr>
                                     <th scope="row">Project Date</th>
@@ -115,9 +120,15 @@
                                                     {{ $outbound->status_payment }}</div>
                                             </td>
                                             <td>
+                                                @if ($outbound->move_to || $outbound->move_from)
+                                                <div class="badge bg-success">
+                                                    {{ $outbound->move_from ? 'Move From '.$outbound->move_from : 'Move To '.  $outbound->move_to }}
+                                                </div>
+                                                @else
                                                 <div class="badge bg-{{ $outbound->is_resend ? 'warning' : 'primary' }}">
                                                     {{ $outbound->is_resend ? 'Resend' : 'Request' }}
                                                 </div>
+                                                @endif
                                             </td>
                                             <td style="text-align: center">
 
@@ -263,10 +274,60 @@
             </div>
         </div>
     </section>
+    @include('projects.modal.next')
 @endsection
 
 @push('styles')
 @endpush
 
 @push('scripts')
+    <script>
+        const nextForm = document.getElementById('nextForm');
+        let datas = @json(collect($outboundGoods)->where('type', 'Rentable')->toArray()) ?? [];
+
+        data = datas.map(item => {
+            return {
+                id: item.id,
+                code: item.code,
+                name: item.name,
+                qty: item.qty,
+                symbol: item.symbol,
+                type: item.type
+            }
+        }) ?? [];
+
+        $('#nextModal').on('shown.bs.modal', function() {
+            $('.select2').select2({
+                placeholder: 'Choose..',
+                theme: 'bootstrap4',
+                dropdownParent: $('#nextModal')
+            });
+        })
+
+        function changeProject(id) {
+            if (id !== 'new') {
+                document.getElementById('newProject').style.display = 'none';
+                document.getElementById('name_new').required = false;
+                document.getElementById('code_new').required = false;
+                document.getElementById('address_new').required = false;
+            } else {
+                document.getElementById('newProject').style.display = 'block';
+                document.getElementById('name_new').required = true;
+                document.getElementById('code_new').required = true;
+                document.getElementById('address_new').required = true;
+            }
+        }
+
+        nextForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            data.forEach(item => {
+                const hiddenInput = document.createElement('input');
+                hiddenInput.type = 'hidden';
+                hiddenInput.name = `goods[${item.id}][qty]`;
+                hiddenInput.value = item.qty;
+                nextForm.appendChild(hiddenInput);
+            });
+            nextForm.submit();
+        })
+    </script>
 @endpush

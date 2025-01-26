@@ -171,6 +171,9 @@ Route::middleware('auth', 'is_active')->group(function () {
             //end project
             Route::get('/projects/{project}/end', [ProjectController::class, 'endProject'])->name('projects.endProject');
 
+            //next project
+            Route::post('/projects/{project}/next', [ProjectController::class, 'nextProject'])->name('projects.nextProject');
+
         });
 
         Route::middleware('role:Super Admin|Admin Warehouse|Head Warehouse|Admin Engineer')->group(function () {
