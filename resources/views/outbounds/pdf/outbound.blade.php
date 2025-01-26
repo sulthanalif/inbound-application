@@ -145,7 +145,7 @@
                 <td style=" text-align: center;"></td>
                 <td style=" text-align: center;"></td>
                 <td style=" text-align: center;">
-                    @if ($outbound->status == 'Success')
+                    @if ($outbound->status == 'Success' && $outbound->project->user->signature != null)
                     <img src="{{ $outbound->project->user->signature->getSignatureImageAbsolutePath() ?? '-' }}" alt="" id="signature">
                     @endif
                 </td>

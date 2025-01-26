@@ -154,7 +154,7 @@
                 <td style="text-align: center; width: 33.33%"><b>Penerima</b></td>
             </tr>
             <tr>
-                <td style="text-align: center;">@if ($inbound->status == 'Success')
+                <td style="text-align: center;">@if ($inbound->status == 'Success' && $inbound->project->user->signature != null)
                     <img src="{{ $inbound->project->user->signature->getSignatureImageAbsolutePath() ?? '-' }}" alt="" id="signature">
                     @endif</td>
                 <td style="text-align: center;"></td>
