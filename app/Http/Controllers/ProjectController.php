@@ -379,6 +379,8 @@ class ProjectController extends Controller
     public function nextProject(Project $project, Request $request)
     {
 
+        // return response()->json($request->all());
+
         $outboundGoods = [];
 
         $outbounds = $project->outbounds()->where('status', 'Success')->get();
@@ -441,16 +443,19 @@ class ProjectController extends Controller
             $project->end_date = $request->date;
             $project->save();
 
-            $project_new = new Project();
-            $project_new->user_id = $project->user_id;
-            $project_new->name = $request->name_new;
-            $project_new->code = $request->code_new;
-            $project_new->start_date = now();
-            $project_new->address = $request->address_new;
-            $project_new->save();
+            if ($request->project_id == 'new') {
+                $project_new = new Project();
+                $project_new->user_id = $project->user_id;
+                $project_new->name = $request->name_new;
+                $project_new->code = $request->code_new;
+                $project_new->start_date = now();
+                $project_new->address = $request->address_new;
+                $project_new->save();
+            } else {
+                $project_new = Project::find($request->project_id);
+            }
 
             $generateCode = new GenerateCode();
-            // $code_outbound = 'OUT' . date('Ymd') . Outbound::count() . rand(1000, 9999);
             $code_outbound = $generateCode->make(Outbound::count(), 'OUT');
 
             $outbound = $project_new->outbounds()->create([

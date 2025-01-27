@@ -134,7 +134,7 @@ class OutboundController extends Controller
         // $vendors = Vendor::all();
         $categories = Category::with(['goods.unit'])->get();
         $goods = Goods::all();
-        $projects = Project::all();
+        $projects = Project::where('status', '!=', 'Finished')->get();
         // $code_outbound = 'OUT' . date('Ymd') . Outbound::count() . rand(1000, 9999);
         $code_outbound = $generateCode->make(Outbound::count(), 'OUT');
         return view('request.index', compact('goods', 'code_outbound', 'projects', 'categories'));

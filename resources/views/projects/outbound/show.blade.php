@@ -36,7 +36,7 @@
                                 </tr>
                                 <tr>
                                     <th scope="row">Company</th>
-                                    <td>{{ $outbound->company_name ?? '-' }}</td>
+                                    <td>{{ $outbound->project->user->company ?? '-' }}</td>
                                 </tr>
                                 <tr>
                                     <th scope="row">Status</th>
@@ -54,7 +54,7 @@
                                             {{ $outbound->status }}</div>
                                     </td>
                                 </tr>
-                               @if (!$outbound->is_resend)
+                               @if (!$outbound->is_resend && !$outbound->move_from)
                                <tr>
                                 <th scope="row">Status Payment</th>
                                 <td>
@@ -69,6 +69,12 @@
                                 </td>
                             </tr>
                                @endif
+                                @if ($outbound->move_from || $outbound->move_to)
+                                <tr>
+                                    <th scope="row">Move From</th>
+                                    <td>{{ $outbound->move_from ?? '-' }}</td>
+                                </tr>
+                                @else
                                 <tr>
                                     <th scope="row">Pickup Area</th>
                                     <td>{{ $outbound->pickup_area_id == null ? '-' : $outbound->pickupArea->warehouse->name . ' - ' . $outbound->pickupArea->name . ' - ' . $outbound->pickupArea->container . ' - ' . $outbound->pickupArea->rack . ' - ' . $outbound->pickupArea->number }}
@@ -86,6 +92,7 @@
                                     <th scope="row">Delivery Area</th>
                                     <td>{{ $outbound->deliveryArea->name ?? '-' }}</td>
                                 </tr>
+                                @endif
                             </tbody>
                         </table>
 

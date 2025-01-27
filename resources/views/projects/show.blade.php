@@ -110,14 +110,16 @@
                                                     {{ \Illuminate\Support\Str::limit($outbound->status, 8) }}</div>
                                             </td>
                                             <td>
+                                                @if ($outbound->payment)
                                                 <div
-                                                    class="badge bg-{{ match ($outbound->status_payment) {
-                                                        'Unpaid' => 'danger',
-                                                        'Paid' => 'success',
-                                                        'Partially Paid' => 'warning',
-                                                        default => 'danger',
-                                                    } }}">
-                                                    {{ $outbound->status_payment }}</div>
+                                                class="badge bg-{{ match ($outbound->status_payment) {
+                                                    'Unpaid' => 'danger',
+                                                    'Paid' => 'success',
+                                                    'Partially Paid' => 'warning',
+                                                    default => 'danger',
+                                                } }}">
+                                                {{ $outbound->status_payment }}</div>
+                                                @endif
                                             </td>
                                             <td>
                                                 @if ($outbound->move_to || $outbound->move_from)
@@ -282,6 +284,14 @@
 
 @push('scripts')
     <script>
+        $('#nextModal').on('shown.bs.modal', function() {
+            $('.select2').select2({
+                placeholder: 'Choose..',
+                theme: 'bootstrap4',
+                dropdownParent: $('#nextModal')
+            });
+        })
+
         const nextForm = document.getElementById('nextForm');
         let datas = @json(collect($outboundGoods)->where('type', 'Rentable')->toArray()) ?? [];
 
@@ -296,13 +306,7 @@
             }
         }) ?? [];
 
-        $('#nextModal').on('shown.bs.modal', function() {
-            $('.select2').select2({
-                placeholder: 'Choose..',
-                theme: 'bootstrap4',
-                dropdownParent: $('#nextModal')
-            });
-        })
+
 
         function changeProject(id) {
             if (id !== 'new') {

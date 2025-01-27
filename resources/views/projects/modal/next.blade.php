@@ -60,7 +60,7 @@
                                 </thead>
                                 <tbody>
                                     @foreach ($outboundGoods as $item)
-                                        @if ($item['type'] == 'Rentable')
+                                        @if ($item['type'] == 'Rentable' && $item['qty'] > 0)
                                             <tr>
                                                 <td>{{ $loop->iteration }}</td>
                                                 <td>{{ $item['name'] }}</td>
