@@ -65,7 +65,7 @@ class Usercontroller extends Controller
             Alert::success('Hore!', 'User created successfully!');
             return redirect()->route('users.index');
         } catch (\Throwable $th) {
-            Alert::error('Oops!', $th->getMessage());
+            Log::channel('debug')->error("message: '{$th->getMessage()}',  file: '{$th->getFile()}',  line: {$th->getLine()}");
             return redirect()->route('users.index');
         }
     }
@@ -115,7 +115,7 @@ class Usercontroller extends Controller
             Alert::success('Hore!', 'User updated successfully!');
             return redirect()->route('users.index');
         } catch (\Throwable $th) {
-            Alert::error('Oops!', $th->getMessage());
+            Log::channel('debug')->error("message: '{$th->getMessage()}',  file: '{$th->getFile()}',  line: {$th->getLine()}");
             return redirect()->route('users.index');
         }
     }

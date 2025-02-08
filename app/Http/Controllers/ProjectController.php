@@ -223,7 +223,11 @@ class ProjectController extends Controller
 
         if ($project->outbounds->flatMap->items->pluck('goods.type')->contains('Rentable')) {
             if ($project->outbounds()->where('is_return', false)->exists()) {
-                $next = true;
+                if ($project->inbounds()->where('is_return', true)->where('status', 'Success')->get()->count() === $project->outbounds()->where('is_resend', true)->get()->count()) {
+                    $end = false;
+                } else {
+                    $next = true;
+                }
             } else if (!$isReturnable) {
                 $end = false;
             }
@@ -238,7 +242,10 @@ class ProjectController extends Controller
                 ->where('id', '!=', $project->id)->latest()->get();
         }
 
-        // return response()->json($projects);
+        // return response()->json([
+        //     'next' => $next,
+        //     'end' => $end
+        // ]);
 
         return view('projects.show', compact('project', 'outboundGoods', 'end', 'next', 'projects'));
     }
@@ -285,7 +292,7 @@ class ProjectController extends Controller
             Alert::success('Hore!', 'Project created successfully!');
             return redirect()->route('projects.index');
         } catch (\Throwable $th) {
-            Alert::error('Oops!', $th->getMessage());
+            Log::channel('debug')->error("message: '{$th->getMessage()}',  file: '{$th->getFile()}',  line: {$th->getLine()}");
             return redirect()->route('projects.index');
         }
     }
@@ -335,7 +342,7 @@ class ProjectController extends Controller
             Alert::success('Hore!', 'Return Created Successfully');
             return redirect()->route('projects.show', $project);
         } catch (\Throwable $th) {
-            Alert::error('Oops!', $th->getMessage());
+            Log::channel('debug')->error("message: '{$th->getMessage()}',  file: '{$th->getFile()}',  line: {$th->getLine()}");
             return redirect()->route('projects.show', $project);
         }
     }
@@ -367,11 +374,11 @@ class ProjectController extends Controller
                 return redirect()->route('projects.show', $project);
             } catch (\Throwable $th) {
                 DB::rollBack();
-                Alert::error('Oops!', $th->getMessage());
+                Log::channel('debug')->error("message: '{$th->getMessage()}',  file: '{$th->getFile()}',  line: {$th->getLine()}");
                 return redirect()->route('projects.show', $project);
             }
         } else {
-            Alert::error('Oops!', 'There are items that have not been returned');
+            Alert::error('Oh no!', 'Project Finished Failed');
             return redirect()->route('projects.show', $project);
         }
     }
@@ -482,7 +489,7 @@ class ProjectController extends Controller
             return redirect()->route('projects.show', $project_new);
         } catch (\Throwable $th) {
             DB::rollBack();
-            Log::error('Oops!', ['exception' => $th]);
+            Log::channel('debug')->error("message: '{$th->getMessage()}',  file: '{$th->getFile()}',  line: {$th->getLine()}");
             return redirect()->route('projects.show', $project);
 
         }

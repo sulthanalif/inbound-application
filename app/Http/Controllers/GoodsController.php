@@ -133,7 +133,7 @@ class GoodsController extends Controller
             Alert::success('Hore!', 'Good Created Successfully');
             return redirect()->route('goods.index');
         } catch (\Throwable $th) {
-            Alert::error('Oops!', $th->getMessage());
+            Log::channel('debug')->error("message: '{$th->getMessage()}',  file: '{$th->getFile()}',  line: {$th->getLine()}");
             return redirect()->route('goods.index');
         }
     }
@@ -197,7 +197,7 @@ class GoodsController extends Controller
             Alert::success('Hore!', 'Good Updated Successfully');
             return redirect()->route('goods.index');
         } catch (\Throwable $th) {
-            Alert::error('Oops!', $th->getMessage());
+            Log::channel('debug')->error("message: '{$th->getMessage()}',  file: '{$th->getFile()}',  line: {$th->getLine()}");
             return redirect()->route('goods.index');
         }
     }
@@ -212,7 +212,7 @@ class GoodsController extends Controller
             Alert::success('Hore!', 'Good Deleted Successfully');
             return redirect()->route('goods.index');
         } catch (\Throwable $th) {
-            Alert::error('Oops!', $th->getMessage());
+            Log::channel('debug')->error("message: '{$th->getMessage()}',  file: '{$th->getFile()}',  line: {$th->getLine()}");
             return redirect()->route('goods.index');
         }
     }

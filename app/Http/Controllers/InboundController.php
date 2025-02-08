@@ -15,6 +15,7 @@ use Illuminate\Support\Carbon;
 use App\Serverces\GenerateCode;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Support\Facades\Validator;
@@ -74,7 +75,7 @@ class InboundController extends Controller
 
             return back();
         } catch (\Throwable $th) {
-            Alert::error('Error', $th->getMessage());
+            Log::channel('debug')->error("message: '{$th->getMessage()}',  file: '{$th->getFile()}',  line: {$th->getLine()}");
             return back();
         }
     }
@@ -112,7 +113,7 @@ class InboundController extends Controller
             Alert::success('Success', 'Data Delivery');
             return back();
         } catch (\Throwable $th) {
-            Alert::error('Error', $th->getMessage());
+            Log::channel('debug')->error("message: '{$th->getMessage()}',  file: '{$th->getFile()}',  line: {$th->getLine()}");
             return back();
         }
     }
@@ -139,7 +140,7 @@ class InboundController extends Controller
             return back();
         } catch (\Throwable $th) {
             DB::rollBack();
-            Alert::error('Error', $th->getMessage());
+            Log::channel('debug')->error("message: '{$th->getMessage()}',  file: '{$th->getFile()}',  line: {$th->getLine()}");
             return back();
         }
     }
@@ -149,7 +150,11 @@ class InboundController extends Controller
         // $vtrendors = Vendor::all();
         $goods = Goods::all();
         if (Auth::user()->roles[0]->name == 'Admin Engineer') {
-            $outbounds = Outbound::where('user_id', Auth::user()->id)->latest()->get();
+            $outbounds = Outbound::with('project')
+            ->whereHas('project', function ($query) {
+                $query->where('status', 'On Progress');
+            })
+                ->where('user_id', Auth::user()->id)->latest()->get();
         } else {
             $outbounds = Outbound::latest()->get();
         }
@@ -207,7 +212,7 @@ class InboundController extends Controller
             Alert::success('Hore!', 'Return Created Successfully');
             return redirect()->route('inbounds.index');
         } catch (\Throwable $th) {
-            Alert::error('Oops!', $th->getMessage());
+            Log::channel('debug')->error("message: '{$th->getMessage()}',  file: '{$th->getFile()}',  line: {$th->getLine()}");
             return redirect()->route('inbounds.index');
         }
     }
@@ -246,7 +251,7 @@ class InboundController extends Controller
             Alert::success('Hore!', 'Return Created Successfully');
             return redirect()->route('outbounds.show', $outbound);
         } catch (\Throwable $th) {
-            Alert::error('Oops!', $th->getMessage());
+            Log::channel('debug')->error("message: '{$th->getMessage()}',  file: '{$th->getFile()}',  line: {$th->getLine()}");
             return redirect()->back();
         }
     }

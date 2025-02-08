@@ -33,7 +33,7 @@ class ProblemItemController extends Controller
             Alert::success('Hore!', 'Qty Updated Successfully');
             return back();
         } catch (\Throwable $th) {
-            Alert::error('Opps!', $th->getMessage());
+            Log::channel('debug')->error("message: '{$th->getMessage()}',  file: '{$th->getFile()}',  line: {$th->getLine()}");
             return back();
         }
     }

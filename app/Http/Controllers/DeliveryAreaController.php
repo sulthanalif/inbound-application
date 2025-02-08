@@ -49,7 +49,7 @@ class DeliveryAreaController extends Controller
             return redirect()->route('delivery-areas.index');
         } catch (\Throwable $th) {
             DB::rollBack();
-            Alert::error('Oops!', $th->getMessage());
+            Log::channel('debug')->error("message: '{$th->getMessage()}',  file: '{$th->getFile()}',  line: {$th->getLine()}");
             return redirect()->back();
         }
     }
@@ -83,7 +83,7 @@ class DeliveryAreaController extends Controller
             return redirect()->route('delivery-areas.index');
         } catch (\Throwable $th) {
             DB::rollBack();
-            Alert::error('Oops!', $th->getMessage());
+            Log::channel('debug')->error("message: '{$th->getMessage()}',  file: '{$th->getFile()}',  line: {$th->getLine()}");
             return redirect()->back();
         }
     }
@@ -98,7 +98,7 @@ class DeliveryAreaController extends Controller
             return redirect()->route('delivery-areas.index');
         } catch (\Throwable $th) {
             DB::rollBack();
-            Alert::error('Oops!', $th->getMessage());
+            Log::channel('debug')->error("message: '{$th->getMessage()}',  file: '{$th->getFile()}',  line: {$th->getLine()}");
             return redirect()->back();
         }
     }

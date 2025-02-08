@@ -52,7 +52,7 @@ class ContainerController extends Controller
             Alert::success('Hore!', 'Container Created Successfully');
             return redirect()->route('warehouses.show', $request->warehouse_id);
         } catch (\Throwable $th) {
-            Alert::error('Oops!', $th->getMessage());
+            Log::channel('debug')->error("message: '{$th->getMessage()}',  file: '{$th->getFile()}',  line: {$th->getLine()}");
             return redirect()->route('warehouses.show', $request->warehouse_id);
         }
     }

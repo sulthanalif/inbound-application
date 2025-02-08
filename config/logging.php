@@ -52,6 +52,20 @@ return [
 
     'channels' => [
 
+        'request' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/requests/request.log'),
+            'level' => 'info', // Menyimpan log pada level info
+            'days' => 14,
+        ],
+        // Channel untuk Debugging Logs
+        'debug' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/debugs/debug.log'),
+            'level' => 'debug', // Menyimpan log pada level debug
+            'days' => 14,
+        ],
+
         'stack' => [
             'driver' => 'stack',
             'channels' => explode(',', env('LOG_STACK', 'single')),

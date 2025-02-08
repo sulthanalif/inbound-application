@@ -8,6 +8,7 @@ use App\Models\Outbound;
 use App\Models\OutboundItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use RealRashid\SweetAlert\Facades\Alert;
 
@@ -59,7 +60,7 @@ class RequestOrderController extends Controller
             Alert::success('Success', 'Request goods successfully');
             return redirect()->route('request-goods.index');
         } catch (\Throwable $th) {
-            Alert::error('Error', $th->getMessage());
+            Log::channel('debug')->error("message: '{$th->getMessage()}',  file: '{$th->getFile()}',  line: {$th->getLine()}");
             return redirect()->route('request-goods.index');
         }
     }

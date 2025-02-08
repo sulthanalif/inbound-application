@@ -44,7 +44,7 @@ class RoleController extends Controller
             Alert::success('Hore!', 'Role Created Successfully');
             return redirect()->route('roles.index');
         } catch (\Throwable $th) {
-            Alert::error('Oops!', $th->getMessage());
+            Log::channel('debug')->error("message: '{$th->getMessage()}',  file: '{$th->getFile()}',  line: {$th->getLine()}");
             return redirect()->back();
         }
     }
@@ -73,7 +73,7 @@ class RoleController extends Controller
             Alert::success('Hore!', 'Role Updated Successfully');
             return redirect()->route('roles.index');
         } catch (\Throwable $th) {
-            Alert::error('Oops!', $th->getMessage());
+            Log::channel('debug')->error("message: '{$th->getMessage()}',  file: '{$th->getFile()}',  line: {$th->getLine()}");
             return redirect()->back();
         }
     }
@@ -88,7 +88,7 @@ class RoleController extends Controller
             Alert::success('Hore!', 'Role Deleted Successfully');
             return redirect()->route('roles.index');
         } catch (\Throwable $th) {
-            Alert::error('Oops!', $th->getMessage());
+            Log::channel('debug')->error("message: '{$th->getMessage()}',  file: '{$th->getFile()}',  line: {$th->getLine()}");
             return redirect()->route('roles.index');
         }
     }

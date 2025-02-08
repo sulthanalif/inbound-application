@@ -113,7 +113,7 @@ class PaymentController extends Controller
             Alert::success('Hore!', 'Payment successfully');
             return redirect()->route('outbounds.show', $outbound);
         } catch (\Throwable $th) {
-            Alert::error('Opps!', $th->getMessage());
+            Log::channel('debug')->error("message: '{$th->getMessage()}',  file: '{$th->getFile()}',  line: {$th->getLine()}");
             return redirect()->route('outbounds.show', $outbound);
         }
     }

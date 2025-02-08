@@ -77,7 +77,7 @@ class WarehouseController extends Controller
             Alert::success('Hore!', 'Warehouse created successfully');
             return redirect()->route('warehouses.index');
         } catch (\Throwable $th) {
-            Alert::error('Oops!', $th->getMessage());
+            Log::channel('debug')->error("message: '{$th->getMessage()}',  file: '{$th->getFile()}',  line: {$th->getLine()}");
             return redirect()->route('warehouses.index');
         }
     }
@@ -144,7 +144,7 @@ class WarehouseController extends Controller
             Alert::success('Hore!', 'Warehouse updated successfully!');
             return redirect()->route('warehouses.index');
         } catch (\Throwable $th) {
-            Alert::error('Oops!', $th->getMessage());
+            Log::channel('debug')->error("message: '{$th->getMessage()}',  file: '{$th->getFile()}',  line: {$th->getLine()}");
             return redirect()->route('warehouses.index');
         }
     }
@@ -158,7 +158,7 @@ class WarehouseController extends Controller
             Alert::success('Hore!', 'Warehouse deleted successfully!');
             return redirect()->route('warehouses.index');
         } catch (\Throwable $th) {
-            Alert::error('Oops!', $th->getMessage());
+            Log::channel('debug')->error("message: '{$th->getMessage()}',  file: '{$th->getFile()}',  line: {$th->getLine()}");
             return redirect()->route('warehouses.index');
         }
     }

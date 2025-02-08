@@ -20,6 +20,7 @@ use App\Serverces\GenerateCode;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use RealRashid\SweetAlert\Facades\Alert;
 
@@ -75,7 +76,7 @@ class OutboundController extends Controller
             return back();
         } catch (\Throwable $th) {
             DB::rollBack();
-            Alert::error('Error', $th->getMessage());
+            Log::channel('debug')->error("message: '{$th->getMessage()}',  file: '{$th->getFile()}',  line: {$th->getLine()}");
             return back();
         }
     }
@@ -92,7 +93,7 @@ class OutboundController extends Controller
             Alert::success('Success', 'Data Delivered');
             return back();
         } catch (\Throwable $th) {
-            Alert::error('Error', $th->getMessage());
+            Log::channel('debug')->error("message: '{$th->getMessage()}',  file: '{$th->getFile()}',  line: {$th->getLine()}");
             return back();
         }
     }
@@ -123,7 +124,7 @@ class OutboundController extends Controller
 
             return back();
         } catch (\Throwable $th) {
-            Alert::error('Error', $th->getMessage());
+            Log::channel('debug')->error("message: '{$th->getMessage()}',  file: '{$th->getFile()}',  line: {$th->getLine()}");
             return back();
         }
     }
@@ -185,7 +186,7 @@ class OutboundController extends Controller
             Alert::success('Success', 'Request goods successfully');
             return redirect()->route('outbounds.index');
         } catch (\Throwable $th) {
-            Alert::error('Error', $th->getMessage());
+            Log::channel('debug')->error("message: '{$th->getMessage()}',  file: '{$th->getFile()}',  line: {$th->getLine()}");
             return redirect()->route('outbounds.index');
         }
     }
@@ -225,7 +226,7 @@ class OutboundController extends Controller
             Alert::success('Success', 'Update request successfully');
             return redirect()->route('outbounds.show', $outbound);
         } catch (\Throwable $th) {
-            Alert::error('Error', $th->getMessage());
+            Log::channel('debug')->error("message: '{$th->getMessage()}',  file: '{$th->getFile()}',  line: {$th->getLine()}");
             return back();
         }
     }
@@ -265,7 +266,7 @@ class OutboundController extends Controller
             Alert::success('Success', 'Data Delivered');
             return back();
         } catch (\Throwable $th) {
-            Alert::error('Error', $th->getMessage());
+            Log::channel('debug')->error("message: '{$th->getMessage()}',  file: '{$th->getFile()}',  line: {$th->getLine()}");
             return back();
         }
     }

@@ -53,7 +53,7 @@ class ReturnController extends Controller
             Alert::success('Hore!', 'Return Created Successfully');
             return back();
         } catch (\Throwable $th) {
-            Alert::error('Oops!', $th->getMessage());
+            Log::channel('debug')->error("message: '{$th->getMessage()}',  file: '{$th->getFile()}',  line: {$th->getLine()}");
             return back();
         }
     }

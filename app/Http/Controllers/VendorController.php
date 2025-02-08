@@ -50,7 +50,7 @@ class VendorController extends Controller
             Alert::success('Hore!', 'Vendor Created Successfully');
             return redirect()->route('vendors.index');
         } catch (\Throwable $th) {
-            Alert::error('Oops!', $th->getMessage());
+            Log::channel('debug')->error("message: '{$th->getMessage()}',  file: '{$th->getFile()}',  line: {$th->getLine()}");
             return redirect()->back();
         }
     }
@@ -85,7 +85,7 @@ class VendorController extends Controller
             Alert::success('Hore!', 'Vendor Updated Successfully');
             return redirect()->route('vendors.index');
         } catch (\Throwable $th) {
-            Alert::error('Oops!', $th->getMessage());
+            Log::channel('debug')->error("message: '{$th->getMessage()}',  file: '{$th->getFile()}',  line: {$th->getLine()}");
             return redirect()->back();
         }
     }
@@ -100,7 +100,7 @@ class VendorController extends Controller
             Alert::success('Hore!', 'Vendor Deleted Successfully');
             return redirect()->route('vendors.index');
         } catch (\Throwable $th) {
-            Alert::error('Oops!', $th->getMessage());
+            Log::channel('debug')->error("message: '{$th->getMessage()}',  file: '{$th->getFile()}',  line: {$th->getLine()}");
             return redirect()->route('vendors.index');
         }
     }

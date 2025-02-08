@@ -55,7 +55,7 @@ class AreaController extends Controller
             Alert::success('Hore!', 'Area Created Successfully');
             return redirect()->route('warehouses.show', $request->warehouse_id);
         } catch (\Throwable $th) {
-            Alert::error('Oops!', $th->getMessage());
+            Log::channel('debug')->error("message: '{$th->getMessage()}',  file: '{$th->getFile()}',  line: {$th->getLine()}");
             return redirect()->route('warehouses.show', $request->warehouse_id);
         }
     }
@@ -92,7 +92,7 @@ class AreaController extends Controller
             Alert::success('Hore', 'Area Updated Successfully');
             return redirect()->route('warehouses.show', $area->warehouse_id);
         } catch (\Throwable $th) {
-            Alert::error('Oops!', $th->getMessage());
+            Log::channel('debug')->error("message: '{$th->getMessage()}',  file: '{$th->getFile()}',  line: {$th->getLine()}");
             return redirect()->route('warehouses.show', $area->warehouse_id);
         }
     }
@@ -107,7 +107,7 @@ class AreaController extends Controller
             Alert::success('Hore!', 'Area Deletion Successfully');
             return redirect()->route('warehouses.show', $area->warehouse_id);
         } catch (\Throwable $th) {
-            Alert::error('Oops!', $th->getMessage());
+            Log::channel('debug')->error("message: '{$th->getMessage()}',  file: '{$th->getFile()}',  line: {$th->getLine()}");
             return redirect()->route('warehouses.show', $area->warehouse_id);
         }
     }

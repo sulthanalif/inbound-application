@@ -19,6 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'Excel' => Maatwebsite\Excel\Facades\Excel::class,
             'signed' => \App\Http\Middleware\Signature::class,
         ]);
+        $middleware->append(\App\Http\Middleware\LogRequests::class);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
