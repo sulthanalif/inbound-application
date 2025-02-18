@@ -159,8 +159,15 @@
                         <div class="d-flex justify-content-between align-items-center">
                             <h5 class="card-title">Inbound</h5>
 
+                            @php
+                                $b = false;
+                                if ($isReturnable) {
+                                    $b =true;
+                                }
+                            @endphp
+
                             @role('Admin Engineer')
-                            <a href="{{ route('projects.return', $project) }}" class="btn btn-primary btn-sm">Return</a>
+                            <a href="{{ route('projects.return', $project) }}" class="btn btn-primary btn-sm {{ $b && !$project->status == 'Finished' ? '' : 'disabled'  }}">Return</a>
                             @endrole
                         </div>
 

@@ -154,7 +154,8 @@ class InboundController extends Controller
             ->whereHas('project', function ($query) {
                 $query->where('status', 'On Progress');
             })
-                ->where('user_id', Auth::user()->id)->latest()->get();
+                ->where('user_id', Auth::user()->id)
+                ->where('is_resend', 0)->latest()->get();
         } else {
             $outbounds = Outbound::latest()->get();
         }

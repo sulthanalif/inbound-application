@@ -212,26 +212,71 @@ class ProjectController extends Controller
             }
         }
 
-        $end = true;
+        $end = false;
         $next = false;
 
+        $cek = '';
 
-        $isReturnable = $project->outbounds->flatMap->items->pluck('goods.type')->contains('Rentable')
-            && $project->outbounds()->where('is_return', true)->get()->every(function ($outbound) {
-                return $outbound->inbound->status === 'Success';
-            });
+        $dataInbounds = $project->inbounds();
+        $dataOutbounds = $project->outbounds();
 
-        if ($project->outbounds->flatMap->items->pluck('goods.type')->contains('Rentable')) {
-            if ($project->outbounds()->where('is_return', false)->exists()) {
-                if ($project->inbounds()->where('is_return', true)->where('status', 'Success')->get()->count() === $project->outbounds()->where('is_resend', true)->get()->count()) {
-                    $end = false;
+        $isReturnable = $dataOutbounds->get()->flatMap->items->pluck('goods.type')->contains('Rentable');
+
+        $isReturnableSuccess = $dataOutbounds->get()->contains(function ($outbound) {
+            return $outbound->items->pluck('goods.type')->contains('Rentable') && $outbound->inbound && $outbound->inbound->status === 'Success';
+        });
+
+        $isReturnableWaiting = $dataOutbounds->get()->contains(function ($outbound) {
+            return $outbound->inbound()->where('is_return', 1)->exists();
+        });
+
+        $isProblem = $dataInbounds->get()->flatMap->pluck('is_return')->contains(1);
+
+        $isProblemSuccess = $dataInbounds->where('is_return', 1)->get()->every(function ($inbound) use ($project) {
+            return $project->outbounds()->where('code_inbound', $inbound->code)->first() ? $project->outbounds()->where('code_inbound', $inbound->code)->first()->status === 'Success' : false;
+        });
+
+
+        $isOutboundSuccess = $project->inbounds()->get()->every(function ($outbound) {
+            return $outbound->status === 'Success';
+        });
+
+        $isInboundSuccess = $project->inbounds()->get()->every(function ($inbound) {
+            return $inbound->status === 'Success';
+        });
+
+        if ($isOutboundSuccess && $isInboundSuccess) {
+            if ($isReturnable) {
+                if ($isReturnableSuccess) {
+                    $end = true;
+                    $cek = 'ok 1';
                 } else {
                     $next = true;
+                    $cek = 'ok 2';
                 }
-            } else if (!$isReturnable) {
-                $end = false;
+                if ($isProblem) {
+                    if ($isProblemSuccess) {
+                        $end = ($isReturnableSuccess ? true : false);
+                        $cek = 'ok 3';
+                    } else {
+                        $end = false;
+                        $cek = 'ok 4';
+                    }
+                }
+            } else {
+                if ($isProblem) {
+                    if ($isProblemSuccess) {
+                        $end = true;
+                        $cek = 'ok 5';
+                    } else {
+                        $end = false;
+                        $cek = 'ok 6';
+                    }
+                }
+
             }
         }
+
 
         if (Auth::user()->roles[0]->name == 'Admin Engineer') {
             $projects = Project::where('user_id', Auth::user()->id)
@@ -242,12 +287,9 @@ class ProjectController extends Controller
                 ->where('id', '!=', $project->id)->latest()->get();
         }
 
-        // return response()->json([
-        //     'next' => $next,
-        //     'end' => $end
-        // ]);
+        // return response()->json($isReturnableSuccess);
 
-        return view('projects.show', compact('project', 'outboundGoods', 'end', 'next', 'projects'));
+        return view('projects.show', compact('isReturnable', 'project', 'outboundGoods', 'end', 'next', 'projects'));
     }
 
     public function create()
