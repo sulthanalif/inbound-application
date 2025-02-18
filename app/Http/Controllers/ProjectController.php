@@ -257,6 +257,7 @@ class ProjectController extends Controller
                 if ($isProblem) {
                     if ($isProblemSuccess) {
                         $end = ($isReturnableSuccess ? true : false);
+                        $next = ($isReturnableSuccess ? false : true);
                         $cek = 'ok 3';
                     } else {
                         $end = false;
@@ -287,7 +288,7 @@ class ProjectController extends Controller
                 ->where('id', '!=', $project->id)->latest()->get();
         }
 
-        // return response()->json($isReturnableSuccess);
+        // return response()->json($cek);
 
         return view('projects.show', compact('isReturnable', 'project', 'outboundGoods', 'end', 'next', 'projects'));
     }

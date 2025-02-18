@@ -167,7 +167,7 @@
                             @endphp
 
                             @role('Admin Engineer')
-                            <a href="{{ route('projects.return', $project) }}" class="btn btn-primary btn-sm {{ $b && !$project->status == 'Finished' ? '' : 'disabled'  }}">Return</a>
+                            <a href="{{ route('projects.return', $project) }}" class="btn btn-primary btn-sm {{ $b && $project->status != 'Finished' ? '' : 'disabled'  }}">Return</a>
                             @endrole
                         </div>
 
