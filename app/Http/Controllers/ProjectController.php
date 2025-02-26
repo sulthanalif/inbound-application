@@ -3,13 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Goods;
 use App\Models\Inbound;
 use App\Models\Project;
 use App\Models\Outbound;
 use App\Models\InboundItem;
 use Illuminate\Http\Request;
 use App\Exports\ProjectExcel;
-use App\Models\Goods;
+use App\Models\ProjectStatus;
 use App\Serverces\GenerateCode;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
@@ -215,68 +216,64 @@ class ProjectController extends Controller
         $end = false;
         $next = false;
 
-        $cek = '';
+        $statusMessage = '';
 
-        $dataInbounds = $project->inbounds();
-        $dataOutbounds = $project->outbounds();
+        // Ambil data inbounds dan outbounds hanya sekali
+        $inbounds = $project->inbounds()->get();
+        $outbounds = $project->outbounds()->get();
 
-        $isReturnable = $dataOutbounds->get()->flatMap->items->pluck('goods.type')->contains('Rentable');
+        $isReturnable = $outbounds->flatMap->items->pluck('goods.type')->contains('Rentable');
 
-        $isReturnableSuccess = $dataOutbounds->get()->contains(function ($outbound) {
-            return $outbound->items->pluck('goods.type')->contains('Rentable') && $outbound->inbound && $outbound->inbound->status === 'Success';
-        });
+        $isReturnableSuccess = $outbounds->contains(fn($outbound) =>
+            $outbound->items->pluck('goods.type')->contains('Rentable') &&
+            optional($outbound->inbound)->status === 'Success'
+        );
 
-        $isReturnableWaiting = $dataOutbounds->get()->contains(function ($outbound) {
-            return $outbound->inbound()->where('is_return', 1)->exists();
-        });
+        $isReturnableWaiting = $outbounds->contains(fn($outbound) =>
+            $outbound->inbound()->where('is_return', 1)->exists()
+        );
 
-        $isProblem = $dataInbounds->get()->flatMap->pluck('is_return')->contains(1);
+        $isProblem = $inbounds->pluck('is_return')->contains(1);
 
-        $isProblemSuccess = $dataInbounds->where('is_return', 1)->get()->every(function ($inbound) use ($project) {
-            return $project->outbounds()->where('code_inbound', $inbound->code)->first() ? $project->outbounds()->where('code_inbound', $inbound->code)->first()->status === 'Success' : false;
-        });
+        $isProblemResolved = $inbounds->where('is_return', 1)->every(fn($inbound) =>
+            optional($project->outbounds()->where('code_inbound', $inbound->code)->first())->status === 'Success'
+        );
 
-
-        $isOutboundSuccess = $project->inbounds()->get()->every(function ($outbound) {
-            return $outbound->status === 'Success';
-        });
-
-        $isInboundSuccess = $project->inbounds()->get()->every(function ($inbound) {
-            return $inbound->status === 'Success';
-        });
+        $isOutboundSuccess = $inbounds->every(fn($outbound) => $outbound->status === 'Success');
+        $isInboundSuccess = $inbounds->every(fn($inbound) => $inbound->status === 'Success');
 
         if ($isOutboundSuccess && $isInboundSuccess) {
             if ($isReturnable) {
                 if ($isReturnableSuccess) {
                     $end = true;
-                    $cek = 'ok 1';
+                    $statusMessage = 'ok 1';
                 } else {
                     $next = true;
-                    $cek = 'ok 2';
+                    $statusMessage = 'ok 2';
                 }
                 if ($isProblem) {
-                    if ($isProblemSuccess) {
-                        $end = ($isReturnableSuccess ? true : false);
-                        $next = ($isReturnableSuccess ? false : true);
-                        $cek = 'ok 3';
+                    if ($isProblemResolved) {
+                        $end = $isReturnableSuccess;
+                        $next = !$isReturnableSuccess;
+                        $statusMessage = 'ok 3';
                     } else {
                         $end = false;
-                        $cek = 'ok 4';
+                        $statusMessage = 'ok 4';
                     }
                 }
             } else {
                 if ($isProblem) {
-                    if ($isProblemSuccess) {
+                    if ($isProblemResolved) {
                         $end = true;
-                        $cek = 'ok 5';
+                        $statusMessage = 'ok 5';
                     } else {
                         $end = false;
-                        $cek = 'ok 6';
+                        $statusMessage = 'ok 6';
                     }
                 }
-
             }
         }
+
 
 
         if (Auth::user()->roles[0]->name == 'Admin Engineer') {
@@ -288,7 +285,7 @@ class ProjectController extends Controller
                 ->where('id', '!=', $project->id)->latest()->get();
         }
 
-        // return response()->json($cek);
+        // return response()->json($statusMessage);
 
         return view('projects.show', compact('isReturnable', 'project', 'outboundGoods', 'end', 'next', 'projects'));
     }
@@ -330,6 +327,13 @@ class ProjectController extends Controller
                 $project->address = $request->address;
                 $project->user_id = $request->user_id ?? Auth::user()->id;
                 $project->save();
+
+
+                $projectStatus = new ProjectStatus();
+                $projectStatus->project_id = $project->id;
+                $projectStatus->next = false;
+                $projectStatus->end = true;
+                $projectStatus->save();
             });
 
             Alert::success('Hore!', 'Project created successfully!');
@@ -368,6 +372,10 @@ class ProjectController extends Controller
                 $outbound = Outbound::where('id', $request->outbound_id)->with('items')->first();
                 $outbound->is_return = true;
                 $outbound->save();
+
+                $project->statusProject->next = false;
+                $project->statusProject->end = false;
+                $project->statusProject->save();
 
                 // dd($outbound);
 

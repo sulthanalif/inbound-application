@@ -100,7 +100,7 @@ class OutboundController extends Controller
 
     public function changeStatus(Outbound $outbound, Request $request)
     {
-        // dd($request->all());
+
         try {
             DB::transaction(function () use ($outbound, $request) {
                 if ($request->status == 'Approved') {
@@ -117,6 +117,28 @@ class OutboundController extends Controller
                 } else {
                     $outbound->status = $request->status;
                     $outbound->save();
+
+                    if ($request->status == 'Success') {
+                        if ($outbound->is_resend) {
+                            $isRentable = $outbound->items->pluck('goods.type')->contains('Rentable');
+                            if ($isRentable) {
+                                $outbound->project->statusProject->next = $isRentable;
+                                $outbound->project->statusProject->end = false;
+                            }else {
+                                $outbound->project->statusProject->end = true;
+                            }
+                        } else {
+                            $isRentable = $outbound->items->pluck('goods.type')->contains('Rentable');
+                            if ($isRentable) {
+                                $outbound->project->statusProject->next = $isRentable;
+                                $outbound->project->statusProject->end = false;
+                            }else {
+                                $outbound->project->statusProject->end = true;
+                            }
+                        }
+
+                        $outbound->project->statusProject->save();
+                    }
                 }
             });
 
@@ -171,6 +193,9 @@ class OutboundController extends Controller
                 $payment->outbound_id = $outbound->id;
                 // $payment->total_payment = $request->total_price;
                 $payment->save();
+
+                $outbound->project->statusProject->end = false;
+                $outbound->project->statusProject->save();
 
                 foreach ($data as $item) {
                     //add outbound item

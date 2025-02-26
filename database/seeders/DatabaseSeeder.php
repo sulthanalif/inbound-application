@@ -7,6 +7,7 @@ use App\Models\Unit;
 use App\Models\User;
 use App\Models\Goods;
 use App\Models\Category;
+use App\Models\DeliveryArea;
 use App\Models\Project;
 use App\Models\Vendor;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -121,12 +122,17 @@ class DatabaseSeeder extends Seeder
             'phone' => '08123456789',
         ]);
 
-        Project::create([
+        $pro = Project::create([
             'code' => 'PRJ01',
             'name' => 'Project 1',
             'start_date' => now(),
             'address' => 'Jl. Kenangan No. 1',
             'user_id' => User::where('name', 'Admin Engineer')->first()->id
+        ]);
+
+        $pro->statusProject()->create([
+            'next' => false,
+            'end' => true
         ]);
 
         for ($i=1 ; $i <= 10 ; $i++) {
@@ -154,6 +160,12 @@ class DatabaseSeeder extends Seeder
                 })->inRandomOrder()->first()->id,
             ]);
         }
+
+        DeliveryArea::create([
+            'code' => 'DAR01',
+            'name' => 'Delivery Area 1',
+            'address' => 'Jl. Kenangan No. 1',
+        ]);
 
     }
 }

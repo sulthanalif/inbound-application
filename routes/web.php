@@ -26,6 +26,7 @@ use App\Http\Controllers\ProblemItemController;
 use App\Http\Controllers\DeliveryAreaController;
 use App\Http\Controllers\LogsActivityController;
 use App\Http\Controllers\RequestOrderController;
+use App\Models\Project;
 use Symfony\Component\HttpKernel\Profiler\Profile;
 
 // Route::get('/', function () {
@@ -33,7 +34,10 @@ use Symfony\Component\HttpKernel\Profiler\Profile;
 // });
 
 Route::get('/coba', function () {
-   return response()->json(Activity::all()->last());
+   $project = Project::find(1);
+   $cek = $project->status()->get();
+
+   return response()->json($cek);
 });
 
 //auth

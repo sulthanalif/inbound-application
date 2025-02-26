@@ -18,8 +18,8 @@
                                 <a target="_blank" href="{{ route('projects.print', $project) }}" class="btn btn-primary btn-sm mx-2"><i class="bi bi-printer-fill"></i> PDF</a>
                                 <a href="{{ route('projects.export', $project) }}" class="btn btn-primary btn-sm"><i class="bi bi-printer-fill"></i> Excel</a>
                                 @if ($project->status != 'Finished')
-                                <a href="{{ route('projects.endProject', $project) }}" class="btn btn-danger btn-sm ms-2 {{ $end ? '' : 'disabled' }}">End Project</a>
-                                <a href="" class="btn btn-success btn-sm mx-2 {{ $next ? '' : 'disabled' }}" data-bs-toggle="modal"
+                                <a href="{{ route('projects.endProject', $project) }}" class="btn btn-danger btn-sm ms-2 {{ $project->statusProject->end ? '' : 'disabled' }}">End Project</a>
+                                <a href="" class="btn btn-success btn-sm mx-2 {{ $project->statusProject->next ? '' : 'disabled' }}" data-bs-toggle="modal"
                                 data-bs-target="#nextModal">Next Project</a>
                                 @endif
                             </div>
@@ -158,16 +158,8 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <h5 class="card-title">Inbound</h5>
-
-                            @php
-                                $b = false;
-                                if ($isReturnable) {
-                                    $b =true;
-                                }
-                            @endphp
-
                             @role('Admin Engineer')
-                            <a href="{{ route('projects.return', $project) }}" class="btn btn-primary btn-sm {{ $b && $project->status != 'Finished' ? '' : 'disabled'  }}">Return</a>
+                            <a href="{{ route('projects.return', $project) }}" class="btn btn-primary btn-sm {{ $project->status != 'Finished' ? '' : 'disabled'  }}">Return</a>
                             @endrole
                         </div>
 

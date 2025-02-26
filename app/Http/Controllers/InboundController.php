@@ -47,10 +47,28 @@ class InboundController extends Controller
 
     public function changeStatus(Inbound $inbound, Request $request)
     {
+        // dd('cek');
         try {
             DB::transaction(function () use ($inbound, $request) {
                 $inbound->status = $request->status;
                 $inbound->save();
+
+                if (!$inbound->is_return) {
+                $inbound->project->statusProject->next = false;
+                $inbound->project->statusProject->end = true;
+                $inbound->project->statusProject->save();
+            } else {
+                $isRentable = $inbound->items->pluck('goods.type')->contains('Rentable');
+                if ($isRentable) {
+                    $inbound->project->statusProject->next = true;
+                    $inbound->project->statusProject->end = false;
+                    $inbound->project->statusProject->save();
+                } else {
+                    $inbound->project->statusProject->next = false;
+                    $inbound->project->statusProject->end = true;
+                    $inbound->project->statusProject->save();
+                }
+            }
 
                 if ($request->status == 'Success' && $inbound->is_return == 0) {
                     foreach ($inbound->items as $item) {
@@ -61,7 +79,11 @@ class InboundController extends Controller
                 }
 
                 if ($request->status == 'Success' && $inbound->is_return == 1) {
+
+
                     foreach ($inbound->items as $item) {
+                        $goods = Goods::find($item->goods_id);
+
                         $problemItem = new ProblemItem();
                         $problemItem->outbound_id = $inbound->outbound_id;
                         $problemItem->goods_id = $item->goods_id;
@@ -120,6 +142,7 @@ class InboundController extends Controller
 
     public function success(Request $request, Inbound $inbound)
     {
+        // dd('masuk');
         try {
             DB::beginTransaction();
             $inbound->status = 'Success';
@@ -127,13 +150,26 @@ class InboundController extends Controller
             $inbound->save();
 
 
+
+
+
+
             foreach ($inbound->items as $item) {
+                $goods = Goods::find($item->goods_id);
+
                 $problemItem = new ProblemItem();
                 $problemItem->outbound_id = $inbound->outbound_id;
                 $problemItem->goods_id = $item->goods_id;
                 $problemItem->qty = $item->qty;
                 $problemItem->save();
             }
+
+            if ($inbound->items->pluck('goods.type')->contains('Rentable')) {
+                $inbound->project->statusProject->next = false;
+            }
+
+            $inbound->project->statusProject->end = false;
+            $inbound->project->statusProject->save();
 
             DB::commit();
             Alert::success('Success', 'Data Success');
@@ -154,7 +190,6 @@ class InboundController extends Controller
             ->whereHas('project', function ($query) {
                 $query->where('status', 'On Progress');
             })
-                ->where('user_id', Auth::user()->id)
                 ->where('is_resend', 0)->latest()->get();
         } else {
             $outbounds = Outbound::latest()->get();
@@ -192,6 +227,7 @@ class InboundController extends Controller
                 $inbound->save();
 
                 foreach ($data as $item) {
+                    $goods = Goods::find($item['item_id']);
                     $inboundItem = new InboundItem();
                     $inboundItem->inbound_id = $inbound->id;
                     $inboundItem->goods_id = $item['item_id'];
@@ -205,9 +241,9 @@ class InboundController extends Controller
 
 
 
-                // $goods = Goods::find($item['item_id']);
-                // $goods->qty += $item['qty'];
-                // $goods->save();
+                $outbound->project->statusProject->next = false;
+                $outbound->project->statusProject->end = false;
+                $outbound->project->statusProject->save();
             });
 
             Alert::success('Hore!', 'Return Created Successfully');
@@ -241,6 +277,18 @@ class InboundController extends Controller
                 ]);
 
                 foreach ($inbound->items as $item) {
+                    $goods = Goods::find($item->goods_id);
+                    if ($goods->type === 'Rentable') {
+                        $inbound->project->statusProject->next = true;
+                        $inbound->project->statusProject->end = true;
+                        $inbound->project->statusProject->save();
+                        break;
+                    } else {
+                        $inbound->project->statusProject->next = true;
+                        $inbound->project->statusProject->end = true;
+                        $inbound->project->statusProject->save();
+                    }
+
                     $outboundItem = new OutboundItem();
                     $outboundItem->outbound_id = $outbound->id;
                     $outboundItem->goods_id = $item->goods_id;
