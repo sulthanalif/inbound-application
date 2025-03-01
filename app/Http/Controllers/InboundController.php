@@ -149,11 +149,6 @@ class InboundController extends Controller
             $inbound->area_id = $request->area_id;
             $inbound->save();
 
-
-
-
-
-
             foreach ($inbound->items as $item) {
                 $goods = Goods::find($item->goods_id);
 
@@ -277,18 +272,6 @@ class InboundController extends Controller
                 ]);
 
                 foreach ($inbound->items as $item) {
-                    $goods = Goods::find($item->goods_id);
-                    if ($goods->type === 'Rentable') {
-                        $inbound->project->statusProject->next = true;
-                        $inbound->project->statusProject->end = true;
-                        $inbound->project->statusProject->save();
-                        break;
-                    } else {
-                        $inbound->project->statusProject->next = true;
-                        $inbound->project->statusProject->end = true;
-                        $inbound->project->statusProject->save();
-                    }
-
                     $outboundItem = new OutboundItem();
                     $outboundItem->outbound_id = $outbound->id;
                     $outboundItem->goods_id = $item->goods_id;
@@ -296,6 +279,10 @@ class InboundController extends Controller
                     $outboundItem->save();
                 }
             });
+
+                $outbound->project->statusProject->next = false;
+                $outbound->project->statusProject->end = false;
+                $outbound->project->statusProject->save();
 
             Alert::success('Hore!', 'Return Created Successfully');
             return redirect()->route('outbounds.show', $outbound);
