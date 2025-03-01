@@ -118,7 +118,7 @@ class InboundController extends Controller
                 $inbound_count = str_pad(Inbound::where('status', 'Approved')->count() + 1, 3, '0', STR_PAD_LEFT);
                 $inbound_goods = 'SJ';
                 $default = 'JSSZ1';
-                $area = $inbound->outbound()->first()->deliveryArea->code;
+                $area = $inbound->outbound()->first()->deliveryArea->code ?? 000;
                 $romanNumerals = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
                 $monthNumber = Carbon::parse(now())->month;
                 $mounth = $romanNumerals[$monthNumber - 1];
