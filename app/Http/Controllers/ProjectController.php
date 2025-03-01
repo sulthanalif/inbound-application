@@ -509,8 +509,15 @@ class ProjectController extends Controller
                 $project_new->start_date = now();
                 $project_new->address = $request->address_new;
                 $project_new->save();
+
+                $project_new->statusProject()->create([
+                    'next' => false,
+                    'end' => false
+                ]);
             } else {
                 $project_new = Project::find($request->project_id);
+                $project_new->statusProject->next = false;
+                $project_new->statusProject->end = false;
             }
 
             $generateCode = new GenerateCode();
