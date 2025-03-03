@@ -63,15 +63,17 @@
                                         <ul>
                                             @foreach ($items as $item)
                                                 @if (!empty($item->goods->name))
-                                                    <li>{{ $item->goods->name }} ({{ $item->qty }} {{ $item->goods->unit->symbol }})</li>
+                                                    <li>{{ $item->goods->name }} ({{ $item->qty }}
+                                                        {{ $item->goods->unit->symbol }})</li>
                                                 @endif
                                             @endforeach
                                         </ul>
                                     </td>
-                                    <td  class="text-nowrap">
+                                    <td class="text-nowrap">
                                         <a href="{{ route('projects.show', $project) }}" class="btn btn-sm btn-primary"><i
                                                 class="bi bi-eye-fill"></i></a>
-                                                <a target="_blank" href="{{ route('projects.print', $project) }}" class="btn btn-primary btn-sm mx-2"><i class="bi bi-printer-fill"></i></a>
+                                        <a target="_blank" href="{{ route('projects.print', $project) }}"
+                                            class="btn btn-primary btn-sm mx-2"><i class="bi bi-printer-fill"></i></a>
                                     </td>
                                 </tr>
                             @endforeach
@@ -129,14 +131,54 @@
                             extend: 'csv',
                             title: 'Projects Data',
                             exportOptions: {
-                                columns: [0, 1, 2, 3, 4, 5, 6]
+                                columns: [0, 1, 2, 3, 4, 5, 6, 7],
+                                format: {
+                                    body: function(data, row, column, node) {
+                                        if (column === 7 && typeof data === 'string') {
+                                            const cleanedData = data
+                                                .replace(/<\/?[^>]+(>|$)/g, '')
+                                                .split(/\s*\n\s*/)
+                                                .filter(item => item.trim() !== '')
+                                                .map(item => `- ${item.trim()}`)
+                                                .join('\n');
+
+                                            return cleanedData;
+                                        }
+
+                                        if (typeof data === 'string' || data instanceof String) {
+                                            return data.replace(/<\/?[^>]+(>|$)/g, '').trim();
+                                        }
+
+                                        return data;
+                                    }
+                                }
                             }
                         },
                         {
                             extend: 'excel',
                             title: 'Projects Data',
                             exportOptions: {
-                                columns: [0, 1, 2, 3, 4, 5, 6]
+                                columns: [0, 1, 2, 3, 4, 5, 6, 7],
+                                format: {
+                                    body: function(data, row, column, node) {
+                                        if (column === 7 && typeof data === 'string') {
+                                            const cleanedData = data
+                                                .replace(/<\/?[^>]+(>|$)/g, '')
+                                                .split(/\s*\n\s*/)
+                                                .filter(item => item.trim() !== '')
+                                                .map(item => `- ${item.trim()}`)
+                                                .join('\n');
+
+                                            return cleanedData;
+                                        }
+
+                                        if (typeof data === 'string' || data instanceof String) {
+                                            return data.replace(/<\/?[^>]+(>|$)/g, '').trim();
+                                        }
+
+                                        return data;
+                                    }
+                                }
                             }
                         },
                         {
@@ -172,7 +214,27 @@
                             extend: 'print',
                             title: 'Projects Data',
                             exportOptions: {
-                                columns: [0, 1, 2, 3, 4, 5, 6]
+                                columns: [0, 1, 2, 3, 4, 5, 6, 7],
+                                format: {
+                                    body: function(data, row, column, node) {
+                                        if (column === 7 && typeof data === 'string') {
+                                            const cleanedData = data
+                                                .replace(/<\/?[^>]+(>|$)/g, '')
+                                                .split(/\s*\n\s*/)
+                                                .filter(item => item.trim() !== '')
+                                                .map(item => `- ${item.trim()}`)
+                                                .join('\n');
+
+                                            return cleanedData;
+                                        }
+
+                                        if (typeof data === 'string' || data instanceof String) {
+                                            return data.replace(/<\/?[^>]+(>|$)/g, '').trim();
+                                        }
+
+                                        return data;
+                                    }
+                                }
                             }
                         },
 
